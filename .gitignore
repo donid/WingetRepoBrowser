@@ -1,0 +1,17 @@
+*.bak
+*.suo
+*.cache
+*.user
+*.VC.db
+*.sdf
+*.binlog
+Generated*.bmp
+bin
+obj
+packages
+MigrationBackup
+publish
+Debug
+ipch
+.vs
+.cr
