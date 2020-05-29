@@ -11,6 +11,8 @@ namespace WingetRepoBrowser
 	{
 
 		ManifestPackage _package;
+		internal ManifestPackage Package { get { return _package; } }
+
 		string _filePath;
 		ManifestInstallerVM[] _installerVMs;
 

@@ -15,12 +15,15 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Grid;
+using System.Net.Http;
+using System.Net;
+using System.Security.Cryptography;
+using System.Collections;
 
 
 //todo:
 // support multiple repo paths (; separated)
 // implement/find custom sort algorithm for version-column
-// download installers context menu with sha check
 
 namespace WingetRepoBrowser
 {
@@ -28,6 +31,7 @@ namespace WingetRepoBrowser
 	{
 
 		GridRowPopupMenuBehavior _gridViewHostsRowPopup;
+		List<ManifestPackageVM> _manifestVMs;
 
 		public MainForm()
 		{
@@ -67,6 +71,10 @@ namespace WingetRepoBrowser
 		{
 			return gridView1.GetFocusedRow() as ManifestPackageVM;
 		}
+		private IEnumerable<ManifestPackageVM> GetSelectedRows()
+		{
+			return gridView1.GetSelectedRows().Select(item => gridView1.GetRow(item)).Cast<ManifestPackageVM>();
+		}
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -76,6 +84,10 @@ namespace WingetRepoBrowser
 			if (args.Length >= 2)
 			{
 				textEditRepoFolder.Text = args[1];
+			}
+			if (args.Length >= 3)
+			{
+				textEditInstallersFolder.Text = args[2];
 			}
 		}
 
@@ -110,15 +122,32 @@ namespace WingetRepoBrowser
 				return;
 			}
 
-			List<ManifestPackageVM> ds = new List<ManifestPackageVM>();
-			IEnumerable<string> yamlFiles = Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories);
+			_manifestVMs = new List<ManifestPackageVM>();
+			IEnumerable<string> yamlFiles;
+			try
+			{
+				yamlFiles = Directory.GetFiles(folder, "*.yaml", SearchOption.AllDirectories);
+			}
+			catch (Exception ex)
+			{
+				gridControl1.DataSource = null; //remove old list;
+				simpleButtonCheckForNewDownloads.Enabled = false;
+				simpleButtonCreateSubFoldersForSelected.Enabled = false;
+
+				// e.g. when using folder 'c:\' System.UnauthorizedAccessException: 'Access to the path 'C:\$Recycle.Bin\S-1-5-18' is denied.'
+				ShowMessageBox(ex.Message);
+				return;
+			}
+
 			foreach (string yamlFile in yamlFiles)
 			{
 				ManifestPackage package = Helpers.ReadYamlFile(yamlFile);
-				ds.Add(new ManifestPackageVM(package, yamlFile));
+				_manifestVMs.Add(new ManifestPackageVM(package, yamlFile));
 			}
 
-			gridControl1.DataSource = ds;
+			gridControl1.DataSource = _manifestVMs;
+			simpleButtonCheckForNewDownloads.Enabled = true;
+			simpleButtonCreateSubFoldersForSelected.Enabled = true;
 		}
 
 
@@ -145,6 +174,99 @@ namespace WingetRepoBrowser
 		{
 			OpenFileOrUrl("https://github.com/microsoft/winget-pkgs");
 		}
+
+		private void simpleButtonCheckForNewDownloads_Click(object sender, EventArgs e)
+		{
+			string installersFolder = textEditInstallersFolder.Text;
+			if (!Directory.Exists(installersFolder))
+			{
+				ShowMessageBox("The specified installers-folder does not exist!");
+				return;
+			}
+
+			Cursor saveCursor = Cursor.Current;
+			try
+			{
+				Cursor.Current = Cursors.WaitCursor;
+				string[] idFiles = Directory.GetFiles(installersFolder, "*.wingetid", SearchOption.AllDirectories);
+				Dictionary<string, string> packageIds = idFiles.ToDictionary(item => Path.GetFileNameWithoutExtension(item));// todo catch ArgumentException for duplicate keys
+				List<NewDownload> newDownloads = FindNewDownloads(packageIds, _manifestVMs.Select(item => item.Package));
+				NewDownloadsForm form = new NewDownloadsForm();
+				form.NewDownloads = newDownloads;
+				form.ShowDialog();
+			}
+			finally
+			{
+				Cursor.Current = saveCursor;
+			}
+		}
+
+		private static List<NewDownload> FindNewDownloads(Dictionary<string, string> packageIds, IEnumerable<ManifestPackage> manifestPackages)
+		{
+			List<NewDownload> result = new List<NewDownload>();
+			foreach (ManifestPackage manifestPackage in manifestPackages)
+			{
+				if (packageIds.TryGetValue(manifestPackage.Id, out string idFilePath))
+				{
+					string idFileFolder = Path.GetDirectoryName(idFilePath);
+					string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in folders with version as name
+					bool exists = Directory.Exists(versionFolder);
+					if (!exists)
+					{
+						result.Add(new NewDownload() { ManifestPackage = manifestPackage, VersionFolder = versionFolder });
+					}
+				}
+			}
+			return result;
+		}
+
+		static string ReplaceInvalidChars(string filename)
+		{
+			return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+		}
+
+		static string ConvertVersionToDirectoryName(string version)
+		{
+			return ReplaceInvalidChars(version);
+		}
+
+		private void simpleButtonCreateSubFoldersForSelected_Click(object sender, EventArgs e)
+		{
+			string installersFolder = textEditInstallersFolder.Text;
+			if (!Directory.Exists(installersFolder))
+			{
+				ShowMessageBox("The specified installers-folder does not exist!");
+				return;
+			}
+
+			DialogResult result = MessageBox.Show(this, "Do you really want to create subfolders for the selected packages?", "WingetRepo Browser", MessageBoxButtons.OKCancel);
+			if (result != DialogResult.OK)
+			{
+				return;
+			}
+
+			IEnumerable<ManifestPackageVM> rows = GetSelectedRows().DistinctBy(item => item.Id);
+			foreach (ManifestPackageVM manifestPackageVM in rows)
+			{
+				string packagePath = Path.Combine(installersFolder, manifestPackageVM.Id);
+				Directory.CreateDirectory(packagePath);
+				string idFilePath = Path.Combine(packagePath, manifestPackageVM.Id + ".wingetid");
+				File.WriteAllText(idFilePath, "");
+			}
+		}
+
+
+
 	}
+
+
+	class NewDownload
+	{
+		public ManifestPackage ManifestPackage { get; set; }
+		public string VersionFolder { get; set; }
+
+	}
+
+	
 
 }

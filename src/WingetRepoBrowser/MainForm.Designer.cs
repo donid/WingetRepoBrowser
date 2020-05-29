@@ -67,13 +67,19 @@
 			this.colCommands = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.textEditRepoFolder = new DevExpress.XtraEditors.TextEdit();
 			this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+			this.simpleButtonCreateSubFoldersForSelected = new DevExpress.XtraEditors.SimpleButton();
+			this.simpleButtonCheckForNewDownloads = new DevExpress.XtraEditors.SimpleButton();
+			this.textEditInstallersFolder = new DevExpress.XtraEditors.TextEdit();
+			this.simpleButtonOpenGitRepo = new DevExpress.XtraEditors.SimpleButton();
 			this.simpleButtonSearch = new DevExpress.XtraEditors.SimpleButton();
 			this.Root = new DevExpress.XtraLayout.LayoutControlGroup();
 			this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
 			this.layoutControlItemRepoFolder = new DevExpress.XtraLayout.LayoutControlItem();
 			this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
-			this.simpleButtonOpenGitRepo = new DevExpress.XtraEditors.SimpleButton();
 			this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
+			this.layoutControlItem4 = new DevExpress.XtraLayout.LayoutControlItem();
+			this.layoutControlItem5 = new DevExpress.XtraLayout.LayoutControlItem();
+			this.layoutControlItem6 = new DevExpress.XtraLayout.LayoutControlItem();
 			((System.ComponentModel.ISupportInitialize)(this.gridView2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
@@ -81,11 +87,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.textEditRepoFolder.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
 			this.layoutControl1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.textEditInstallersFolder.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.Root)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItemRepoFolder)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// gridView2
@@ -213,12 +223,12 @@
 			gridLevelNode1.RelationName = "Installers";
 			this.gridControl1.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] {
             gridLevelNode1});
-			this.gridControl1.Location = new System.Drawing.Point(5, 31);
+			this.gridControl1.Location = new System.Drawing.Point(5, 57);
 			this.gridControl1.MainView = this.gridView1;
 			this.gridControl1.Name = "gridControl1";
 			this.gridControl1.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
             this.repositoryItemButtonEditUrl});
-			this.gridControl1.Size = new System.Drawing.Size(1002, 603);
+			this.gridControl1.Size = new System.Drawing.Size(1002, 577);
 			this.gridControl1.TabIndex = 4;
 			this.gridControl1.UseEmbeddedNavigator = true;
 			this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
@@ -413,14 +423,17 @@
 			// 
 			// textEditRepoFolder
 			// 
-			this.textEditRepoFolder.Location = new System.Drawing.Point(71, 5);
+			this.textEditRepoFolder.Location = new System.Drawing.Point(90, 5);
 			this.textEditRepoFolder.Name = "textEditRepoFolder";
-			this.textEditRepoFolder.Size = new System.Drawing.Size(684, 20);
+			this.textEditRepoFolder.Size = new System.Drawing.Size(615, 20);
 			this.textEditRepoFolder.StyleController = this.layoutControl1;
 			this.textEditRepoFolder.TabIndex = 5;
 			// 
 			// layoutControl1
 			// 
+			this.layoutControl1.Controls.Add(this.simpleButtonCreateSubFoldersForSelected);
+			this.layoutControl1.Controls.Add(this.simpleButtonCheckForNewDownloads);
+			this.layoutControl1.Controls.Add(this.textEditInstallersFolder);
 			this.layoutControl1.Controls.Add(this.simpleButtonOpenGitRepo);
 			this.layoutControl1.Controls.Add(this.simpleButtonSearch);
 			this.layoutControl1.Controls.Add(this.textEditRepoFolder);
@@ -433,11 +446,51 @@
 			this.layoutControl1.TabIndex = 6;
 			this.layoutControl1.Text = "layoutControl1";
 			// 
+			// simpleButtonCreateSubFoldersForSelected
+			// 
+			this.simpleButtonCreateSubFoldersForSelected.Enabled = false;
+			this.simpleButtonCreateSubFoldersForSelected.Location = new System.Drawing.Point(849, 31);
+			this.simpleButtonCreateSubFoldersForSelected.Name = "simpleButtonCreateSubFoldersForSelected";
+			this.simpleButtonCreateSubFoldersForSelected.Size = new System.Drawing.Size(158, 22);
+			this.simpleButtonCreateSubFoldersForSelected.StyleController = this.layoutControl1;
+			this.simpleButtonCreateSubFoldersForSelected.TabIndex = 10;
+			this.simpleButtonCreateSubFoldersForSelected.Text = "CreateSubFolders For Selected";
+			this.simpleButtonCreateSubFoldersForSelected.Click += new System.EventHandler(this.simpleButtonCreateSubFoldersForSelected_Click);
+			// 
+			// simpleButtonCheckForNewDownloads
+			// 
+			this.simpleButtonCheckForNewDownloads.Enabled = false;
+			this.simpleButtonCheckForNewDownloads.Location = new System.Drawing.Point(709, 31);
+			this.simpleButtonCheckForNewDownloads.Name = "simpleButtonCheckForNewDownloads";
+			this.simpleButtonCheckForNewDownloads.Size = new System.Drawing.Size(136, 22);
+			this.simpleButtonCheckForNewDownloads.StyleController = this.layoutControl1;
+			this.simpleButtonCheckForNewDownloads.TabIndex = 9;
+			this.simpleButtonCheckForNewDownloads.Text = "Check For New Downloads";
+			this.simpleButtonCheckForNewDownloads.Click += new System.EventHandler(this.simpleButtonCheckForNewDownloads_Click);
+			// 
+			// textEditInstallersFolder
+			// 
+			this.textEditInstallersFolder.Location = new System.Drawing.Point(90, 31);
+			this.textEditInstallersFolder.Name = "textEditInstallersFolder";
+			this.textEditInstallersFolder.Size = new System.Drawing.Size(615, 20);
+			this.textEditInstallersFolder.StyleController = this.layoutControl1;
+			this.textEditInstallersFolder.TabIndex = 8;
+			// 
+			// simpleButtonOpenGitRepo
+			// 
+			this.simpleButtonOpenGitRepo.Location = new System.Drawing.Point(849, 5);
+			this.simpleButtonOpenGitRepo.Name = "simpleButtonOpenGitRepo";
+			this.simpleButtonOpenGitRepo.Size = new System.Drawing.Size(158, 22);
+			this.simpleButtonOpenGitRepo.StyleController = this.layoutControl1;
+			this.simpleButtonOpenGitRepo.TabIndex = 7;
+			this.simpleButtonOpenGitRepo.Text = "Open GitRepo";
+			this.simpleButtonOpenGitRepo.Click += new System.EventHandler(this.simpleButtonOpenGitRepo_Click);
+			// 
 			// simpleButtonSearch
 			// 
-			this.simpleButtonSearch.Location = new System.Drawing.Point(759, 5);
+			this.simpleButtonSearch.Location = new System.Drawing.Point(709, 5);
 			this.simpleButtonSearch.Name = "simpleButtonSearch";
-			this.simpleButtonSearch.Size = new System.Drawing.Size(122, 22);
+			this.simpleButtonSearch.Size = new System.Drawing.Size(136, 22);
 			this.simpleButtonSearch.StyleController = this.layoutControl1;
 			this.simpleButtonSearch.TabIndex = 6;
 			this.simpleButtonSearch.Text = "Search";
@@ -451,7 +504,10 @@
             this.layoutControlItem1,
             this.layoutControlItemRepoFolder,
             this.layoutControlItem2,
-            this.layoutControlItem3});
+            this.layoutControlItem3,
+            this.layoutControlItem4,
+            this.layoutControlItem5,
+            this.layoutControlItem6});
 			this.Root.Name = "Root";
 			this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(3, 3, 3, 3);
 			this.Root.Size = new System.Drawing.Size(1012, 639);
@@ -460,9 +516,9 @@
 			// layoutControlItem1
 			// 
 			this.layoutControlItem1.Control = this.gridControl1;
-			this.layoutControlItem1.Location = new System.Drawing.Point(0, 26);
+			this.layoutControlItem1.Location = new System.Drawing.Point(0, 52);
 			this.layoutControlItem1.Name = "layoutControlItem1";
-			this.layoutControlItem1.Size = new System.Drawing.Size(1006, 607);
+			this.layoutControlItem1.Size = new System.Drawing.Size(1006, 581);
 			this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItem1.TextVisible = false;
 			// 
@@ -471,37 +527,54 @@
 			this.layoutControlItemRepoFolder.Control = this.textEditRepoFolder;
 			this.layoutControlItemRepoFolder.Location = new System.Drawing.Point(0, 0);
 			this.layoutControlItemRepoFolder.Name = "layoutControlItemRepoFolder";
-			this.layoutControlItemRepoFolder.Size = new System.Drawing.Size(754, 26);
+			this.layoutControlItemRepoFolder.Size = new System.Drawing.Size(704, 26);
 			this.layoutControlItemRepoFolder.Text = "Repo-Folder:";
-			this.layoutControlItemRepoFolder.TextSize = new System.Drawing.Size(63, 13);
+			this.layoutControlItemRepoFolder.TextSize = new System.Drawing.Size(82, 13);
 			// 
 			// layoutControlItem2
 			// 
 			this.layoutControlItem2.Control = this.simpleButtonSearch;
-			this.layoutControlItem2.Location = new System.Drawing.Point(754, 0);
+			this.layoutControlItem2.Location = new System.Drawing.Point(704, 0);
 			this.layoutControlItem2.Name = "layoutControlItem2";
-			this.layoutControlItem2.Size = new System.Drawing.Size(126, 26);
+			this.layoutControlItem2.Size = new System.Drawing.Size(140, 26);
 			this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItem2.TextVisible = false;
-			// 
-			// simpleButtonOpenGitRepo
-			// 
-			this.simpleButtonOpenGitRepo.Location = new System.Drawing.Point(885, 5);
-			this.simpleButtonOpenGitRepo.Name = "simpleButtonOpenGitRepo";
-			this.simpleButtonOpenGitRepo.Size = new System.Drawing.Size(122, 22);
-			this.simpleButtonOpenGitRepo.StyleController = this.layoutControl1;
-			this.simpleButtonOpenGitRepo.TabIndex = 7;
-			this.simpleButtonOpenGitRepo.Text = "Open GitRepo";
-			this.simpleButtonOpenGitRepo.Click += new System.EventHandler(this.simpleButtonOpenGitRepo_Click);
 			// 
 			// layoutControlItem3
 			// 
 			this.layoutControlItem3.Control = this.simpleButtonOpenGitRepo;
-			this.layoutControlItem3.Location = new System.Drawing.Point(880, 0);
+			this.layoutControlItem3.Location = new System.Drawing.Point(844, 0);
 			this.layoutControlItem3.Name = "layoutControlItem3";
-			this.layoutControlItem3.Size = new System.Drawing.Size(126, 26);
+			this.layoutControlItem3.Size = new System.Drawing.Size(162, 26);
 			this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItem3.TextVisible = false;
+			// 
+			// layoutControlItem4
+			// 
+			this.layoutControlItem4.Control = this.textEditInstallersFolder;
+			this.layoutControlItem4.Location = new System.Drawing.Point(0, 26);
+			this.layoutControlItem4.Name = "layoutControlItem4";
+			this.layoutControlItem4.Size = new System.Drawing.Size(704, 26);
+			this.layoutControlItem4.Text = "Installers-Folder:";
+			this.layoutControlItem4.TextSize = new System.Drawing.Size(82, 13);
+			// 
+			// layoutControlItem5
+			// 
+			this.layoutControlItem5.Control = this.simpleButtonCheckForNewDownloads;
+			this.layoutControlItem5.Location = new System.Drawing.Point(704, 26);
+			this.layoutControlItem5.Name = "layoutControlItem5";
+			this.layoutControlItem5.Size = new System.Drawing.Size(140, 26);
+			this.layoutControlItem5.TextSize = new System.Drawing.Size(0, 0);
+			this.layoutControlItem5.TextVisible = false;
+			// 
+			// layoutControlItem6
+			// 
+			this.layoutControlItem6.Control = this.simpleButtonCreateSubFoldersForSelected;
+			this.layoutControlItem6.Location = new System.Drawing.Point(844, 26);
+			this.layoutControlItem6.Name = "layoutControlItem6";
+			this.layoutControlItem6.Size = new System.Drawing.Size(162, 26);
+			this.layoutControlItem6.TextSize = new System.Drawing.Size(0, 0);
+			this.layoutControlItem6.TextVisible = false;
 			// 
 			// MainForm
 			// 
@@ -510,7 +583,7 @@
 			this.ClientSize = new System.Drawing.Size(1012, 639);
 			this.Controls.Add(this.layoutControl1);
 			this.Name = "MainForm";
-			this.Text = "WingetRepo Browser 0.0.1";
+			this.Text = "WingetRepo Browser 0.0.2";
 			((System.ComponentModel.ISupportInitialize)(this.gridView2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
@@ -518,11 +591,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.textEditRepoFolder.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
 			this.layoutControl1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.textEditInstallersFolder.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.Root)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItemRepoFolder)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem4)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem5)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem6)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -573,6 +650,12 @@
 		private DevExpress.XtraEditors.Repository.RepositoryItemButtonEdit repositoryItemButtonEditUrl;
 		private DevExpress.XtraEditors.SimpleButton simpleButtonOpenGitRepo;
 		private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
+		private DevExpress.XtraEditors.TextEdit textEditInstallersFolder;
+		private DevExpress.XtraLayout.LayoutControlItem layoutControlItem4;
+		private DevExpress.XtraEditors.SimpleButton simpleButtonCheckForNewDownloads;
+		private DevExpress.XtraLayout.LayoutControlItem layoutControlItem5;
+		private DevExpress.XtraEditors.SimpleButton simpleButtonCreateSubFoldersForSelected;
+		private DevExpress.XtraLayout.LayoutControlItem layoutControlItem6;
 	}
 }
 
