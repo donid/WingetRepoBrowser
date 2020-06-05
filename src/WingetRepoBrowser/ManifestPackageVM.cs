@@ -60,6 +60,13 @@ namespace WingetRepoBrowser
 		public string Protocols { get { return _package.Protocols; } }
 
 		public string Commands { get { return _package.Commands; } }
+		public string InstallersArch { get { return string.Join("|",_package.Installers.Select(item=>item.Arch)); } }
+		public string InstallersLanguage { get { return string.Join("|", _package.Installers.Select(item => item.Language)); } }
+		public string InstallersInstallerType { get { return string.Join("|", _package.Installers.Select(item => item.InstallerType)); } }
+
+		public string ManifestSwitchInteractive { get { return _package.Switches?.Interactive; } }
+		public string ManifestSwitchSilent { get { return _package.Switches?.Silent; } }
+		public string ManifestSwitchSilentWithProgress { get { return _package.Switches?.SilentWithProgress; } }
 
 		//TODO
 		//public ManifestSwitches Switches { get; set; }

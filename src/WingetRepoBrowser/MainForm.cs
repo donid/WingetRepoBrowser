@@ -190,7 +190,7 @@ namespace WingetRepoBrowser
 				Cursor.Current = Cursors.WaitCursor;
 				string[] idFiles = Directory.GetFiles(installersFolder, "*.wingetid", SearchOption.AllDirectories);
 				Dictionary<string, string> packageIds = idFiles.ToDictionary(item => Path.GetFileNameWithoutExtension(item));// todo catch ArgumentException for duplicate keys
-				List<NewDownload> newDownloads = FindNewDownloads(packageIds, _manifestVMs.Select(item => item.Package));
+				List<NewDownload> newDownloads = FindNewDownloads(packageIds, _manifestVMs);
 				NewDownloadsForm form = new NewDownloadsForm();
 				form.NewDownloads = newDownloads;
 				form.ShowDialog();
@@ -201,10 +201,10 @@ namespace WingetRepoBrowser
 			}
 		}
 
-		private static List<NewDownload> FindNewDownloads(Dictionary<string, string> packageIds, IEnumerable<ManifestPackage> manifestPackages)
+		private static List<NewDownload> FindNewDownloads(Dictionary<string, string> packageIds, IEnumerable<ManifestPackageVM> manifestPackages)
 		{
 			List<NewDownload> result = new List<NewDownload>();
-			foreach (ManifestPackage manifestPackage in manifestPackages)
+			foreach (ManifestPackageVM manifestPackage in manifestPackages)
 			{
 				if (packageIds.TryGetValue(manifestPackage.Id, out string idFilePath))
 				{
@@ -213,7 +213,8 @@ namespace WingetRepoBrowser
 					bool exists = Directory.Exists(versionFolder);
 					if (!exists)
 					{
-						result.Add(new NewDownload() { ManifestPackage = manifestPackage, VersionFolder = versionFolder });
+						NewDownload dl = new NewDownload() { ManifestPackage = manifestPackage.Package, VersionFolder = versionFolder, FilePath = manifestPackage.FilePath };
+						result.Add(dl);
 					}
 				}
 			}
@@ -255,8 +256,16 @@ namespace WingetRepoBrowser
 			}
 		}
 
-
-
+		private void gridView1_CustomDrawFooter(object sender, DevExpress.XtraGrid.Views.Base.RowObjectCustomDrawEventArgs e)
+		{
+			if (this.gridView1.GroupCount > 0)
+			{
+				e.DefaultDraw();
+				string groupRows = this.gridView1.DataController.GroupRowCount.ToString();
+				e.Graphics.DrawString("GroupRowCount:" + Environment.NewLine+groupRows, e.Appearance.Font, Brushes.Black, e.Bounds);
+				e.Handled = true;
+			}
+		}
 	}
 
 
@@ -264,9 +273,10 @@ namespace WingetRepoBrowser
 	{
 		public ManifestPackage ManifestPackage { get; set; }
 		public string VersionFolder { get; set; }
+		public string FilePath { get; set; }
 
 	}
 
-	
+
 
 }

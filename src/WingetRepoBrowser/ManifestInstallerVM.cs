@@ -48,5 +48,6 @@ namespace WingetRepoBrowser
 		public string SwitchesLanguage { get { return _installers.Switches?.Language; } }
 
 		public string SwitchesLog { get { return _installers.Switches?.Log; } }
+		public string SwitchesInteractive { get { return _installers.Switches?.Interactive; } }
 	}
 }

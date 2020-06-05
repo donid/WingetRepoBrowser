@@ -67,5 +67,17 @@ namespace WingetRepoBrowserCore
 		/// example: /LOG=<LOGPATH>
 		/// </summary>
 		public string Log { get; set; }
+
+
+		// e.g. in "V:\\projects_os_git\\winget-pkgs\\manifests\\Sonos\\Controller\\11.1.yaml"
+		/// <summary>
+		/// experimental
+		/// Interactive represents the value that should be passed to the installer when the tool requires user interaction.  If the installer has a flag
+		/// that when passed to the installer, causes it to require user input, it should be provided here.  This flag will be used when the user passes the
+		/// --interactive switch to the installer.  
+		/// Interactive is not supported in this preview (5/24/2020)
+		/// example: /ShowEula
+		/// </summary>
+		public string Interactive { get; set; }
 	}
 }

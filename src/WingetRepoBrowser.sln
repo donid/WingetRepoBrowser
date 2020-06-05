@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingetRepoBrowser", "WingetRepoBrowser\WingetRepoBrowser.csproj", "{79FC0687-FB8B-4C11-A5F3-B6076A931236}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingetRepoBrowserCore", "WingetRepoBrowserCore\WingetRepoBrowserCore.csproj", "{DEF25C0F-26CD-42F3-BF53-0B36FC0EC535}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WingetRepoBrowserCore", "WingetRepoBrowserCore\WingetRepoBrowserCore.csproj", "{DEF25C0F-26CD-42F3-BF53-0B36FC0EC535}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WingetRepoBrowserCoreTests", "WingetRepoBrowserCoreTests\WingetRepoBrowserCoreTests.csproj", "{417546D0-0C53-412E-A0D0-9D0B1035BDE4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{DEF25C0F-26CD-42F3-BF53-0B36FC0EC535}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEF25C0F-26CD-42F3-BF53-0B36FC0EC535}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEF25C0F-26CD-42F3-BF53-0B36FC0EC535}.Release|Any CPU.Build.0 = Release|Any CPU
+		{417546D0-0C53-412E-A0D0-9D0B1035BDE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{417546D0-0C53-412E-A0D0-9D0B1035BDE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{417546D0-0C53-412E-A0D0-9D0B1035BDE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{417546D0-0C53-412E-A0D0-9D0B1035BDE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

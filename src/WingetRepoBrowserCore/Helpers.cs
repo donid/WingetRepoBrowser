@@ -14,15 +14,26 @@ namespace WingetRepoBrowserCore
 
 		public static ManifestPackage ReadYamlFile(string yamlFile)
 		{
-			//todo: dispose?
-			var input = new StreamReader(yamlFile, true);// TODO: Firetrust.MailWasherPro -> copyright sign works with Encoding.Default, but other packages have wrong signs then then 
+			// TODO: Firetrust.MailWasherPro -> copyright sign works with Encoding.Default, but other packages have wrong signs then then 
+			using (StreamReader streamReader = new StreamReader(yamlFile, true))
+			{
+				var deserializer = new DeserializerBuilder()
+					.IgnoreUnmatchedProperties() // comment this out, to check if there are new properties used in yaml, which are not yet in the data-model
+					.Build();
 
-			var deserializer = new DeserializerBuilder()
-				// .WithNamingConvention(CamelCaseNamingConvention.Instance)
-				.Build();
+				ManifestPackage package = deserializer.Deserialize<ManifestPackage>(streamReader);
+				return package;
+			}
+		}
 
-			ManifestPackage package = deserializer.Deserialize<ManifestPackage>(input);
-			return package;
+		public static void WriteYamlFile(string yamlFile, ManifestPackage package)
+		{
+			using (StreamWriter streamWriter = File.CreateText(yamlFile))
+			{
+				var serializer = new SerializerBuilder().Build();
+
+				serializer.Serialize(streamWriter, package);
+			}
 		}
 
 
