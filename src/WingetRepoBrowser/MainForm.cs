@@ -30,18 +30,18 @@ namespace WingetRepoBrowser
 	public partial class MainForm : XtraForm
 	{
 
-		GridRowPopupMenuBehavior _gridViewHostsRowPopup;
+		GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
 		List<ManifestPackageVM> _manifestVMs;
 
 		public MainForm()
 		{
 			InitializeComponent();
 
-			_gridViewHostsRowPopup = new GridRowPopupMenuBehavior(gridView1);
-			_gridViewHostsRowPopup.SetMenuItems(CreateMenuItemsHostsPopup());
+			_gridViewManifestsRowPopup = new GridRowPopupMenuBehavior(gridView1);
+			_gridViewManifestsRowPopup.SetMenuItems(CreateMenuItemsManifestsPopup());
 		}
 
-		private DXMenuItem[] CreateMenuItemsHostsPopup()
+		private DXMenuItem[] CreateMenuItemsManifestsPopup()
 		{
 			//menu tooltip: https://www.devexpress.com/Support/Center/Question/Details/Q304975
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using WingetRepoBrowserCore;
