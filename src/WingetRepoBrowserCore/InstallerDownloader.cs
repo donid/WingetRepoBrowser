@@ -58,7 +58,10 @@ namespace WingetRepoBrowserCore
 				if (!string.IsNullOrEmpty(contDisp))
 				{
 					ContentDisposition parsedContDisp = new ContentDisposition(contDisp);
-					return parsedContDisp.FileName;
+					if (parsedContDisp.FileName != null)//null: https://dl.google.com/edgedl/chrome/install/GoogleChromeStandaloneEnterprise64.msi
+					{
+						return parsedContDisp.FileName;
+					}
 				}
 
 				string location = resp.Headers["Location"];
@@ -73,7 +76,13 @@ namespace WingetRepoBrowserCore
 				//	return Path.GetFileName(resp.ResponseUri.ToString());
 				//}
 
-				return Path.GetFileName(resp.ResponseUri.ToString());
+				string potentialFilename = Path.GetFileName(resp.ResponseUri.ToString());
+				int foundIndex = potentialFilename.IndexOfAny(new[] { '?' });
+				if (foundIndex == -1)
+				{
+					return potentialFilename;
+				}
+				return potentialFilename.Substring(0, foundIndex);
 			}
 
 		}

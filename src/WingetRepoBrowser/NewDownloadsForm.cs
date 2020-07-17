@@ -70,6 +70,11 @@ namespace WingetRepoBrowser
 				{
 					string downloadUrl = manifestInstaller.Url;
 					string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl);
+					if (downloadFileName==null)
+					{
+						AddLogLineBackground("Error: Unable to determine filename from download-url!");
+						continue;
+					}
 					try
 					{
 						AddLogLineBackground("Creating directory: " + versionFolder);
