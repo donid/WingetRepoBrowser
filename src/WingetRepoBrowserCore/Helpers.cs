@@ -15,7 +15,7 @@ namespace WingetRepoBrowserCore
 
 		public static ManifestPackage ReadYamlFile(string yamlFile)
 		{
-			// TODO: Firetrust.MailWasherPro -> copyright sign works with Encoding.Default, but other packages have wrong signs then then 
+			// TODO: Firetrust.MailWasherPro -> copyright sign works with Encoding.Default, but other packages have wrong signs then 
 			using (StreamReader streamReader = new StreamReader(yamlFile, true))
 			{
 				var deserializer = new DeserializerBuilder()

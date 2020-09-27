@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.IO;
-using WingetRepoBrowserCore;
-using DevExpress.Utils.Menu;
-using System.Diagnostics;
+﻿using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid;
 using DevExpress.XtraGrid.Views.Grid;
-using System.Net.Http;
-using System.Net;
-using System.Security.Cryptography;
-using System.Collections;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using WingetRepoBrowserCore;
 
 
 //todo:
@@ -122,30 +115,39 @@ namespace WingetRepoBrowser
 				return;
 			}
 
-			_manifestVMs = new List<ManifestPackageVM>();
-			IEnumerable<string> yamlFiles;
+			Cursor saveCursor = Cursor.Current;
 			try
 			{
-				yamlFiles = Directory.GetFiles(folder, "*.yaml", SearchOption.AllDirectories);
+				Cursor.Current = Cursors.WaitCursor;
+				_manifestVMs = new List<ManifestPackageVM>();
+				IEnumerable<string> yamlFiles;
+				try
+				{
+					yamlFiles = Directory.GetFiles(folder, "*.yaml", SearchOption.AllDirectories);
+				}
+				catch (Exception ex)
+				{
+					gridControl1.DataSource = null; //remove old list;
+					simpleButtonCheckForNewDownloads.Enabled = false;
+					simpleButtonCreateSubFoldersForSelected.Enabled = false;
+
+					// e.g. when using folder 'c:\' System.UnauthorizedAccessException: 'Access to the path 'C:\$Recycle.Bin\S-1-5-18' is denied.'
+					ShowMessageBox(ex.Message);
+					return;
+				}
+
+				foreach (string yamlFile in yamlFiles)
+				{
+					ManifestPackage package = Helpers.ReadYamlFile(yamlFile);
+					_manifestVMs.Add(new ManifestPackageVM(package, yamlFile));
+				}
+
+				gridControl1.DataSource = _manifestVMs;
 			}
-			catch (Exception ex)
+			finally
 			{
-				gridControl1.DataSource = null; //remove old list;
-				simpleButtonCheckForNewDownloads.Enabled = false;
-				simpleButtonCreateSubFoldersForSelected.Enabled = false;
-
-				// e.g. when using folder 'c:\' System.UnauthorizedAccessException: 'Access to the path 'C:\$Recycle.Bin\S-1-5-18' is denied.'
-				ShowMessageBox(ex.Message);
-				return;
+				Cursor.Current = saveCursor;
 			}
-
-			foreach (string yamlFile in yamlFiles)
-			{
-				ManifestPackage package = Helpers.ReadYamlFile(yamlFile);
-				_manifestVMs.Add(new ManifestPackageVM(package, yamlFile));
-			}
-
-			gridControl1.DataSource = _manifestVMs;
 			simpleButtonCheckForNewDownloads.Enabled = true;
 			simpleButtonCreateSubFoldersForSelected.Enabled = true;
 		}
@@ -262,7 +264,7 @@ namespace WingetRepoBrowser
 			{
 				e.DefaultDraw();
 				string groupRows = this.gridView1.DataController.GroupRowCount.ToString();
-				e.Graphics.DrawString("GroupRowCount:" + Environment.NewLine+groupRows, e.Appearance.Font, Brushes.Black, e.Bounds);
+				e.Graphics.DrawString("GroupRowCount:" + Environment.NewLine + groupRows, e.Appearance.Font, Brushes.Black, e.Bounds);
 				e.Handled = true;
 			}
 		}

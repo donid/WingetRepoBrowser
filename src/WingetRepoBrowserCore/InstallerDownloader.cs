@@ -21,9 +21,9 @@ namespace WingetRepoBrowserCore
 
 		}
 
-		public string GetFileNameFromUrl(string url)
+		public string GetFileNameFromUrl(string url, out Uri responseUri)
 		{
-
+			responseUri = null;
 			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
 			req.Method = "HEAD";
 			//without this: "https://fossies.org/windows/misc/audacity-win-2.4.1.exe" -> WebException 403 forbidden
@@ -53,6 +53,7 @@ namespace WingetRepoBrowserCore
 			}
 			using (resp)
 			{
+				responseUri = resp.ResponseUri;
 				// Try to extract the filename from the Content-Disposition header
 				string contDisp = resp.Headers["Content-Disposition"];
 				if (!string.IsNullOrEmpty(contDisp))

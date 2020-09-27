@@ -69,7 +69,15 @@ namespace WingetRepoBrowser
 				foreach (ManifestInstaller manifestInstaller in targetManifestPackage.Installers)
 				{
 					string downloadUrl = manifestInstaller.Url;
-					string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl);
+					string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl, out Uri responseUri);
+					if (responseUri!=null)
+					{
+						// this download url returns html instead of the .exe
+						// https://sourceforge.net/projects/keepass/files/KeePass%202.x/2.46/KeePass-2.46-Setup.exe/download 
+						// but the returned responseUri works:
+						// https://downloads.sourceforge.net/project/keepass/KeePass%202.x/2.46/KeePass-2.46-Setup.exe
+						downloadUrl = responseUri.ToString();
+					}
 					if (downloadFileName==null)
 					{
 						AddLogLineBackground("Error: Unable to determine filename from download-url!");
@@ -93,7 +101,7 @@ namespace WingetRepoBrowser
 						}
 
 
-						manifestInstaller.Url = downloadFileName;
+						manifestInstaller.Url = downloadFileName+" |# "+ manifestInstaller.Url; //HACK!!!
 
 						if (backgroundWorker1.CancellationPending) return;
 					}
