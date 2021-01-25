@@ -56,13 +56,10 @@ namespace WingetRepoBrowserCore
 				responseUri = resp.ResponseUri;
 				// Try to extract the filename from the Content-Disposition header
 				string contDisp = resp.Headers["Content-Disposition"];
-				if (!string.IsNullOrEmpty(contDisp))
+				string filenameFromCd = GetFilenameFromContentDisposition(contDisp);
+				if (filenameFromCd != null)
 				{
-					ContentDisposition parsedContDisp = new ContentDisposition(contDisp);
-					if (parsedContDisp.FileName != null)//null: https://dl.google.com/edgedl/chrome/install/GoogleChromeStandaloneEnterprise64.msi
-					{
-						return parsedContDisp.FileName;
-					}
+					return filenameFromCd;
 				}
 
 				string location = resp.Headers["Location"];
@@ -86,6 +83,65 @@ namespace WingetRepoBrowserCore
 				return potentialFilename.Substring(0, foundIndex);
 			}
 
+		}
+
+		static string GetFilenameFromContentDisposition(string contDisp)
+		{
+			if (string.IsNullOrEmpty(contDisp))
+			{
+				return null;
+			}
+
+			// this url: "https://download.sqlitebrowser.org/DB.Browser.for.SQLite-3.11.2-win64.msi"
+			// returns this contDisp: "attachment; filename=\"DB.Browser.for.SQLite-3.11.2-win64.msi\"; modification-date=\"2019-04-03T18:13:35Z\";"
+			// for which ContentDisposition ctor throws this exception: System.FormatException: 'An invalid character was found in the mail header: '{0}'.'
+			// this does not work either: ContentDispositionHeaderValue.Parse(cd)
+			ContentDisposition parsedContDisp = null;
+			try
+			{
+				parsedContDisp = new ContentDisposition(contDisp);
+			}
+			catch (FormatException)
+			{
+				return GetFilenameFromContentDispositionWorkaround(contDisp);
+			}
+
+			//null: https://dl.google.com/edgedl/chrome/install/GoogleChromeStandaloneEnterprise64.msi
+			if (parsedContDisp.FileName == null)
+			{
+				return null;
+			}
+			return parsedContDisp.FileName;
+		}
+
+		static string GetFilenameFromContentDispositionWorkaround(string contDisp)
+		{
+			string[] parts = contDisp.Split(';');
+			string filenamePart=parts.Select(i => i.Trim()).FirstOrDefault(i=>i.StartsWith("filename=",StringComparison.InvariantCultureIgnoreCase));
+			if (filenamePart==null)
+			{
+				return null;
+			}
+			string filename = filenamePart.Substring("filename=".Length);
+			return RemoveQuotes(filename);
+		}
+
+		static string RemoveQuotes(/*this*/ string text)
+		{
+			if (text == null)
+			{
+				return null;
+			}
+			string result = text;
+			if (result.StartsWith("\""))
+			{
+				result = result.Substring(1);
+			}
+			if (result.EndsWith("\""))
+			{
+				result = result.Substring(0, result.Length - 1);
+			}
+			return result;
 		}
 
 		public void DownloadFile(string downloadUrl, string downloadFilePath)

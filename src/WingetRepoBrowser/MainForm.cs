@@ -191,7 +191,7 @@ namespace WingetRepoBrowser
 			{
 				Cursor.Current = Cursors.WaitCursor;
 				string[] idFiles = Directory.GetFiles(installersFolder, "*.wingetid", SearchOption.AllDirectories);
-				Dictionary<string, string> packageIds = idFiles.ToDictionary(item => Path.GetFileNameWithoutExtension(item));// todo catch ArgumentException for duplicate keys
+				Dictionary<string, string> packageIds = idFiles.ToDictionary(item => Path.GetFileNameWithoutExtension(item).ToLower());// todo catch ArgumentException for duplicate keys
 				List<NewDownload> newDownloads = FindNewDownloads(packageIds, _manifestVMs);
 				NewDownloadsForm form = new NewDownloadsForm();
 				form.NewDownloads = newDownloads;
@@ -208,7 +208,7 @@ namespace WingetRepoBrowser
 			List<NewDownload> result = new List<NewDownload>();
 			foreach (ManifestPackageVM manifestPackage in manifestPackages)
 			{
-				if (packageIds.TryGetValue(manifestPackage.Id, out string idFilePath))
+				if (packageIds.TryGetValue(manifestPackage.Id.ToLower(), out string idFilePath))
 				{
 					string idFileFolder = Path.GetDirectoryName(idFilePath);
 					string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in folders with version as name
