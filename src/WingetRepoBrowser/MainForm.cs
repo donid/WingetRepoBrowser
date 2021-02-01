@@ -191,7 +191,13 @@ namespace WingetRepoBrowser
 			{
 				Cursor.Current = Cursors.WaitCursor;
 				string[] idFiles = Directory.GetFiles(installersFolder, "*.wingetid", SearchOption.AllDirectories);
-				Dictionary<string, string> packageIds = idFiles.ToDictionary(item => Path.GetFileNameWithoutExtension(item).ToLower());// todo catch ArgumentException for duplicate keys
+				string[] duplicateIdFiles = idFiles.GroupBy(item => GetKeyFromIdFilePath(item)).Where(g => g.Count() > 1).Select(g => g.Key).ToArray();
+				if (duplicateIdFiles.Length > 0)
+				{
+					ShowMessageBox("Error: Multiple '.wingetid' files found for the following ID(s):" + Environment.NewLine + string.Join(Environment.NewLine, duplicateIdFiles));
+					return;
+				}
+				Dictionary<string, string> packageIds = idFiles.ToDictionary(item => GetKeyFromIdFilePath(item));
 				List<NewDownload> newDownloads = FindNewDownloads(packageIds, _manifestVMs);
 				NewDownloadsForm form = new NewDownloadsForm();
 				form.NewDownloads = newDownloads;
@@ -201,6 +207,10 @@ namespace WingetRepoBrowser
 			{
 				Cursor.Current = saveCursor;
 			}
+		}
+		static string GetKeyFromIdFilePath(string wingetidFilePath)
+		{
+			return Path.GetFileNameWithoutExtension(wingetidFilePath).ToLower();
 		}
 
 		private static List<NewDownload> FindNewDownloads(Dictionary<string, string> packageIds, IEnumerable<ManifestPackageVM> manifestPackages)
