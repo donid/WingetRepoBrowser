@@ -223,6 +223,21 @@ namespace WingetRepoBrowser
 					string idFileFolder = Path.GetDirectoryName(idFilePath);
 					string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in folders with version as name
 					bool exists = Directory.Exists(versionFolder);
+					if (manifestPackage.Version == "latest" && exists)
+					{
+						string downloadedYamlFilePath = Path.Combine(versionFolder, "latest.yaml");
+						ManifestPackage downloadedManifestPackage = Helpers.ReadYamlFile(downloadedYamlFilePath);
+						//TODO test all installers when winget supports multiple installers
+						if (manifestPackage.Installers[0].Sha256 != downloadedManifestPackage.Installers[0].Sha256)
+						{
+							FileInfo fi = new FileInfo(downloadedYamlFilePath);
+							string versionSuffix = fi.LastWriteTime.ToString("_yyyy-MM-dd");
+							downloadedManifestPackage.Version += versionSuffix;
+							Helpers.WriteYamlFile(downloadedYamlFilePath, downloadedManifestPackage);
+							Directory.Move(versionFolder, versionFolder + versionSuffix);
+							exists = Directory.Exists(versionFolder);
+						}
+					}
 					if (!exists)
 					{
 						NewDownload dl = new NewDownload() { ManifestPackage = manifestPackage.Package, VersionFolder = versionFolder, FilePath = manifestPackage.FilePath };

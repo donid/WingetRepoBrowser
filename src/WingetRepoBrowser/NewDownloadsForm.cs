@@ -1,19 +1,13 @@
-﻿using System;
+﻿using DevExpress.XtraEditors;
+using DevExpress.XtraLayout.Utils;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DevExpress.XtraEditors;
-using DevExpress.XtraLayout.Utils;
-using WingetRepoBrowserCore;
 using System.IO;
-using System.Net;
-using System.Net.Mime;
-using System.Web;
+using System.Linq;
+using System.Windows.Forms;
+using WingetRepoBrowserCore;
 
 namespace WingetRepoBrowser
 {
@@ -50,6 +44,7 @@ namespace WingetRepoBrowser
 		{
 			memoEdit1.Text += text + Environment.NewLine;
 		}
+
 		void AddLogLineBackground(string text)
 		{
 			backgroundWorker1.ReportProgress(0, text);
@@ -61,67 +56,78 @@ namespace WingetRepoBrowser
 			_errorCount = 0;
 			foreach (NewDownload newDownload in NewDownloads)
 			{
-				string versionFolder = newDownload.VersionFolder;
-				// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
-				ManifestPackage targetManifestPackage = Helpers.ReadYamlFile(newDownload.FilePath);
+				ProcessOneNewDownload(newDownload);
+			}
+		}
 
-				//TODO select specific installer when winget supports multiple installers
-				foreach (ManifestInstaller manifestInstaller in targetManifestPackage.Installers)
+		private void ProcessOneNewDownload(NewDownload newDownload)
+		{
+			string versionFolder = newDownload.VersionFolder;
+			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
+			ManifestPackage targetManifestPackage = Helpers.ReadYamlFile(newDownload.FilePath);
+
+			//TODO select specific installer when winget supports multiple installers
+			foreach (ManifestInstaller manifestInstaller in targetManifestPackage.Installers)
+			{
+				string downloadUrl = manifestInstaller.Url;
+				string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl, out Uri responseUri);
+				if (responseUri != null)
 				{
-					string downloadUrl = manifestInstaller.Url;
-					string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl, out Uri responseUri);
-					if (responseUri!=null)
+					// this download url returns html instead of the .exe
+					// https://sourceforge.net/projects/keepass/files/KeePass%202.x/2.46/KeePass-2.46-Setup.exe/download 
+					// but the returned responseUri works:
+					// https://downloads.sourceforge.net/project/keepass/KeePass%202.x/2.46/KeePass-2.46-Setup.exe
+					downloadUrl = responseUri.ToString();
+				}
+				if (downloadFileName == null)
+				{
+					AddLogLineBackground("Error: Unable to determine filename from download-url!");
+					continue;
+				}
+				try
+				{
+					AddLogLineBackground("Creating directory: " + versionFolder);
+					Directory.CreateDirectory(versionFolder);
+					string downloadFilePath = Path.Combine(versionFolder, downloadFileName);
+					AddLogLineBackground("Downloading: " + downloadUrl + " -> " + downloadFilePath);
+					_installerDownloader.DownloadFile(downloadUrl, downloadFilePath);
+					if (backgroundWorker1.CancellationPending)
 					{
-						// this download url returns html instead of the .exe
-						// https://sourceforge.net/projects/keepass/files/KeePass%202.x/2.46/KeePass-2.46-Setup.exe/download 
-						// but the returned responseUri works:
-						// https://downloads.sourceforge.net/project/keepass/KeePass%202.x/2.46/KeePass-2.46-Setup.exe
-						downloadUrl = responseUri.ToString();
+						return;
 					}
-					if (downloadFileName==null)
-					{
-						AddLogLineBackground("Error: Unable to determine filename from download-url!");
-						continue;
-					}
-					try
-					{
-						AddLogLineBackground("Creating directory: " + versionFolder);
-						Directory.CreateDirectory(versionFolder);
-						string downloadFilePath = Path.Combine(versionFolder, downloadFileName);
-						AddLogLineBackground("Downloading: " + downloadUrl + " -> " + downloadFilePath);
-						_installerDownloader.DownloadFile(downloadUrl, downloadFilePath);
-						if (backgroundWorker1.CancellationPending) return;
-						AddLogLineBackground("Calculating Sha256-Hash from file");
-						string calculatedHash = Helpers.CalculateSha256HashFromFile(downloadFilePath);
-						string expectedHash = manifestInstaller.Sha256.ToLower();
-						if (calculatedHash != expectedHash)
-						{
-							AddLogLineBackground($"Error: Sha256-Hash mismatch (expected {expectedHash} - calculated {calculatedHash})");
-							++_errorCount;
-						}
 
-
-						manifestInstaller.Url = downloadFileName+" |# "+ manifestInstaller.Url; //HACK!!!
-
-						if (backgroundWorker1.CancellationPending) return;
-					}
-					catch (Exception ex)
+					AddLogLineBackground("Calculating Sha256-Hash from file");
+					string calculatedHash = Helpers.CalculateSha256HashFromFile(downloadFilePath);
+					string expectedHash = manifestInstaller.Sha256.ToLower();
+					if (calculatedHash != expectedHash)
 					{
+						AddLogLineBackground($"Error: Sha256-Hash mismatch (expected {expectedHash} - calculated {calculatedHash})");
 						++_errorCount;
-						AddLogLineBackground(ex.ToString());
-						if (Directory.GetFiles(versionFolder).Length == 0)
-						{
-							Directory.Delete(versionFolder);
-						}
+					}
+
+					manifestInstaller.Url = downloadFileName + " |# " + manifestInstaller.Url; //HACK!!!
+
+					if (backgroundWorker1.CancellationPending)
+					{
+						return;
 					}
 				}
-				//save modified manifest to download-folder
-				string yamlTargetFilename = Path.GetFileName(newDownload.FilePath);
-				string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
-				if (Directory.Exists(versionFolder))
+				catch (Exception ex)
 				{
-					Helpers.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
+					++_errorCount;
+					AddLogLineBackground(ex.ToString());
+					if (Directory.GetFiles(versionFolder).Length == 0)
+					{
+						Directory.Delete(versionFolder);
+					}
 				}
+			}
+			//save modified manifest to download-folder
+			string yamlTargetFilename = Path.GetFileName(newDownload.FilePath);
+			string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
+			if (Directory.Exists(versionFolder))
+			{
+				Helpers.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
 			}
 		}
 

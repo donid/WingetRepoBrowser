@@ -490,9 +490,9 @@
 			// 
 			// textEditRepoFolder
 			// 
-			this.textEditRepoFolder.Location = new System.Drawing.Point(90, 5);
+			this.textEditRepoFolder.Location = new System.Drawing.Point(91, 5);
 			this.textEditRepoFolder.Name = "textEditRepoFolder";
-			this.textEditRepoFolder.Size = new System.Drawing.Size(615, 20);
+			this.textEditRepoFolder.Size = new System.Drawing.Size(614, 20);
 			this.textEditRepoFolder.StyleController = this.layoutControl1;
 			this.textEditRepoFolder.TabIndex = 5;
 			// 
@@ -537,9 +537,9 @@
 			// 
 			// textEditInstallersFolder
 			// 
-			this.textEditInstallersFolder.Location = new System.Drawing.Point(90, 31);
+			this.textEditInstallersFolder.Location = new System.Drawing.Point(91, 31);
 			this.textEditInstallersFolder.Name = "textEditInstallersFolder";
-			this.textEditInstallersFolder.Size = new System.Drawing.Size(615, 20);
+			this.textEditInstallersFolder.Size = new System.Drawing.Size(614, 20);
 			this.textEditInstallersFolder.StyleController = this.layoutControl1;
 			this.textEditInstallersFolder.TabIndex = 8;
 			// 
@@ -650,7 +650,7 @@
 			this.ClientSize = new System.Drawing.Size(1012, 639);
 			this.Controls.Add(this.layoutControl1);
 			this.Name = "MainForm";
-			this.Text = "WingetRepo Browser 0.0.4";
+			this.Text = "WingetRepo Browser 0.0.5";
 			((System.ComponentModel.ISupportInitialize)(this.gridView2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
