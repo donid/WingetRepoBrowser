@@ -39,7 +39,8 @@ namespace WingetRepoBrowser
 			//menu tooltip: https://www.devexpress.com/Support/Center/Question/Details/Q304975
 
 			DXMenuItem[] result = new DXMenuItem[] {
-				new DXMenuItem("OpenYamlFile", ItemOpenYamlFile_Click)
+				new DXMenuItem("OpenYamlFile", ItemOpenYamlFile_Click),
+				new DXMenuItem("OpenYamlFolder", ItemOpenYamlFolder_Click)
 			};
 			return result;
 		}
@@ -53,6 +54,16 @@ namespace WingetRepoBrowser
 			}
 
 			OpenFileOrUrl(row.FilePath);
+		}
+		private void ItemOpenYamlFolder_Click(object sender, EventArgs e)
+		{
+			ManifestPackageVM row = GetFocusedRow();
+			if (row == null)
+			{
+				return;
+			}
+
+			OpenFileOrUrl(Path.GetDirectoryName(row.FilePath));
 		}
 
 		private void ShowMessageBox(string message)
@@ -119,6 +130,8 @@ namespace WingetRepoBrowser
 			try
 			{
 				Cursor.Current = Cursors.WaitCursor;
+
+
 				_manifestVMs = new List<ManifestPackageVM>();
 				IEnumerable<string> yamlFiles;
 				try
@@ -136,10 +149,34 @@ namespace WingetRepoBrowser
 					return;
 				}
 
+
+				Dictionary<string, MultiFileYaml> multiFileYamlDict = new Dictionary<string, MultiFileYaml>();
+
 				foreach (string yamlFile in yamlFiles)
 				{
-					ManifestPackage package = Helpers.ReadYamlFile(yamlFile);
-					_manifestVMs.Add(new ManifestPackageVM(package, yamlFile));
+					ManifestPackage_1_0_0 package = Helpers.ReadYamlFile(yamlFile);
+					if (package.ManifestType == "singleton")
+					{
+						_manifestVMs.Add(new ManifestPackageVM(package, yamlFile));
+					}
+					else
+					{
+						string yamlFolder = Path.GetDirectoryName(yamlFile);
+						MultiFileYaml multiFileYaml = null;
+						if (multiFileYamlDict.TryGetValue(yamlFolder, out multiFileYaml) == false)
+						{
+							multiFileYaml = new MultiFileYaml();
+							multiFileYamlDict.Add(yamlFolder, multiFileYaml);
+						}
+						if (package.ManifestType == "version")
+						{
+							_manifestVMs.Add(new ManifestPackageVM(package, yamlFile, multiFileYaml));
+						}
+						else
+						{
+							multiFileYaml.Packages.Add(package);
+						}
+					}
 				}
 
 				gridControl1.DataSource = _manifestVMs;
@@ -223,25 +260,29 @@ namespace WingetRepoBrowser
 					string idFileFolder = Path.GetDirectoryName(idFilePath);
 					string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in folders with version as name
 					bool exists = Directory.Exists(versionFolder);
-					if (manifestPackage.Version == "latest" && exists)
+					//if (manifestPackage.Version == "latest" && exists)
+					if (false)//TODO: the following code crashes when downloaded yaml-files are not version 1.0.0
 					{
 						string downloadedYamlFilePath = Path.Combine(versionFolder, "latest.yaml");
-						ManifestPackage downloadedManifestPackage = Helpers.ReadYamlFile(downloadedYamlFilePath);
+						ManifestPackage_1_0_0 downloadedManifestPackage = Helpers.ReadYamlFile(downloadedYamlFilePath);
 						//TODO test all installers when winget supports multiple installers
-						if (manifestPackage.Installers[0].Sha256 != downloadedManifestPackage.Installers[0].Sha256)
+						if (manifestPackage.Installers[0].Sha256 != downloadedManifestPackage.Installers[0].InstallerSha256)
 						{
 							FileInfo fi = new FileInfo(downloadedYamlFilePath);
 							string versionSuffix = fi.LastWriteTime.ToString("_yyyy-MM-dd");
-							downloadedManifestPackage.Version += versionSuffix;
+							downloadedManifestPackage.PackageVersion += versionSuffix;
 							Helpers.WriteYamlFile(downloadedYamlFilePath, downloadedManifestPackage);
 							Directory.Move(versionFolder, versionFolder + versionSuffix);
 							exists = Directory.Exists(versionFolder);
 						}
 					}
-					if (!exists)
+					if (manifestPackage.ManifestType == "singleton" && manifestPackage.Version != "latest")//TODO!!!!
 					{
-						NewDownload dl = new NewDownload() { ManifestPackage = manifestPackage.Package, VersionFolder = versionFolder, FilePath = manifestPackage.FilePath };
-						result.Add(dl);
+						if (!exists)
+						{
+							NewDownload dl = new NewDownload() { ManifestPackage = manifestPackage.Package, VersionFolder = versionFolder, FilePath = manifestPackage.FilePath };
+							result.Add(dl);
+						}
 					}
 				}
 			}
@@ -298,7 +339,7 @@ namespace WingetRepoBrowser
 
 	class NewDownload
 	{
-		public ManifestPackage ManifestPackage { get; set; }
+		public ManifestPackage_1_0_0 ManifestPackage { get; set; }
 		public string VersionFolder { get; set; }
 		public string FilePath { get; set; }
 

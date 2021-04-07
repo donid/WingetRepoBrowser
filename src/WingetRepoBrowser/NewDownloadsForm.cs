@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -25,7 +26,7 @@ namespace WingetRepoBrowser
 		{
 			base.OnLoad(e);
 
-			List<ManifestPackage> ds = NewDownloads.Select(item => item.ManifestPackage).ToList();
+			List<ManifestPackage_1_0_0> ds = NewDownloads.Select(item => item.ManifestPackage).ToList();
 			gridControl1.DataSource = ds;
 		}
 
@@ -64,12 +65,12 @@ namespace WingetRepoBrowser
 		{
 			string versionFolder = newDownload.VersionFolder;
 			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
-			ManifestPackage targetManifestPackage = Helpers.ReadYamlFile(newDownload.FilePath);
+			ManifestPackage_1_0_0 targetManifestPackage = Helpers.ReadYamlFile(newDownload.FilePath);
 
 			//TODO select specific installer when winget supports multiple installers
-			foreach (ManifestInstaller manifestInstaller in targetManifestPackage.Installers)
+			foreach (ManifestInstaller_1_0_0 manifestInstaller in targetManifestPackage.Installers)
 			{
-				string downloadUrl = manifestInstaller.Url;
+				string downloadUrl = manifestInstaller.InstallerUrl;
 				string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl, out Uri responseUri);
 				if (responseUri != null)
 				{
@@ -98,14 +99,14 @@ namespace WingetRepoBrowser
 
 					AddLogLineBackground("Calculating Sha256-Hash from file");
 					string calculatedHash = Helpers.CalculateSha256HashFromFile(downloadFilePath);
-					string expectedHash = manifestInstaller.Sha256.ToLower();
+					string expectedHash = manifestInstaller.InstallerSha256.ToLower();
 					if (calculatedHash != expectedHash)
 					{
 						AddLogLineBackground($"Error: Sha256-Hash mismatch (expected {expectedHash} - calculated {calculatedHash})");
 						++_errorCount;
 					}
 
-					manifestInstaller.Url = downloadFileName + " |# " + manifestInstaller.Url; //HACK!!!
+					manifestInstaller.InstallerUrl = downloadFileName + " |# " + manifestInstaller.InstallerUrl; //HACK!!!
 
 					if (backgroundWorker1.CancellationPending)
 					{
@@ -128,6 +129,7 @@ namespace WingetRepoBrowser
 			if (Directory.Exists(versionFolder))
 			{
 				Helpers.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
+				Trace.WriteLine("modified: " + newDownload.FilePath + " " + yamlTargetFilePath);
 			}
 		}
 

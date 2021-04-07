@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using WingetRepoBrowserCore;
 using YamlDotNet.Serialization;
 
 
@@ -13,7 +10,7 @@ namespace WingetRepoBrowserCore
 	public class Helpers
 	{
 
-		public static ManifestPackage ReadYamlFile(string yamlFile)
+		public static ManifestPackage_1_0_0 ReadYamlFile(string yamlFile)
 		{
 			// TODO: Firetrust.MailWasherPro -> copyright sign works with Encoding.Default, but other packages have wrong signs then 
 			using (StreamReader streamReader = new StreamReader(yamlFile, true))
@@ -22,12 +19,12 @@ namespace WingetRepoBrowserCore
 					.IgnoreUnmatchedProperties() // comment this out, to check if there are new properties used in yaml, which are not yet in the data-model
 					.Build();
 
-				ManifestPackage package = deserializer.Deserialize<ManifestPackage>(streamReader);
+				ManifestPackage_1_0_0 package = deserializer.Deserialize<ManifestPackage_1_0_0>(streamReader);
 				return package;
 			}
 		}
 
-		public static void WriteYamlFile(string yamlFile, ManifestPackage package)
+		public static void WriteYamlFile(string yamlFile, ManifestPackage_1_0_0 package)
 		{
 			using (StreamWriter streamWriter = File.CreateText(yamlFile))
 			{

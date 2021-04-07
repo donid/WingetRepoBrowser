@@ -1,72 +1,116 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WingetRepoBrowserCore;
 
 namespace WingetRepoBrowser
 {
+	[DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 	public class ManifestPackageVM
 	{
 
-		ManifestPackage _package;
-		internal ManifestPackage Package { get { return _package; } }
+		ManifestPackage_1_0_0 _package;
+		internal ManifestPackage_1_0_0 Package { get { return _package; } }
 
 		string _filePath;
 		ManifestInstallerVM[] _installerVMs;
 
-		public ManifestPackageVM(ManifestPackage package, string filePath)
+		MultiFileYaml _multiFileYaml;
+		ManifestPackage_1_0_0 _defaultLocalePackage;
+		ManifestPackage_1_0_0 _installerPackage;
+
+		public ManifestPackageVM(ManifestPackage_1_0_0 package, string filePath, MultiFileYaml multiFileYaml)
+		{
+			_package = package;
+			_filePath = filePath;
+			_multiFileYaml = multiFileYaml;
+			_defaultLocalePackage = _multiFileYaml.Packages.FirstOrDefault(p => p.PackageLocale == package.DefaultLocale);
+			_installerPackage = _multiFileYaml.Packages.FirstOrDefault(p => p.ManifestType == "installer");
+			_installerVMs = _installerPackage.Installers.Select(item => new ManifestInstallerVM(item)).ToArray();
+		}
+
+		public ManifestPackageVM(ManifestPackage_1_0_0 package, string filePath)
 		{
 			_package = package;
 			_filePath = filePath;
 			_installerVMs = _package.Installers.Select(item => new ManifestInstallerVM(item)).ToArray();
 		}
 
+		ManifestPackage_1_0_0 GetDefaultPackage()
+		{
+			return _defaultLocalePackage ?? _package;
+		}
+		ManifestPackage_1_0_0 GetInstallerPackage()
+		{
+			return _installerPackage ?? _package;
+		}
+
 		public string FilePath { get { return _filePath; } }
+
+
+		public string Id { get { return _package.PackageIdentifier; } }
+
+		public string Name { get { return GetDefaultPackage().PackageName; } }
+
+		public string Version { get { return _package.PackageVersion; } }
+
+		public string Publisher { get { return GetDefaultPackage().Publisher; } }
+
+		public string Moniker { get { return GetDefaultPackage().Moniker; } }
+
+		public string Author { get { return GetDefaultPackage().Author; } }
+
+		public string License { get { return GetDefaultPackage().License; } }
+
+		public string LicenseUrl { get { return GetDefaultPackage().LicenseUrl; } }
+
+		public string MinOSVersion { get { return GetInstallerPackage().MinimumOSVersion; } }
+
+		public string PackageUrl { get { return GetDefaultPackage().PackageUrl; } }
+
+		public string ShortDescription { get { return GetDefaultPackage().ShortDescription; } }
+		public string Description { get { return GetDefaultPackage().Description; } }
+
+		public string Tags { get { return SafeJoin("|", GetDefaultPackage().Tags); } }
+
+		static string SafeJoin(string separator, IEnumerable<string> arr)
+		{
+			if (arr == null)
+			{
+				return null;
+			}
+			return string.Join(separator, arr);
+		}
+
+		public string InstallerType { get { return GetInstallerPackage().InstallerType; } }
+
+		public ManifestInstallerVM[] Installers { get { return _installerVMs; } }
 		public int InstallersCount { get { return _installerVMs.Length; } }
 
 
-		public string Id { get { return _package.Id; } }
+		public string FileExtensions { get { return SafeJoin("|", _package.FileExtensions); } }
 
-		public string Name { get { return _package.Name; } }
+		public string Protocols { get { return SafeJoin("|", _package.Protocols); } }
 
-		public string Version { get { return _package.Version; } }
+		public string Commands { get { return SafeJoin("|", _package.Commands); } }
 
-		public string Publisher { get { return _package.Publisher; } }
+		public string InstallersArch { get { return SafeJoin("|", GetInstallerPackage().Installers.Select(item => item.Architecture)); } }
+		public string InstallersLanguage { get { return SafeJoin("|", GetInstallerPackage().Installers.Select(item => item.InstallerLocale)); } }
+		public string InstallersInstallerType { get { return SafeJoin("|", GetInstallerPackage().Installers.Select(item => item.InstallerType)); } }
 
-		public string AppMoniker { get { return _package.AppMoniker; } }
+		public string ManifestSwitchInteractive { get { return GetInstallerPackage().InstallerSwitches?.Interactive; } }
+		public string ManifestSwitchSilent { get { return GetInstallerPackage().InstallerSwitches?.Silent; } }
+		public string ManifestSwitchSilentWithProgress { get { return GetInstallerPackage().InstallerSwitches?.SilentWithProgress; } }
 
-		public string Author { get { return _package.Author; } }
-	
-		public string License { get { return _package.License; } }
 
-		public string LicenseUrl { get { return _package.LicenseUrl; } }
+		public string ManifestType { get { return _package.ManifestType; } }
+		public string PackageLocale { get { return _package.PackageLocale; } }
+		public string DefaultLocale { get { return _package.DefaultLocale; } }
 
-		public string MinOSVersion { get { return _package.MinOSVersion; } }
-
-		public string Homepage { get { return _package.Homepage; } }
-
-		public string Description { get { return _package.Description; } }
-	
-		public string Tags { get { return _package.Tags; } }
-
-		public string InstallerType { get { return _package.InstallerType; } }
-
-		public ManifestInstallerVM[] Installers { get { return _installerVMs; } }
-
-		public string FileExtensions { get { return _package.FileExtensions; } }
-
-		public string Protocols { get { return _package.Protocols; } }
-
-		public string Commands { get { return _package.Commands; } }
-		public string InstallersArch { get { return string.Join("|",_package.Installers.Select(item=>item.Arch)); } }
-		public string InstallersLanguage { get { return string.Join("|", _package.Installers.Select(item => item.Language)); } }
-		public string InstallersInstallerType { get { return string.Join("|", _package.Installers.Select(item => item.InstallerType)); } }
-
-		public string ManifestSwitchInteractive { get { return _package.Switches?.Interactive; } }
-		public string ManifestSwitchSilent { get { return _package.Switches?.Silent; } }
-		public string ManifestSwitchSilentWithProgress { get { return _package.Switches?.SilentWithProgress; } }
+		private string GetDebuggerDisplay()
+		{
+			return ToString();
+		}
 
 		//TODO
 		//public ManifestSwitches Switches { get; set; }
@@ -136,4 +180,10 @@ namespace WingetRepoBrowser
 
 		*/
 	}
+
+	public class MultiFileYaml
+	{
+		public List<ManifestPackage_1_0_0> Packages { get; } = new List<ManifestPackage_1_0_0>();
+	}
+
 }

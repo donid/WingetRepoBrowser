@@ -123,7 +123,7 @@
 			// 
 			// ColName
 			// 
-			this.ColName.FieldName = "Name";
+			this.ColName.FieldName = "PackageName";
 			this.ColName.Name = "ColName";
 			this.ColName.Visible = true;
 			this.ColName.VisibleIndex = 0;
@@ -131,7 +131,7 @@
 			// 
 			// colVersion
 			// 
-			this.colVersion.FieldName = "Version";
+			this.colVersion.FieldName = "PackageVersion";
 			this.colVersion.Name = "colVersion";
 			this.colVersion.Visible = true;
 			this.colVersion.VisibleIndex = 1;
@@ -139,7 +139,7 @@
 			// 
 			// colId
 			// 
-			this.colId.FieldName = "Id";
+			this.colId.FieldName = "PackageIdentifier";
 			this.colId.Name = "colId";
 			this.colId.Visible = true;
 			this.colId.VisibleIndex = 2;

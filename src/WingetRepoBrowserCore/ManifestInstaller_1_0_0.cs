@@ -1,13 +1,10 @@
-﻿using System;
-using System.Linq;
-
-namespace WingetRepoBrowserCore
+﻿namespace WingetRepoBrowserCore
 {
 	/// <summary>
 	///  Installers represents the collection of entries that define the actual installer.  The installer provides the architecture, url and hash that 
 	/// ensure that the installer has not been tampered with.
 	/// </summary>
-	public class ManifestInstaller
+	public class ManifestInstaller_1_0_0
 	{
 		/// <summary>
 		/// Mandatory!
@@ -16,7 +13,7 @@ namespace WingetRepoBrowserCore
 		/// Supported values: arm, arm64, x86, x64 and neutral
 		/// example: x64
 		/// </summary>
-		public string Arch { get; set; }
+		public string Architecture { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -26,7 +23,7 @@ namespace WingetRepoBrowserCore
 		/// Restrictions: [min: 10, max:2000]
 		/// example: https://statics.teams.cdn.office.net/production-windows-x64/1.3.00.4461/Teams_windows_x64.exe
 		/// </summary>
-		public string Url { get; set; }
+		public string InstallerUrl { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -35,7 +32,7 @@ namespace WingetRepoBrowserCore
 		/// Restrictions: [valid sha256 hash]
 		/// example: 712f139d71e56bfb306e4a7b739b0e1109abb662dfa164192a5cfd6adb24a4e1
 		/// </summary>
-		public string Sha256 { get; set; }
+		public string InstallerSha256 { get; set; }
 
 		/// <summary>
 		/// SHA256 calculated from signature file's hash of MSIX file
@@ -54,19 +51,15 @@ namespace WingetRepoBrowserCore
 		public string InstallerType { get; set; }
 
 		/// <summary>
-		/// Language is the specific language of the installer.  If no language is specified, the installer will display for all users.
-		/// Language must follow IETF language tag guidelines.
-		/// Language is not supported in this preview (5/24/2020)
 		/// example: en-us
 		/// </summary>
-		public string Language { get; set; }
+		public string InstallerLocale { get; set; }
 
 		/// <summary>
 		/// experimental
 		/// Scope indicates if the installer is per user or per machine.  
 		/// Supported values: user and machine
 		/// Unless specified, user is the default.
-		/// Scope is not supported in this preview (5/24/2020)
 		/// example: user
 		/// </summary>
 		public string Scope { get; set; }
@@ -74,7 +67,7 @@ namespace WingetRepoBrowserCore
 		/// <summary>
 		/// collection of entries to override root keys
 		/// </summary>
-		public ManifestSwitches Switches { get; set; }
+		public ManifestSwitches InstallerSwitches { get; set; }
 
 		/// <summary>
 		///  not yet used in the wild!
@@ -90,6 +83,14 @@ namespace WingetRepoBrowserCore
 		/// Restrictions: [min: 3, max:128] 
 		/// example:{3740BD44-B58D-321A-AFC0-6D3D4556DD6C}
 		/// </summary>
-		public string SystemAppId { get; set; }
+		public string ProductCode { get; set; }
+
+		/// <summary>
+		///   "type": [ "string", "null" ],
+		///   "pattern": "^[A-Za-z0-9][-\\.A-Za-z0-9]+_[A-Za-z0-9]{13}$",
+		///   "maxLength": 255,
+		///   "description": "PackageFamilyName for appx or msix installer. Could be used for correlation of packages across sources"
+		/// </summary>
+		public string PackageFamilyName { get; set; }
 	}
 }

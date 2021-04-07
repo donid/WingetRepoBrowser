@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using WingetRepoBrowserCore;
-
-namespace WingetRepoBrowserCore
+﻿namespace WingetRepoBrowserCore
 {
 	// Manifest Specification:
 	// https://github.com/microsoft/winget-cli/blob/0109b3937ac99deaefb1d4a68a1b477153dc596e/doc/ManifestSpecv0.1.md
@@ -32,7 +28,7 @@ Localization:
     LicenseUrl: https://github.com/microsoft/msix-packaging/blob/master/LICENSE-es-MX
 	*/
 
-	public class ManifestPackage
+	public class ManifestPackage_0_1_0
 	{
 		/// <summary>
 		/// Mandatory!
@@ -143,10 +139,10 @@ Localization:
 		/// Mandatory!
 		/// enumeration of supported installer types (exe, msi, msix)
 		/// InstallerType is a required field.  Supported types are inno, wix, msi, nullsoft, zip, appx, msix and exe.
-/// The winget command tool uses this value to assist in installing this application.
-/// If the value is an exe, you will need to provide the quiet switches.
-/// zip is not supported in this preview (5/24/2020)  
-/// Restrictions: [min: 1, max:40] 
+		/// The winget command tool uses this value to assist in installing this application.
+		/// If the value is an exe, you will need to provide the quiet switches.
+		/// zip is not supported in this preview (5/24/2020)  
+		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
 		public string InstallerType { get; set; }
 
@@ -155,14 +151,14 @@ Localization:
 		/// nested map of keys for specific installer
 		/// When more than one installer type exists for the specified version of the package, an instance of InstallerType can be placed under each of the Installers
 		/// </summary>
-		public ManifestInstaller[] Installers { get; set; }
+		public ManifestInstaller_0_1_0[] Installers { get; set; }
 
 		/// <summary>
 		///  datatype: 'list' !?!?
 		///  list of file extensions the package could support
 		///  FileExtensions is a comma separated list.  FileExtensions provides the list of extensions the application could support.
-/// FileExtensions are not supported in this preview (5/24/2020)
-/// Restrictions: [min: 1, max:40] 
+		/// FileExtensions are not supported in this preview (5/24/2020)
+		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
 		public string FileExtensions { get; set; }
 
@@ -181,8 +177,8 @@ Localization:
 		///  datatype: 'list' !?!?
 		/// list of commands or aliases the user would use to run the package
 		/// Commands are the common executable or alias that the user might type trying to run the application.
-/// For example "code" for VSCode.  If multiple commands are supported, the commands must be separated by a comma.
-/// Restrictions: [min: 1, max:40] 
+		/// For example "code" for VSCode.  If multiple commands are supported, the commands must be separated by a comma.
+		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
 		public string Commands { get; set; }
 
