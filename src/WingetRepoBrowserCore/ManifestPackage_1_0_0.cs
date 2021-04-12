@@ -97,6 +97,7 @@ Localization:
 		/// </summary>
 		public string License { get; set; }
 
+
 		/// <summary>
 		/// valid secure URL to license
 		/// example: https://docs.microsoft.com/en-us/MicrosoftTeams/assign-teams-licenses
@@ -105,6 +106,10 @@ Localization:
 		/// followed by a hostname.  [min: 10, max:2000]
 		/// </summary>
 		public string LicenseUrl { get; set; }
+
+		public string PrivacyUrl { get; set; }
+		public string PublisherUrl { get; set; }
+
 
 		/// <summary>
 		/// version numbering format for minimum version of Windows supported

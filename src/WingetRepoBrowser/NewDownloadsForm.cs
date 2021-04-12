@@ -66,9 +66,16 @@ namespace WingetRepoBrowser
 			string versionFolder = newDownload.VersionFolder;
 			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
 			ManifestPackage_1_0_0 targetManifestPackage = Helpers.ReadYamlFile(newDownload.FilePath);
+			ManifestInstaller_1_0_0[] installers = targetManifestPackage.Installers;
 
-			//TODO select specific installer when winget supports multiple installers
-			foreach (ManifestInstaller_1_0_0 manifestInstaller in targetManifestPackage.Installers)
+			ManifestPackage_1_0_0 installerPackage = null;
+			if (newDownload.InstallerPackageFilePath != null)
+			{
+				installerPackage = Helpers.ReadYamlFile(newDownload.InstallerPackageFilePath);
+				installers = installerPackage.Installers;
+			}
+
+			foreach (ManifestInstaller_1_0_0 manifestInstaller in installers)
 			{
 				string downloadUrl = manifestInstaller.InstallerUrl;
 				string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl, out Uri responseUri);
@@ -89,7 +96,15 @@ namespace WingetRepoBrowser
 				{
 					AddLogLineBackground("Creating directory: " + versionFolder);
 					Directory.CreateDirectory(versionFolder);
-					string downloadFilePath = Path.Combine(versionFolder, downloadFileName);
+					string downloadFolder = versionFolder;
+					if (newDownload.InstallerPackageFilePath != null)
+					{
+						string archAndLocale = $"{manifestInstaller.Architecture ?? "null"}_{manifestInstaller.InstallerLocale ?? "null"}";
+						downloadFolder = Path.Combine(versionFolder, archAndLocale);
+						Directory.CreateDirectory(downloadFolder);
+					}
+
+					string downloadFilePath = Path.Combine(downloadFolder, downloadFileName);
 					AddLogLineBackground("Downloading: " + downloadUrl + " -> " + downloadFilePath);
 					_installerDownloader.DownloadFile(downloadUrl, downloadFilePath);
 					if (backgroundWorker1.CancellationPending)
@@ -123,14 +138,35 @@ namespace WingetRepoBrowser
 					}
 				}
 			}
-			//save modified manifest to download-folder
-			string yamlTargetFilename = Path.GetFileName(newDownload.FilePath);
-			string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
+
 			if (Directory.Exists(versionFolder))
 			{
+				//save modified manifest to download-folder
+				string yamlTargetFilename = Path.GetFileName(newDownload.FilePath);
+				string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
+
 				Helpers.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
-				Trace.WriteLine("modified: " + newDownload.FilePath + " " + yamlTargetFilePath);
+				if (newDownload.InstallerPackageFilePath == null)
+				{
+					Trace.WriteLine("modified: " + newDownload.FilePath + " " + yamlTargetFilePath);
+				}
+				else
+				{
+					string yamlInstallerTargetFilePath = Helpers.GetInstallerPackageFilePath(yamlTargetFilePath);
+					Helpers.WriteYamlFile(yamlInstallerTargetFilePath, installerPackage);
+					Trace.WriteLine("modified: " + newDownload.InstallerPackageFilePath + " " + yamlInstallerTargetFilePath);
+
+					string defaultLocale = targetManifestPackage.DefaultLocale;
+					string yamlLocaleTargetFilePath = GetYamlLocaleFilePath(yamlTargetFilePath, defaultLocale);
+					string yamlLocaleSourceFilePath = GetYamlLocaleFilePath(newDownload.FilePath, defaultLocale);
+					File.Copy(yamlLocaleSourceFilePath, yamlLocaleTargetFilePath);
+				}
 			}
+		}
+
+		private static string GetYamlLocaleFilePath(string yamlFilePath, string locale)
+		{
+			return Path.ChangeExtension(yamlFilePath, ".locale." + locale + ".yaml");
 		}
 
 		private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)

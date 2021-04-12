@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using WingetRepoBrowserCore;
 
 
+
 //todo:
 // support multiple repo paths (; separated)
 // implement/find custom sort algorithm for version-column
@@ -154,7 +155,18 @@ namespace WingetRepoBrowser
 
 				foreach (string yamlFile in yamlFiles)
 				{
-					ManifestPackage_1_0_0 package = Helpers.ReadYamlFile(yamlFile);
+					ManifestPackage_1_0_0 package;
+					try
+					{
+						package = Helpers.ReadYamlFile(yamlFile);
+					}
+					catch (YamlDotNet.Core.YamlException ex)
+					{
+						layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+						memoEditMessages.Text += yamlFile + ": " + GetMessage(ex) + Environment.NewLine;
+						continue;
+					}
+
 					if (package.ManifestType == "singleton")
 					{
 						_manifestVMs.Add(new ManifestPackageVM(package, yamlFile));
@@ -189,6 +201,15 @@ namespace WingetRepoBrowser
 			simpleButtonCreateSubFoldersForSelected.Enabled = true;
 		}
 
+		private static string GetMessage(YamlDotNet.Core.YamlException ex)
+		{
+			string inner = null;
+			if (ex.InnerException != null)
+			{
+				inner = " (" + ex.InnerException.Message + ")";
+			}
+			return ex.Message + inner;
+		}
 
 		private void repositoryItemButtonEditUrl_ButtonClick(object sender, ButtonPressedEventArgs e)
 		{
@@ -276,11 +297,17 @@ namespace WingetRepoBrowser
 							exists = Directory.Exists(versionFolder);
 						}
 					}
-					if (manifestPackage.ManifestType == "singleton" && manifestPackage.Version != "latest")//TODO!!!!
+					if (manifestPackage.Version != "latest")//TODO!!!!
 					{
 						if (!exists)
 						{
-							NewDownload dl = new NewDownload() { ManifestPackage = manifestPackage.Package, VersionFolder = versionFolder, FilePath = manifestPackage.FilePath };
+							NewDownload dl = new NewDownload()
+							{
+								ManifestPackage = manifestPackage.Package,
+								VersionFolder = versionFolder,
+								FilePath = manifestPackage.FilePath,
+								InstallerPackageFilePath = GetInstallerPackageFilePath(manifestPackage)
+							};
 							result.Add(dl);
 						}
 					}
@@ -288,6 +315,15 @@ namespace WingetRepoBrowser
 			}
 			return result;
 		}
+		static string GetInstallerPackageFilePath(ManifestPackageVM manifestPackage)
+		{
+			if (manifestPackage.InstallerPackage == null)
+			{
+				return null;
+			}
+			return Helpers.GetInstallerPackageFilePath(manifestPackage.FilePath);
+		}
+
 
 		static string ReplaceInvalidChars(string filename)
 		{
@@ -342,6 +378,8 @@ namespace WingetRepoBrowser
 		public ManifestPackage_1_0_0 ManifestPackage { get; set; }
 		public string VersionFolder { get; set; }
 		public string FilePath { get; set; }
+		//public ManifestPackage_1_0_0 InstallerPackage { get; set; }
+		public string InstallerPackageFilePath { get; set; }
 
 	}
 

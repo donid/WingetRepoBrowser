@@ -92,5 +92,8 @@
 		///   "description": "PackageFamilyName for appx or msix installer. Could be used for correlation of packages across sources"
 		/// </summary>
 		public string PackageFamilyName { get; set; }
+
+
+		public string UpgradeBehavior { get; set; }
 	}
 }

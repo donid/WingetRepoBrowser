@@ -27,7 +27,8 @@ namespace WingetRepoBrowser
 		public string Scope { get { return _installers.Scope; } }
 
 
-		public string SystemAppId { get { return _installers.ProductCode; } }
+		public string ProductCode { get { return _installers.ProductCode; } }
+		public string UpgradeBehavior { get { return _installers.UpgradeBehavior; } }
 
 		//public ManifestSwitches Switches { get { return _installers.Switches; } }
 
