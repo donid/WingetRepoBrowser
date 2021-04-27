@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using YamlDotNet.Serialization;
 
 
@@ -9,6 +11,39 @@ namespace WingetRepoBrowserCore
 {
 	public class Helpers
 	{
+		public static void SaveWingetIdSettings(string idFilePath, WingetIdSettings wingetidSettings)
+		{
+			string json = JsonSerializer.Serialize(wingetidSettings, new JsonSerializerOptions() { WriteIndented = true });
+			File.WriteAllText(idFilePath, json);
+		}
+
+		public static WingetIdSettings LoadWingetIdSettings(string idFilePath)
+		{
+			string json = File.ReadAllText(idFilePath);
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				return null;
+			}
+			return JsonSerializer.Deserialize<WingetIdSettings>(json);
+		}
+
+		public static string[] GetVersionsToIgnoreDownload(string idFilePath)
+		{
+			string[] result = new string[] { };
+			try
+			{
+				WingetIdSettings settings = LoadWingetIdSettings(idFilePath);
+				if (settings?.VersionsToIgnoreDownload != null)
+				{
+					result = settings.VersionsToIgnoreDownload;
+				}
+			}
+			catch (JsonException ex)
+			{
+				Trace.WriteLine("Error during deserialization of '" + idFilePath + "': " + ex.Message);
+			}
+			return result;
+		}
 
 		public static ManifestPackage_1_0_0 ReadYamlFile(string yamlFile)
 		{

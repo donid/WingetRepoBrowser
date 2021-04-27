@@ -12,10 +12,11 @@ Microsoft is creating a new Windows Package Manager CLI (aka winget) which is ba
 
 Clone the winget-pkgs repository to a local folder and specify that folder in WingetRepoBrowser and click on 'Search'.
 
-**Commandline Arguments:**
+**New Features in v0.1.2**
 
-- First Arg will be used to fill 'Repo-Folder' edit
-- Second Arg will be used to fill 'Installers-Folder' edit
+- moved from command-line switches to AppSettings.json (that allows to configure which locales should be downloaded)
+- context menu in 'New Downloads'-window allows to ignore a ParsedVersion for download (VersionsToIgnoreDownload stored .wingetid-files)
+- ParsedVersion-column allows to sort by PackageVersion (using a separate column makes it easier to find problems with the sorting-implementation)
 
 **New Feature in v0.0.2**
 

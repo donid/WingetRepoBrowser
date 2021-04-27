@@ -21,6 +21,8 @@ namespace WingetRepoBrowser
 		ManifestPackage_1_0_0 _installerPackage;
 		internal ManifestPackage_1_0_0 InstallerPackage { get { return _installerPackage; } }
 
+		ParsedPackageVersion _parsedPackageVersion;
+		public ParsedPackageVersion ParsedPackageVersion { get { return _parsedPackageVersion; } }
 
 		public ManifestPackageVM(ManifestPackage_1_0_0 package, string filePath, MultiFileYaml multiFileYaml)
 		{
@@ -30,6 +32,7 @@ namespace WingetRepoBrowser
 			_defaultLocalePackage = _multiFileYaml.Packages.FirstOrDefault(p => p.PackageLocale == package.DefaultLocale);
 			_installerPackage = _multiFileYaml.Packages.FirstOrDefault(p => p.ManifestType == "installer");
 			_installerVMs = _installerPackage?.Installers.Select(item => new ManifestInstallerVM(item)).ToArray();
+			_parsedPackageVersion = new ParsedPackageVersion(package.PackageVersion);
 		}
 
 		public ManifestPackageVM(ManifestPackage_1_0_0 package, string filePath)
@@ -37,6 +40,7 @@ namespace WingetRepoBrowser
 			_package = package;
 			_filePath = filePath;
 			_installerVMs = _package.Installers.Select(item => new ManifestInstallerVM(item)).ToArray();
+			_parsedPackageVersion = new ParsedPackageVersion(package.PackageVersion);
 		}
 
 		ManifestPackage_1_0_0 GetDefaultPackage()
@@ -100,7 +104,7 @@ namespace WingetRepoBrowser
 		public string Commands { get { return SafeJoin("|", _package.Commands); } }
 
 		public string InstallersArch { get { return SafeJoin("|", GetInstallerPackage().Installers?.Select(item => item.Architecture)); } }
-		public string InstallersLanguage { get { return SafeJoin("|", GetInstallerPackage().Installers?.Select(item => item.InstallerLocale)); } }
+		public string InstallersLocale { get { return SafeJoin("|", GetInstallerPackage().Installers?.Select(item => item.InstallerLocale)); } }
 		public string InstallersInstallerType { get { return SafeJoin("|", GetInstallerPackage().Installers?.Select(item => item.InstallerType)); } }
 
 		public string ManifestSwitchInteractive { get { return GetInstallerPackage().InstallerSwitches?.Interactive; } }
@@ -189,6 +193,46 @@ namespace WingetRepoBrowser
 	public class MultiFileYaml
 	{
 		public List<ManifestPackage_1_0_0> Packages { get; } = new List<ManifestPackage_1_0_0>();
+	}
+
+	public class ParsedPackageVersion
+	{
+		private string[] _parts;
+		private int?[] _intParts;
+
+		public ParsedPackageVersion(string version)
+		{
+			_parts = version.Split('.');
+			_intParts = _parts.Select(p => ParseInt(p)).ToArray();
+		}
+
+		private static int? ParseInt(string text)
+		{
+			if (!int.TryParse(text, out int result))
+			{
+				return null;
+			}
+			return result;
+		}
+
+		public override string ToString()
+		{
+			List<string> resultParts = new List<string>();
+			for (int index = 0; index < _intParts.Length; index++)
+			{
+				string part;
+				if (_intParts[index].HasValue)
+				{
+					part = _intParts[index].Value.ToString("0000000000");
+				}
+				else
+				{
+					part = _parts[index];
+				}
+				resultParts.Add(part);
+			}
+			return string.Join(".", resultParts);
+		}
 	}
 
 }

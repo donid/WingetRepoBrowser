@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraEditors;
+﻿using DevExpress.Utils.Menu;
+using DevExpress.XtraEditors;
 using DevExpress.XtraLayout.Utils;
 using System;
 using System.Collections.Generic;
@@ -14,21 +15,65 @@ namespace WingetRepoBrowser
 {
 	public partial class NewDownloadsForm : XtraForm
 	{
+		GridRowPopupMenuBehavior _gridViewDownloadRowPopup;
 
 		public NewDownloadsForm()
 		{
 			InitializeComponent();
+
+			_gridViewDownloadRowPopup = new GridRowPopupMenuBehavior(gridView1);
+			_gridViewDownloadRowPopup.SetMenuItems(CreateMenuItemsDownloadPopup());
+		}
+
+		private DXMenuItem[] CreateMenuItemsDownloadPopup()
+		{
+			DXMenuItem[] result = new DXMenuItem[] {
+				new DXMenuItem("Ignore selected version(s)", ItemIgnoreVersion_Click)
+			};
+			return result;
+		}
+
+		private void ItemIgnoreVersion_Click(object sender, EventArgs e)
+		{
+			NewDownloadVM[] rows = GetSelectedRows().ToArray();
+			if (rows.Length == 0)
+			{
+				return;
+			}
+			IEnumerable<IGrouping<string, NewDownload>> groupedByWingetId = rows.GroupBy(r => r.NewDownload.IdFilePath, r => r.NewDownload);
+			foreach (IGrouping<string, NewDownload> group in groupedByWingetId)
+			{
+				string wingetidFilePath = group.Key;
+				string[] versionsToIgnore = group.Select(nd => nd.ManifestPackage.PackageVersion).ToArray();
+				WingetIdSettings wingetidSettings = Helpers.LoadWingetIdSettings(wingetidFilePath);
+				if (wingetidSettings == null)
+				{
+					wingetidSettings = new WingetIdSettings();
+				}
+				IEnumerable<string> oldVersions = wingetidSettings.VersionsToIgnoreDownload ?? new string[] { };
+				wingetidSettings.VersionsToIgnoreDownload = oldVersions.Concat(versionsToIgnore).ToArray();
+				Helpers.SaveWingetIdSettings(wingetidFilePath, wingetidSettings);
+			}
+		}
+
+		private IEnumerable<NewDownloadVM> GetSelectedRows()
+		{
+			return gridView1.GetSelectedRows().Select(item => gridView1.GetRow(item)).Cast<NewDownloadVM>();
 		}
 
 		internal List<NewDownload> NewDownloads { get; set; }
+
+		public string[] LocalesToDownload { get; set; }
+
 
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
-			List<ManifestPackage_1_0_0> ds = NewDownloads.Select(item => item.ManifestPackage).ToList();
+			List<NewDownloadVM> ds = NewDownloads.Select(item => new NewDownloadVM(item)).ToList();
 			gridControl1.DataSource = ds;
 		}
+
 
 		InstallerDownloader _installerDownloader;
 		int _errorCount;
@@ -61,6 +106,15 @@ namespace WingetRepoBrowser
 			}
 		}
 
+		private static bool HasMatchingLocale(ManifestInstaller_1_0_0 manifestInstaller, string[] localesToDownload)
+		{
+			if (string.IsNullOrEmpty(manifestInstaller.InstallerLocale))
+			{
+				return true;
+			}
+			return localesToDownload.Any(locale => string.Compare(locale, manifestInstaller.InstallerLocale, true) == 0);
+		}
+
 		private void ProcessOneNewDownload(NewDownload newDownload)
 		{
 			string versionFolder = newDownload.VersionFolder;
@@ -75,7 +129,9 @@ namespace WingetRepoBrowser
 				installers = installerPackage.Installers;
 			}
 
-			foreach (ManifestInstaller_1_0_0 manifestInstaller in installers)
+			var installersWithMatchingLocale = installers.Where(i => HasMatchingLocale(i, LocalesToDownload));
+
+			foreach (ManifestInstaller_1_0_0 manifestInstaller in installersWithMatchingLocale)
 			{
 				string downloadUrl = manifestInstaller.InstallerUrl;
 				string downloadFileName = _installerDownloader.GetFileNameFromUrl(downloadUrl, out Uri responseUri);
@@ -210,5 +266,19 @@ namespace WingetRepoBrowser
 		}
 	}
 
+	class NewDownloadVM
+	{
+		NewDownload _newDownload;
 
+		public NewDownloadVM(NewDownload newDownload)
+		{
+			_newDownload = newDownload;
+		}
+		internal NewDownload NewDownload { get { return _newDownload; } }
+
+
+		public string PackageName { get { return _newDownload.ManifestPackage.PackageName; } }
+		public string PackageVersion { get { return _newDownload.ManifestPackage.PackageVersion; } }
+		public string PackageIdentifier { get { return _newDownload.ManifestPackage.PackageIdentifier; } }
+	}
 }

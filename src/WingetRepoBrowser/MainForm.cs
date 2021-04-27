@@ -2,6 +2,7 @@
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid;
+using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows.Forms;
 using WingetRepoBrowserCore;
-
 
 
 //todo:
@@ -23,7 +24,7 @@ namespace WingetRepoBrowser
 {
 	public partial class MainForm : XtraForm
 	{
-
+		AppSettings _appSettings;
 		GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
 		List<ManifestPackageVM> _manifestVMs;
 
@@ -85,15 +86,32 @@ namespace WingetRepoBrowser
 		{
 			base.OnLoad(e);
 
-			var args = Environment.GetCommandLineArgs();
-			if (args.Length >= 2)
+			//var args = Environment.GetCommandLineArgs();
+			//if (args.Length >= 2)
+			//{
+			//	textEditRepoFolder.Text = args[1];
+			//}
+			//if (args.Length >= 3)
+			//{
+			//	textEditInstallersFolder.Text = args[2];
+			//}
+
+			string settingsFilePath = Path.Combine(Application.StartupPath, "AppSettings.json");
+			if (File.Exists(settingsFilePath))
 			{
-				textEditRepoFolder.Text = args[1];
+				try
+				{
+					string json = File.ReadAllText(settingsFilePath);
+					_appSettings = JsonSerializer.Deserialize<AppSettings>(json);
+					textEditRepoFolder.Text = _appSettings.RepoFolder;
+					textEditInstallersFolder.Text = _appSettings.InstallersFolder;
+				}
+				catch (Exception ex)
+				{
+					ShowMessageBox("Error while deserializing AppSettings: " + ex.Message);
+				}
 			}
-			if (args.Length >= 3)
-			{
-				textEditInstallersFolder.Text = args[2];
-			}
+
 		}
 
 
@@ -126,6 +144,8 @@ namespace WingetRepoBrowser
 				ShowMessageBox("The specified folder does not exist!");
 				return;
 			}
+
+			memoEditMessages.Text = string.Empty;
 
 			Cursor saveCursor = Cursor.Current;
 			try
@@ -259,6 +279,10 @@ namespace WingetRepoBrowser
 				List<NewDownload> newDownloads = FindNewDownloads(packageIds, _manifestVMs);
 				NewDownloadsForm form = new NewDownloadsForm();
 				form.NewDownloads = newDownloads;
+				if (_appSettings != null)
+				{
+					form.LocalesToDownload = _appSettings.LocalesToDownload;
+				}
 				form.ShowDialog();
 			}
 			finally
@@ -271,6 +295,7 @@ namespace WingetRepoBrowser
 			return Path.GetFileNameWithoutExtension(wingetidFilePath).ToLower();
 		}
 
+
 		private static List<NewDownload> FindNewDownloads(Dictionary<string, string> packageIds, IEnumerable<ManifestPackageVM> manifestPackages)
 		{
 			List<NewDownload> result = new List<NewDownload>();
@@ -278,9 +303,11 @@ namespace WingetRepoBrowser
 			{
 				if (packageIds.TryGetValue(manifestPackage.Id.ToLower(), out string idFilePath))
 				{
+					string[] versionsToIgnoreDownload = Helpers.GetVersionsToIgnoreDownload(idFilePath);
+
 					string idFileFolder = Path.GetDirectoryName(idFilePath);
 					string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in folders with version as name
-					bool exists = Directory.Exists(versionFolder);
+					bool exists = versionsToIgnoreDownload.Any(v => v == manifestPackage.Version) || Directory.Exists(versionFolder);
 					//if (manifestPackage.Version == "latest" && exists)
 					if (false)//TODO: the following code crashes when downloaded yaml-files are not version 1.0.0
 					{
@@ -306,7 +333,8 @@ namespace WingetRepoBrowser
 								ManifestPackage = manifestPackage.Package,
 								VersionFolder = versionFolder,
 								FilePath = manifestPackage.FilePath,
-								InstallerPackageFilePath = GetInstallerPackageFilePath(manifestPackage)
+								InstallerPackageFilePath = GetInstallerPackageFilePath(manifestPackage),
+								IdFilePath = idFilePath
 							};
 							result.Add(dl);
 						}
@@ -360,7 +388,7 @@ namespace WingetRepoBrowser
 			}
 		}
 
-		private void gridView1_CustomDrawFooter(object sender, DevExpress.XtraGrid.Views.Base.RowObjectCustomDrawEventArgs e)
+		private void gridView1_CustomDrawFooter(object sender, RowObjectCustomDrawEventArgs e)
 		{
 			if (this.gridView1.GroupCount > 0)
 			{
@@ -370,6 +398,22 @@ namespace WingetRepoBrowser
 				e.Handled = true;
 			}
 		}
+
+		/*
+		private void gridView1_CustomColumnSort(object sender, CustomColumnSortEventArgs e)
+		{
+			GridView view = gridView1;
+			if (e.Column.FieldName == nameof(ManifestPackageVM.ParsedPackageVersion))
+			{
+				object val1 = view.GetListSourceRowCellValue(e.ListSourceRowIndex1, e.Column);
+				object val2 = view.GetListSourceRowCellValue(e.ListSourceRowIndex2, e.Column);
+				e.Handled = true;
+				e.Result = System.Collections.Comparer.Default.Compare(val1.ToString(), val2.ToString());
+			}
+		}
+		*/
+
+
 	}
 
 
@@ -380,6 +424,7 @@ namespace WingetRepoBrowser
 		public string FilePath { get; set; }
 		//public ManifestPackage_1_0_0 InstallerPackage { get; set; }
 		public string InstallerPackageFilePath { get; set; }
+		public string IdFilePath { get; set; }
 
 	}
 

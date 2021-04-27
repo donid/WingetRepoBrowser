@@ -22,7 +22,7 @@ namespace WingetRepoBrowser
 
 		public string InstallerType { get { return _installers.InstallerType; } }
 
-		public string Language { get { return _installers.InstallerLocale; } }
+		public string InstallerLocale { get { return _installers.InstallerLocale; } }
 
 		public string Scope { get { return _installers.Scope; } }
 

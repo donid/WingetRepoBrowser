@@ -1,33 +1,33 @@
 ﻿namespace WingetRepoBrowser
 {
-    partial class MainForm
-    {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+	partial class MainForm
+	{
+		/// <summary>
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Windows Form Designer generated code
+		#region Windows Form Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
 			DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
 			this.gridView2 = new DevExpress.XtraGrid.Views.Grid.GridView();
 			this.colInstArch = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -53,6 +53,7 @@
 			this.colId = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colName = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colVersion = new DevExpress.XtraGrid.Columns.GridColumn();
+			this.colParsedVersion = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colDefaultLocale = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colPackageLocale = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colPublisher = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -74,7 +75,7 @@
 			this.colInstallerType = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colInstallersCount = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colInstallersArch = new DevExpress.XtraGrid.Columns.GridColumn();
-			this.colInstallersLanguage = new DevExpress.XtraGrid.Columns.GridColumn();
+			this.colInstallersLocale = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colInstallersInstallerType = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colManifestSwitchInteractive = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colManifestSwitchSilent = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -185,7 +186,8 @@
 			// 
 			// colInstLanguage
 			// 
-			this.colInstLanguage.FieldName = "Language";
+			this.colInstLanguage.Caption = "InstallerLocale";
+			this.colInstLanguage.FieldName = "InstallerLocale";
 			this.colInstLanguage.Name = "colInstLanguage";
 			this.colInstLanguage.Visible = true;
 			this.colInstLanguage.VisibleIndex = 6;
@@ -281,6 +283,7 @@
             this.colId,
             this.colName,
             this.colVersion,
+            this.colParsedVersion,
             this.colDefaultLocale,
             this.colPackageLocale,
             this.colPublisher,
@@ -301,7 +304,7 @@
             this.colInstallerType,
             this.colInstallersCount,
             this.colInstallersArch,
-            this.colInstallersLanguage,
+            this.colInstallersLocale,
             this.colInstallersInstallerType,
             this.colManifestSwitchInteractive,
             this.colManifestSwitchSilent,
@@ -359,7 +362,17 @@
 			this.colVersion.Name = "colVersion";
 			this.colVersion.OptionsColumn.ReadOnly = true;
 			this.colVersion.Visible = true;
-			this.colVersion.VisibleIndex = 6;
+			this.colVersion.VisibleIndex = 4;
+			// 
+			// colParsedVersion
+			// 
+			this.colParsedVersion.Caption = "ParsedVersion";
+			this.colParsedVersion.FieldName = "ParsedPackageVersion";
+			this.colParsedVersion.Name = "colParsedVersion";
+			this.colParsedVersion.OptionsColumn.AllowSort = DevExpress.Utils.DefaultBoolean.True;
+			this.colParsedVersion.SortMode = DevExpress.XtraGrid.ColumnSortMode.DisplayText;
+			this.colParsedVersion.Visible = true;
+			this.colParsedVersion.VisibleIndex = 5;
 			// 
 			// colDefaultLocale
 			// 
@@ -367,7 +380,7 @@
 			this.colDefaultLocale.FieldName = "DefaultLocale";
 			this.colDefaultLocale.Name = "colDefaultLocale";
 			this.colDefaultLocale.Visible = true;
-			this.colDefaultLocale.VisibleIndex = 5;
+			this.colDefaultLocale.VisibleIndex = 7;
 			// 
 			// colPackageLocale
 			// 
@@ -375,7 +388,7 @@
 			this.colPackageLocale.FieldName = "PackageLocale";
 			this.colPackageLocale.Name = "colPackageLocale";
 			this.colPackageLocale.Visible = true;
-			this.colPackageLocale.VisibleIndex = 4;
+			this.colPackageLocale.VisibleIndex = 6;
 			// 
 			// colPublisher
 			// 
@@ -383,7 +396,7 @@
 			this.colPublisher.Name = "colPublisher";
 			this.colPublisher.OptionsColumn.ReadOnly = true;
 			this.colPublisher.Visible = true;
-			this.colPublisher.VisibleIndex = 7;
+			this.colPublisher.VisibleIndex = 8;
 			// 
 			// colMoniker
 			// 
@@ -391,7 +404,7 @@
 			this.colMoniker.Name = "colMoniker";
 			this.colMoniker.OptionsColumn.ReadOnly = true;
 			this.colMoniker.Visible = true;
-			this.colMoniker.VisibleIndex = 8;
+			this.colMoniker.VisibleIndex = 9;
 			// 
 			// colAuthor
 			// 
@@ -399,7 +412,7 @@
 			this.colAuthor.Name = "colAuthor";
 			this.colAuthor.OptionsColumn.ReadOnly = true;
 			this.colAuthor.Visible = true;
-			this.colAuthor.VisibleIndex = 9;
+			this.colAuthor.VisibleIndex = 10;
 			// 
 			// colLicense
 			// 
@@ -407,7 +420,7 @@
 			this.colLicense.Name = "colLicense";
 			this.colLicense.OptionsColumn.ReadOnly = true;
 			this.colLicense.Visible = true;
-			this.colLicense.VisibleIndex = 10;
+			this.colLicense.VisibleIndex = 11;
 			// 
 			// colLicenseUrl
 			// 
@@ -416,7 +429,7 @@
 			this.colLicenseUrl.Name = "colLicenseUrl";
 			this.colLicenseUrl.OptionsColumn.ReadOnly = true;
 			this.colLicenseUrl.Visible = true;
-			this.colLicenseUrl.VisibleIndex = 11;
+			this.colLicenseUrl.VisibleIndex = 12;
 			// 
 			// repositoryItemButtonEditUrl
 			// 
@@ -432,7 +445,7 @@
 			this.colPublisherUrl.FieldName = "PublisherUrl";
 			this.colPublisherUrl.Name = "colPublisherUrl";
 			this.colPublisherUrl.Visible = true;
-			this.colPublisherUrl.VisibleIndex = 12;
+			this.colPublisherUrl.VisibleIndex = 13;
 			// 
 			// colPrivacyUrl
 			// 
@@ -440,7 +453,7 @@
 			this.colPrivacyUrl.FieldName = "PrivacyUrl";
 			this.colPrivacyUrl.Name = "colPrivacyUrl";
 			this.colPrivacyUrl.Visible = true;
-			this.colPrivacyUrl.VisibleIndex = 13;
+			this.colPrivacyUrl.VisibleIndex = 14;
 			// 
 			// colMinOSVersion
 			// 
@@ -448,7 +461,7 @@
 			this.colMinOSVersion.Name = "colMinOSVersion";
 			this.colMinOSVersion.OptionsColumn.ReadOnly = true;
 			this.colMinOSVersion.Visible = true;
-			this.colMinOSVersion.VisibleIndex = 14;
+			this.colMinOSVersion.VisibleIndex = 15;
 			// 
 			// colPackageUrl
 			// 
@@ -457,7 +470,7 @@
 			this.colPackageUrl.Name = "colPackageUrl";
 			this.colPackageUrl.OptionsColumn.ReadOnly = true;
 			this.colPackageUrl.Visible = true;
-			this.colPackageUrl.VisibleIndex = 15;
+			this.colPackageUrl.VisibleIndex = 16;
 			// 
 			// colShortDescription
 			// 
@@ -465,7 +478,7 @@
 			this.colShortDescription.FieldName = "ShortDescription";
 			this.colShortDescription.Name = "colShortDescription";
 			this.colShortDescription.Visible = true;
-			this.colShortDescription.VisibleIndex = 17;
+			this.colShortDescription.VisibleIndex = 18;
 			// 
 			// colDescription
 			// 
@@ -473,7 +486,7 @@
 			this.colDescription.Name = "colDescription";
 			this.colDescription.OptionsColumn.ReadOnly = true;
 			this.colDescription.Visible = true;
-			this.colDescription.VisibleIndex = 16;
+			this.colDescription.VisibleIndex = 17;
 			// 
 			// colTags
 			// 
@@ -481,7 +494,7 @@
 			this.colTags.Name = "colTags";
 			this.colTags.OptionsColumn.ReadOnly = true;
 			this.colTags.Visible = true;
-			this.colTags.VisibleIndex = 18;
+			this.colTags.VisibleIndex = 19;
 			// 
 			// colFileExtensions
 			// 
@@ -489,7 +502,7 @@
 			this.colFileExtensions.Name = "colFileExtensions";
 			this.colFileExtensions.OptionsColumn.ReadOnly = true;
 			this.colFileExtensions.Visible = true;
-			this.colFileExtensions.VisibleIndex = 19;
+			this.colFileExtensions.VisibleIndex = 20;
 			// 
 			// colProtocols
 			// 
@@ -497,7 +510,7 @@
 			this.colProtocols.Name = "colProtocols";
 			this.colProtocols.OptionsColumn.ReadOnly = true;
 			this.colProtocols.Visible = true;
-			this.colProtocols.VisibleIndex = 20;
+			this.colProtocols.VisibleIndex = 21;
 			// 
 			// colCommands
 			// 
@@ -505,7 +518,7 @@
 			this.colCommands.Name = "colCommands";
 			this.colCommands.OptionsColumn.ReadOnly = true;
 			this.colCommands.Visible = true;
-			this.colCommands.VisibleIndex = 21;
+			this.colCommands.VisibleIndex = 22;
 			// 
 			// colInstallerType
 			// 
@@ -513,7 +526,7 @@
 			this.colInstallerType.Name = "colInstallerType";
 			this.colInstallerType.OptionsColumn.ReadOnly = true;
 			this.colInstallerType.Visible = true;
-			this.colInstallerType.VisibleIndex = 22;
+			this.colInstallerType.VisibleIndex = 23;
 			// 
 			// colInstallersCount
 			// 
@@ -521,49 +534,50 @@
 			this.colInstallersCount.Name = "colInstallersCount";
 			this.colInstallersCount.OptionsColumn.ReadOnly = true;
 			this.colInstallersCount.Visible = true;
-			this.colInstallersCount.VisibleIndex = 23;
+			this.colInstallersCount.VisibleIndex = 24;
 			// 
 			// colInstallersArch
 			// 
 			this.colInstallersArch.FieldName = "InstallersArch";
 			this.colInstallersArch.Name = "colInstallersArch";
 			this.colInstallersArch.Visible = true;
-			this.colInstallersArch.VisibleIndex = 25;
+			this.colInstallersArch.VisibleIndex = 26;
 			// 
-			// colInstallersLanguage
+			// colInstallersLocale
 			// 
-			this.colInstallersLanguage.FieldName = "InstallersLanguage";
-			this.colInstallersLanguage.Name = "colInstallersLanguage";
-			this.colInstallersLanguage.Visible = true;
-			this.colInstallersLanguage.VisibleIndex = 26;
+			this.colInstallersLocale.Caption = "InstallersLocale";
+			this.colInstallersLocale.FieldName = "InstallersLocale";
+			this.colInstallersLocale.Name = "colInstallersLocale";
+			this.colInstallersLocale.Visible = true;
+			this.colInstallersLocale.VisibleIndex = 27;
 			// 
 			// colInstallersInstallerType
 			// 
 			this.colInstallersInstallerType.FieldName = "InstallersInstallerType";
 			this.colInstallersInstallerType.Name = "colInstallersInstallerType";
 			this.colInstallersInstallerType.Visible = true;
-			this.colInstallersInstallerType.VisibleIndex = 24;
+			this.colInstallersInstallerType.VisibleIndex = 25;
 			// 
 			// colManifestSwitchInteractive
 			// 
 			this.colManifestSwitchInteractive.FieldName = "ManifestSwitchInteractive";
 			this.colManifestSwitchInteractive.Name = "colManifestSwitchInteractive";
 			this.colManifestSwitchInteractive.Visible = true;
-			this.colManifestSwitchInteractive.VisibleIndex = 27;
+			this.colManifestSwitchInteractive.VisibleIndex = 28;
 			// 
 			// colManifestSwitchSilent
 			// 
 			this.colManifestSwitchSilent.FieldName = "ManifestSwitchSilentWithProgress";
 			this.colManifestSwitchSilent.Name = "colManifestSwitchSilent";
 			this.colManifestSwitchSilent.Visible = true;
-			this.colManifestSwitchSilent.VisibleIndex = 28;
+			this.colManifestSwitchSilent.VisibleIndex = 29;
 			// 
 			// colManifestSwitchSilentWithProgress
 			// 
 			this.colManifestSwitchSilentWithProgress.FieldName = "ManifestSwitchSilentWithProgress";
 			this.colManifestSwitchSilentWithProgress.Name = "colManifestSwitchSilentWithProgress";
 			this.colManifestSwitchSilentWithProgress.Visible = true;
-			this.colManifestSwitchSilentWithProgress.VisibleIndex = 29;
+			this.colManifestSwitchSilentWithProgress.VisibleIndex = 30;
 			// 
 			// textEditRepoFolder
 			// 
@@ -757,7 +771,7 @@
 			this.ClientSize = new System.Drawing.Size(1012, 639);
 			this.Controls.Add(this.layoutControl1);
 			this.Name = "MainForm";
-			this.Text = "WingetRepo Browser 0.1.1";
+			this.Text = "WingetRepo Browser 0.1.2";
 			((System.ComponentModel.ISupportInitialize)(this.gridView2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
@@ -779,11 +793,11 @@
 			((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
 			this.ResumeLayout(false);
 
-        }
+		}
 
-        #endregion
-        private DevExpress.XtraGrid.GridControl gridControl1;
-        private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
+		#endregion
+		private DevExpress.XtraGrid.GridControl gridControl1;
+		private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
 		private DevExpress.XtraGrid.Columns.GridColumn colFilePath;
 		private DevExpress.XtraGrid.Columns.GridColumn colInstallersCount;
 		private DevExpress.XtraGrid.Columns.GridColumn colId;
@@ -834,7 +848,7 @@
 		private DevExpress.XtraEditors.SimpleButton simpleButtonCreateSubFoldersForSelected;
 		private DevExpress.XtraLayout.LayoutControlItem layoutControlItem6;
 		private DevExpress.XtraGrid.Columns.GridColumn colInstallersArch;
-		private DevExpress.XtraGrid.Columns.GridColumn colInstallersLanguage;
+		private DevExpress.XtraGrid.Columns.GridColumn colInstallersLocale;
 		private DevExpress.XtraGrid.Columns.GridColumn colInstallersInstallerType;
 		private DevExpress.XtraGrid.Columns.GridColumn colSwitchesInteractive;
 		private DevExpress.XtraGrid.Columns.GridColumn colManifestSwitchInteractive;
@@ -850,6 +864,6 @@
 		private DevExpress.XtraEditors.MemoEdit memoEditMessages;
 		private DevExpress.XtraLayout.LayoutControlItem layoutControlItemMessages;
 		private DevExpress.XtraLayout.SplitterItem splitterItem1;
+		private DevExpress.XtraGrid.Columns.GridColumn colParsedVersion;
 	}
 }
-
