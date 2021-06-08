@@ -4,7 +4,6 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using YamlDotNet.Serialization;
 
 
 namespace WingetRepoBrowserCore
@@ -45,30 +44,6 @@ namespace WingetRepoBrowserCore
 			return result;
 		}
 
-		public static ManifestPackage_1_0_0 ReadYamlFile(string yamlFile)
-		{
-			// TODO: Firetrust.MailWasherPro -> copyright sign works with Encoding.Default, but other packages have wrong signs then 
-			using (StreamReader streamReader = new StreamReader(yamlFile, true))
-			{
-				var deserializer = new DeserializerBuilder()
-					.IgnoreUnmatchedProperties() // comment this out, to check if there are new properties used in yaml, which are not yet in the data-model
-					.Build();
-
-				ManifestPackage_1_0_0 package = deserializer.Deserialize<ManifestPackage_1_0_0>(streamReader);
-				return package;
-			}
-		}
-
-		public static void WriteYamlFile(string yamlFile, ManifestPackage_1_0_0 package)
-		{
-			using (StreamWriter streamWriter = File.CreateText(yamlFile))
-			{
-				var serializer = new SerializerBuilder().Build();
-
-				serializer.Serialize(streamWriter, package);
-			}
-		}
-
 
 		public static string CalculateSha256HashFromFile(string downloadFilePath)
 		{
@@ -76,10 +51,11 @@ namespace WingetRepoBrowserCore
 			{
 				try
 				{
-					FileStream fileStream = File.Open(downloadFilePath, FileMode.Open);
-					byte[] hashValue = mySHA256.ComputeHash(fileStream);
-					fileStream.Close();//todo dispose
-					return ToHex(hashValue);
+					using (FileStream fileStream = File.Open(downloadFilePath, FileMode.Open))
+					{
+						byte[] hashValue = mySHA256.ComputeHash(fileStream);
+						return ToHex(hashValue);
+					}
 				}
 				catch (IOException e)
 				{

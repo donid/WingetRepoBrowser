@@ -396,7 +396,7 @@
 			this.colPublisher.Name = "colPublisher";
 			this.colPublisher.OptionsColumn.ReadOnly = true;
 			this.colPublisher.Visible = true;
-			this.colPublisher.VisibleIndex = 8;
+			this.colPublisher.VisibleIndex = 14;
 			// 
 			// colMoniker
 			// 
@@ -404,7 +404,7 @@
 			this.colMoniker.Name = "colMoniker";
 			this.colMoniker.OptionsColumn.ReadOnly = true;
 			this.colMoniker.Visible = true;
-			this.colMoniker.VisibleIndex = 9;
+			this.colMoniker.VisibleIndex = 8;
 			// 
 			// colAuthor
 			// 
@@ -412,7 +412,7 @@
 			this.colAuthor.Name = "colAuthor";
 			this.colAuthor.OptionsColumn.ReadOnly = true;
 			this.colAuthor.Visible = true;
-			this.colAuthor.VisibleIndex = 10;
+			this.colAuthor.VisibleIndex = 13;
 			// 
 			// colLicense
 			// 
@@ -420,7 +420,7 @@
 			this.colLicense.Name = "colLicense";
 			this.colLicense.OptionsColumn.ReadOnly = true;
 			this.colLicense.Visible = true;
-			this.colLicense.VisibleIndex = 11;
+			this.colLicense.VisibleIndex = 28;
 			// 
 			// colLicenseUrl
 			// 
@@ -429,7 +429,7 @@
 			this.colLicenseUrl.Name = "colLicenseUrl";
 			this.colLicenseUrl.OptionsColumn.ReadOnly = true;
 			this.colLicenseUrl.Visible = true;
-			this.colLicenseUrl.VisibleIndex = 12;
+			this.colLicenseUrl.VisibleIndex = 29;
 			// 
 			// repositoryItemButtonEditUrl
 			// 
@@ -445,7 +445,7 @@
 			this.colPublisherUrl.FieldName = "PublisherUrl";
 			this.colPublisherUrl.Name = "colPublisherUrl";
 			this.colPublisherUrl.Visible = true;
-			this.colPublisherUrl.VisibleIndex = 13;
+			this.colPublisherUrl.VisibleIndex = 15;
 			// 
 			// colPrivacyUrl
 			// 
@@ -453,7 +453,7 @@
 			this.colPrivacyUrl.FieldName = "PrivacyUrl";
 			this.colPrivacyUrl.Name = "colPrivacyUrl";
 			this.colPrivacyUrl.Visible = true;
-			this.colPrivacyUrl.VisibleIndex = 14;
+			this.colPrivacyUrl.VisibleIndex = 30;
 			// 
 			// colMinOSVersion
 			// 
@@ -461,7 +461,7 @@
 			this.colMinOSVersion.Name = "colMinOSVersion";
 			this.colMinOSVersion.OptionsColumn.ReadOnly = true;
 			this.colMinOSVersion.Visible = true;
-			this.colMinOSVersion.VisibleIndex = 15;
+			this.colMinOSVersion.VisibleIndex = 16;
 			// 
 			// colPackageUrl
 			// 
@@ -470,7 +470,7 @@
 			this.colPackageUrl.Name = "colPackageUrl";
 			this.colPackageUrl.OptionsColumn.ReadOnly = true;
 			this.colPackageUrl.Visible = true;
-			this.colPackageUrl.VisibleIndex = 16;
+			this.colPackageUrl.VisibleIndex = 9;
 			// 
 			// colShortDescription
 			// 
@@ -478,7 +478,7 @@
 			this.colShortDescription.FieldName = "ShortDescription";
 			this.colShortDescription.Name = "colShortDescription";
 			this.colShortDescription.Visible = true;
-			this.colShortDescription.VisibleIndex = 18;
+			this.colShortDescription.VisibleIndex = 10;
 			// 
 			// colDescription
 			// 
@@ -486,7 +486,7 @@
 			this.colDescription.Name = "colDescription";
 			this.colDescription.OptionsColumn.ReadOnly = true;
 			this.colDescription.Visible = true;
-			this.colDescription.VisibleIndex = 17;
+			this.colDescription.VisibleIndex = 11;
 			// 
 			// colTags
 			// 
@@ -494,7 +494,7 @@
 			this.colTags.Name = "colTags";
 			this.colTags.OptionsColumn.ReadOnly = true;
 			this.colTags.Visible = true;
-			this.colTags.VisibleIndex = 19;
+			this.colTags.VisibleIndex = 12;
 			// 
 			// colFileExtensions
 			// 
@@ -502,7 +502,7 @@
 			this.colFileExtensions.Name = "colFileExtensions";
 			this.colFileExtensions.OptionsColumn.ReadOnly = true;
 			this.colFileExtensions.Visible = true;
-			this.colFileExtensions.VisibleIndex = 20;
+			this.colFileExtensions.VisibleIndex = 17;
 			// 
 			// colProtocols
 			// 
@@ -510,7 +510,7 @@
 			this.colProtocols.Name = "colProtocols";
 			this.colProtocols.OptionsColumn.ReadOnly = true;
 			this.colProtocols.Visible = true;
-			this.colProtocols.VisibleIndex = 21;
+			this.colProtocols.VisibleIndex = 18;
 			// 
 			// colCommands
 			// 
@@ -518,7 +518,7 @@
 			this.colCommands.Name = "colCommands";
 			this.colCommands.OptionsColumn.ReadOnly = true;
 			this.colCommands.Visible = true;
-			this.colCommands.VisibleIndex = 22;
+			this.colCommands.VisibleIndex = 19;
 			// 
 			// colInstallerType
 			// 
@@ -526,7 +526,7 @@
 			this.colInstallerType.Name = "colInstallerType";
 			this.colInstallerType.OptionsColumn.ReadOnly = true;
 			this.colInstallerType.Visible = true;
-			this.colInstallerType.VisibleIndex = 23;
+			this.colInstallerType.VisibleIndex = 20;
 			// 
 			// colInstallersCount
 			// 
@@ -534,14 +534,14 @@
 			this.colInstallersCount.Name = "colInstallersCount";
 			this.colInstallersCount.OptionsColumn.ReadOnly = true;
 			this.colInstallersCount.Visible = true;
-			this.colInstallersCount.VisibleIndex = 24;
+			this.colInstallersCount.VisibleIndex = 21;
 			// 
 			// colInstallersArch
 			// 
 			this.colInstallersArch.FieldName = "InstallersArch";
 			this.colInstallersArch.Name = "colInstallersArch";
 			this.colInstallersArch.Visible = true;
-			this.colInstallersArch.VisibleIndex = 26;
+			this.colInstallersArch.VisibleIndex = 23;
 			// 
 			// colInstallersLocale
 			// 
@@ -549,35 +549,35 @@
 			this.colInstallersLocale.FieldName = "InstallersLocale";
 			this.colInstallersLocale.Name = "colInstallersLocale";
 			this.colInstallersLocale.Visible = true;
-			this.colInstallersLocale.VisibleIndex = 27;
+			this.colInstallersLocale.VisibleIndex = 24;
 			// 
 			// colInstallersInstallerType
 			// 
 			this.colInstallersInstallerType.FieldName = "InstallersInstallerType";
 			this.colInstallersInstallerType.Name = "colInstallersInstallerType";
 			this.colInstallersInstallerType.Visible = true;
-			this.colInstallersInstallerType.VisibleIndex = 25;
+			this.colInstallersInstallerType.VisibleIndex = 22;
 			// 
 			// colManifestSwitchInteractive
 			// 
 			this.colManifestSwitchInteractive.FieldName = "ManifestSwitchInteractive";
 			this.colManifestSwitchInteractive.Name = "colManifestSwitchInteractive";
 			this.colManifestSwitchInteractive.Visible = true;
-			this.colManifestSwitchInteractive.VisibleIndex = 28;
+			this.colManifestSwitchInteractive.VisibleIndex = 25;
 			// 
 			// colManifestSwitchSilent
 			// 
 			this.colManifestSwitchSilent.FieldName = "ManifestSwitchSilentWithProgress";
 			this.colManifestSwitchSilent.Name = "colManifestSwitchSilent";
 			this.colManifestSwitchSilent.Visible = true;
-			this.colManifestSwitchSilent.VisibleIndex = 29;
+			this.colManifestSwitchSilent.VisibleIndex = 26;
 			// 
 			// colManifestSwitchSilentWithProgress
 			// 
 			this.colManifestSwitchSilentWithProgress.FieldName = "ManifestSwitchSilentWithProgress";
 			this.colManifestSwitchSilentWithProgress.Name = "colManifestSwitchSilentWithProgress";
 			this.colManifestSwitchSilentWithProgress.Visible = true;
-			this.colManifestSwitchSilentWithProgress.VisibleIndex = 30;
+			this.colManifestSwitchSilentWithProgress.VisibleIndex = 27;
 			// 
 			// textEditRepoFolder
 			// 

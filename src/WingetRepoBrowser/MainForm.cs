@@ -1,10 +1,4 @@
-﻿using DevExpress.Utils.Menu;
-using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraGrid;
-using DevExpress.XtraGrid.Views.Base;
-using DevExpress.XtraGrid.Views.Grid;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -13,12 +7,20 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows.Forms;
+
+using DevExpress.Utils.Menu;
+using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraGrid;
+using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
+
 using WingetRepoBrowserCore;
 
 
 //todo:
 // support multiple repo paths (; separated)
-// implement/find custom sort algorithm for version-column
+
 
 namespace WingetRepoBrowser
 {
@@ -27,6 +29,7 @@ namespace WingetRepoBrowser
 		AppSettings _appSettings;
 		GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
 		List<ManifestPackageVM> _manifestVMs;
+		YamlFileHelper _yamlFileHelper;
 
 		public MainForm()
 		{
@@ -34,6 +37,7 @@ namespace WingetRepoBrowser
 
 			_gridViewManifestsRowPopup = new GridRowPopupMenuBehavior(gridView1);
 			_gridViewManifestsRowPopup.SetMenuItems(CreateMenuItemsManifestsPopup());
+			_yamlFileHelper = new YamlFileHelper();
 		}
 
 		private DXMenuItem[] CreateMenuItemsManifestsPopup()
@@ -153,7 +157,6 @@ namespace WingetRepoBrowser
 				Cursor.Current = Cursors.WaitCursor;
 
 
-				_manifestVMs = new List<ManifestPackageVM>();
 				IEnumerable<string> yamlFiles;
 				try
 				{
@@ -170,47 +173,16 @@ namespace WingetRepoBrowser
 					return;
 				}
 
+				List<ManifestPackageVM> tmpManifestVMs;
+				List<string> messages;
+				LoadAllManifests(yamlFiles,_yamlFileHelper, out tmpManifestVMs, out messages);
 
-				Dictionary<string, MultiFileYaml> multiFileYamlDict = new Dictionary<string, MultiFileYaml>();
-
-				foreach (string yamlFile in yamlFiles)
+				if (messages.Any())
 				{
-					ManifestPackage_1_0_0 package;
-					try
-					{
-						package = Helpers.ReadYamlFile(yamlFile);
-					}
-					catch (YamlDotNet.Core.YamlException ex)
-					{
-						layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
-						memoEditMessages.Text += yamlFile + ": " + GetMessage(ex) + Environment.NewLine;
-						continue;
-					}
-
-					if (package.ManifestType == "singleton")
-					{
-						_manifestVMs.Add(new ManifestPackageVM(package, yamlFile));
-					}
-					else
-					{
-						string yamlFolder = Path.GetDirectoryName(yamlFile);
-						MultiFileYaml multiFileYaml = null;
-						if (multiFileYamlDict.TryGetValue(yamlFolder, out multiFileYaml) == false)
-						{
-							multiFileYaml = new MultiFileYaml();
-							multiFileYamlDict.Add(yamlFolder, multiFileYaml);
-						}
-						if (package.ManifestType == "version")
-						{
-							_manifestVMs.Add(new ManifestPackageVM(package, yamlFile, multiFileYaml));
-						}
-						else
-						{
-							multiFileYaml.Packages.Add(package);
-						}
-					}
+					layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+					memoEditMessages.Text = string.Join(Environment.NewLine, messages);
 				}
-
+				_manifestVMs = tmpManifestVMs;
 				gridControl1.DataSource = _manifestVMs;
 			}
 			finally
@@ -221,14 +193,44 @@ namespace WingetRepoBrowser
 			simpleButtonCreateSubFoldersForSelected.Enabled = true;
 		}
 
-		private static string GetMessage(YamlDotNet.Core.YamlException ex)
+		public static void LoadAllManifests(IEnumerable<string> yamlFiles, YamlFileHelper yamlFileHelper, out List<ManifestPackageVM> tmpManifestVMs, out List<string> messages)
 		{
-			string inner = null;
-			if (ex.InnerException != null)
+			tmpManifestVMs = new List<ManifestPackageVM>();
+			Dictionary<string, MultiFileYaml> multiFileYamlDict = new Dictionary<string, MultiFileYaml>();
+			messages = new List<string>();
+			foreach (string yamlFilePath in yamlFiles)
 			{
-				inner = " (" + ex.InnerException.Message + ")";
+				ReadYamlFileResult ryfr = yamlFileHelper.ReadYamlFile(yamlFilePath);
+				if (ryfr.ErrorMessage != null)
+				{
+					messages.Add(yamlFilePath + ": " + ryfr.ErrorMessage);
+					continue;
+				}
+				ManifestPackage_1_0_0 package = ryfr.Manifest;
+
+				if (package.ManifestType == "singleton")
+				{
+					tmpManifestVMs.Add(new ManifestPackageVM(package, yamlFilePath));
+				}
+				else
+				{
+					string yamlFolder = Path.GetDirectoryName(yamlFilePath);
+					MultiFileYaml multiFileYaml = null;
+					if (multiFileYamlDict.TryGetValue(yamlFolder, out multiFileYaml) == false)
+					{
+						multiFileYaml = new MultiFileYaml();
+						multiFileYamlDict.Add(yamlFolder, multiFileYaml);
+					}
+					if (package.ManifestType == "version")
+					{
+						tmpManifestVMs.Add(new ManifestPackageVM(package, yamlFilePath, multiFileYaml));
+					}
+					else
+					{
+						multiFileYaml.Packages.Add(package);
+					}
+				}
 			}
-			return ex.Message + inner;
 		}
 
 		private void repositoryItemButtonEditUrl_ButtonClick(object sender, ButtonPressedEventArgs e)
@@ -276,8 +278,8 @@ namespace WingetRepoBrowser
 					return;
 				}
 				Dictionary<string, string> packageIds = idFiles.ToDictionary(item => GetKeyFromIdFilePath(item));
-				List<NewDownload> newDownloads = FindNewDownloads(packageIds, _manifestVMs);
-				NewDownloadsForm form = new NewDownloadsForm();
+				List<NewDownload> newDownloads = FindNewDownloads(_yamlFileHelper, packageIds, _manifestVMs);
+				NewDownloadsForm form = new NewDownloadsForm(_yamlFileHelper);
 				form.NewDownloads = newDownloads;
 				if (_appSettings != null)
 				{
@@ -296,7 +298,7 @@ namespace WingetRepoBrowser
 		}
 
 
-		private static List<NewDownload> FindNewDownloads(Dictionary<string, string> packageIds, IEnumerable<ManifestPackageVM> manifestPackages)
+		private static List<NewDownload> FindNewDownloads(YamlFileHelper yamlFileHelper, Dictionary<string, string> packageIds, IEnumerable<ManifestPackageVM> manifestPackages)
 		{
 			List<NewDownload> result = new List<NewDownload>();
 			foreach (ManifestPackageVM manifestPackage in manifestPackages)
@@ -312,14 +314,14 @@ namespace WingetRepoBrowser
 					if (false)//TODO: the following code crashes when downloaded yaml-files are not version 1.0.0
 					{
 						string downloadedYamlFilePath = Path.Combine(versionFolder, "latest.yaml");
-						ManifestPackage_1_0_0 downloadedManifestPackage = Helpers.ReadYamlFile(downloadedYamlFilePath);
+						ManifestPackage_1_0_0 downloadedManifestPackage = yamlFileHelper.ReadYamlFile(downloadedYamlFilePath).Manifest;
 						//TODO test all installers when winget supports multiple installers
 						if (manifestPackage.Installers[0].Sha256 != downloadedManifestPackage.Installers[0].InstallerSha256)
 						{
 							FileInfo fi = new FileInfo(downloadedYamlFilePath);
 							string versionSuffix = fi.LastWriteTime.ToString("_yyyy-MM-dd");
 							downloadedManifestPackage.PackageVersion += versionSuffix;
-							Helpers.WriteYamlFile(downloadedYamlFilePath, downloadedManifestPackage);
+							yamlFileHelper.WriteYamlFile(downloadedYamlFilePath, downloadedManifestPackage);
 							Directory.Move(versionFolder, versionFolder + versionSuffix);
 							exists = Directory.Exists(versionFolder);
 						}
@@ -343,6 +345,7 @@ namespace WingetRepoBrowser
 			}
 			return result;
 		}
+
 		static string GetInstallerPackageFilePath(ManifestPackageVM manifestPackage)
 		{
 			if (manifestPackage.InstallerPackage == null)

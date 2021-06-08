@@ -1,7 +1,4 @@
-﻿using DevExpress.Utils.Menu;
-using DevExpress.XtraEditors;
-using DevExpress.XtraLayout.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +6,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+
+using DevExpress.Utils.Menu;
+using DevExpress.XtraEditors;
+using DevExpress.XtraLayout.Utils;
+
 using WingetRepoBrowserCore;
 
 namespace WingetRepoBrowser
@@ -16,13 +18,15 @@ namespace WingetRepoBrowser
 	public partial class NewDownloadsForm : XtraForm
 	{
 		GridRowPopupMenuBehavior _gridViewDownloadRowPopup;
+		YamlFileHelper _yamlFileHelper;
 
-		public NewDownloadsForm()
+		public NewDownloadsForm(YamlFileHelper yamlFileHelper)
 		{
 			InitializeComponent();
 
 			_gridViewDownloadRowPopup = new GridRowPopupMenuBehavior(gridView1);
 			_gridViewDownloadRowPopup.SetMenuItems(CreateMenuItemsDownloadPopup());
+			_yamlFileHelper = yamlFileHelper;
 		}
 
 		private DXMenuItem[] CreateMenuItemsDownloadPopup()
@@ -119,13 +123,13 @@ namespace WingetRepoBrowser
 		{
 			string versionFolder = newDownload.VersionFolder;
 			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
-			ManifestPackage_1_0_0 targetManifestPackage = Helpers.ReadYamlFile(newDownload.FilePath);
+			ManifestPackage_1_0_0 targetManifestPackage = _yamlFileHelper.ReadYamlFile(newDownload.FilePath).Manifest;
 			ManifestInstaller_1_0_0[] installers = targetManifestPackage.Installers;
 
 			ManifestPackage_1_0_0 installerPackage = null;
 			if (newDownload.InstallerPackageFilePath != null)
 			{
-				installerPackage = Helpers.ReadYamlFile(newDownload.InstallerPackageFilePath);
+				installerPackage = _yamlFileHelper.ReadYamlFile(newDownload.InstallerPackageFilePath).Manifest;
 				installers = installerPackage.Installers;
 			}
 
@@ -201,7 +205,7 @@ namespace WingetRepoBrowser
 				string yamlTargetFilename = Path.GetFileName(newDownload.FilePath);
 				string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
 
-				Helpers.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
+				_yamlFileHelper.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
 				if (newDownload.InstallerPackageFilePath == null)
 				{
 					Trace.WriteLine("modified: " + newDownload.FilePath + " " + yamlTargetFilePath);
@@ -209,7 +213,7 @@ namespace WingetRepoBrowser
 				else
 				{
 					string yamlInstallerTargetFilePath = Helpers.GetInstallerPackageFilePath(yamlTargetFilePath);
-					Helpers.WriteYamlFile(yamlInstallerTargetFilePath, installerPackage);
+					_yamlFileHelper.WriteYamlFile(yamlInstallerTargetFilePath, installerPackage);
 					Trace.WriteLine("modified: " + newDownload.InstallerPackageFilePath + " " + yamlInstallerTargetFilePath);
 
 					string defaultLocale = targetManifestPackage.DefaultLocale;

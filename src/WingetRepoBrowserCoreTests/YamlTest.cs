@@ -1,6 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
+﻿using System.IO;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using WingetRepoBrowserCore;
+
 using YamlDotNet.RepresentationModel;
 
 namespace WingetRepoBrowserTests
@@ -13,7 +16,7 @@ namespace WingetRepoBrowserTests
 		public void TestDeserializeYaml()
 		{
 			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\7\7zip\7zip\19.0.0\7zip.7zip.yaml";
-			ManifestPackage_1_0_0 package = Helpers.ReadYamlFile(yamlFile);
+			ManifestPackage_1_0_0 package = new YamlFileHelper().ReadYamlFile(yamlFile).Manifest;
 			string locale = package.PackageLocale;
 		}
 
@@ -26,10 +29,10 @@ namespace WingetRepoBrowserTests
 			//string yamlFileTarget = @"e:\7Zip_19.0.0.yaml";
 			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\a\AcroSoftware\CutePDFWriter\4.0.1.1\AcroSoftware.CutePDFWriter.yaml";
 			string yamlFileTarget = @"e:\cutepdf4.yaml";
-			ManifestPackage_1_0_0 package = Helpers.ReadYamlFile(yamlFile);
+			YamlFileHelper yamlFileHelper = new YamlFileHelper();
+			ManifestPackage_1_0_0 package = yamlFileHelper.ReadYamlFile(yamlFile).Manifest;
 			package.Installers[0].InstallerUrl = "cutepdf.exe";
-			Helpers.WriteYamlFile(yamlFileTarget, package);
-
+			yamlFileHelper.WriteYamlFile(yamlFileTarget, package);
 		}
 
 		[TestMethod]

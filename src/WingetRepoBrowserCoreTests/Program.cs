@@ -1,4 +1,5 @@
 ﻿using WingetRepoBrowserCore;
+
 using WingetRepoBrowserTests;
 
 namespace WingetRepoBrowserCoreTests
@@ -13,7 +14,7 @@ namespace WingetRepoBrowserCoreTests
 			return;
 
 			string yamlFileTarget = @"e:\7Zip_19.0.0.yaml";
-			ManifestPackage_1_0_0 package = Helpers.ReadYamlFile(yamlFileTarget);
+			ManifestPackage_1_0_0 package = new YamlFileHelper().ReadYamlFile(yamlFileTarget).Manifest;
 
 
 		}
