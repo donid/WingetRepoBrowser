@@ -45,7 +45,7 @@ namespace WingetRepoBrowserCore
 		}
 
 
-		public static string CalculateSha256HashFromFile(string downloadFilePath)
+		public static CalculateFileHashResult CalculateSha256HashFromFile(string downloadFilePath)
 		{
 			using (SHA256 mySHA256 = SHA256.Create())
 			{
@@ -54,19 +54,25 @@ namespace WingetRepoBrowserCore
 					using (FileStream fileStream = File.Open(downloadFilePath, FileMode.Open))
 					{
 						byte[] hashValue = mySHA256.ComputeHash(fileStream);
-						return ToHex(hashValue);
+						string hash = ToHex(hashValue);
+						return new CalculateFileHashResult() { Hash= hash };
 					}
 				}
 				catch (IOException e)
 				{
-					Console.WriteLine($"I/O Exception: {e.Message}");
+					return new CalculateFileHashResult() { ErrorMessage = $"I/O Exception: {e.Message}" };
 				}
 				catch (UnauthorizedAccessException e)
 				{
-					Console.WriteLine($"Access Exception: {e.Message}");
+					return new CalculateFileHashResult() { ErrorMessage = $"Access Exception: {e.Message}" };
 				}
 			}
-			return null;//todo
+		}
+
+		public class CalculateFileHashResult
+		{
+			public string Hash { get; set; }
+			public string ErrorMessage { get; set; }
 		}
 
 		public static string ToHex(Byte[] bytes)
@@ -85,7 +91,7 @@ namespace WingetRepoBrowserCore
 
 		public static string GetInstallerPackageFilePath(string filePath)
 		{
-			return Path.ChangeExtension(filePath, ".installer.yaml"); ;
+			return Path.ChangeExtension(filePath, ".installer.yaml");
 		}
 	}
 }

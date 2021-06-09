@@ -48,7 +48,7 @@ namespace WingetRepoBrowser
 			foreach (IGrouping<string, NewDownload> group in groupedByWingetId)
 			{
 				string wingetidFilePath = group.Key;
-				string[] versionsToIgnore = group.Select(nd => nd.ManifestPackage.PackageVersion).ToArray();
+				string[] versionsToIgnore = group.Select(nd => nd.MultiFileYaml.MainPackage.PackageVersion).ToArray();
 				WingetIdSettings wingetidSettings = Helpers.LoadWingetIdSettings(wingetidFilePath);
 				if (wingetidSettings == null)
 				{
@@ -123,13 +123,13 @@ namespace WingetRepoBrowser
 		{
 			string versionFolder = newDownload.VersionFolder;
 			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
-			ManifestPackage_1_0_0 targetManifestPackage = _yamlFileHelper.ReadYamlFile(newDownload.FilePath).Manifest;
+			ManifestPackage_1_0_0 targetManifestPackage = _yamlFileHelper.ReadYamlFile(newDownload.MultiFileYaml.MainYamlFilePath).Manifest;
 			ManifestInstaller_1_0_0[] installers = targetManifestPackage.Installers;
 
 			ManifestPackage_1_0_0 installerPackage = null;
-			if (newDownload.InstallerPackageFilePath != null)
+			if (newDownload.MultiFileYaml.InstallerPackageFilePath != null)
 			{
-				installerPackage = _yamlFileHelper.ReadYamlFile(newDownload.InstallerPackageFilePath).Manifest;
+				installerPackage = _yamlFileHelper.ReadYamlFile(newDownload.MultiFileYaml.InstallerPackageFilePath).Manifest;
 				installers = installerPackage.Installers;
 			}
 
@@ -157,7 +157,7 @@ namespace WingetRepoBrowser
 					AddLogLineBackground("Creating directory: " + versionFolder);
 					Directory.CreateDirectory(versionFolder);
 					string downloadFolder = versionFolder;
-					if (newDownload.InstallerPackageFilePath != null)
+					if (newDownload.MultiFileYaml.InstallerPackageFilePath != null)
 					{
 						string archAndLocale = $"{manifestInstaller.Architecture ?? "null"}_{manifestInstaller.InstallerLocale ?? "null"}";
 						downloadFolder = Path.Combine(versionFolder, archAndLocale);
@@ -173,11 +173,20 @@ namespace WingetRepoBrowser
 					}
 
 					AddLogLineBackground("Calculating Sha256-Hash from file");
-					string calculatedHash = Helpers.CalculateSha256HashFromFile(downloadFilePath);
-					string expectedHash = manifestInstaller.InstallerSha256.ToLower();
-					if (calculatedHash != expectedHash)
+					Helpers.CalculateFileHashResult calculateFileHashResult = Helpers.CalculateSha256HashFromFile(downloadFilePath);
+					if (calculateFileHashResult.ErrorMessage == null)
 					{
-						AddLogLineBackground($"Error: Sha256-Hash mismatch (expected {expectedHash} - calculated {calculatedHash})");
+						string calculatedHash = calculateFileHashResult.Hash;
+						string expectedHash = manifestInstaller.InstallerSha256.ToLower();
+						if (calculatedHash != expectedHash)
+						{
+							AddLogLineBackground($"Error: Sha256-Hash mismatch (expected {expectedHash} - calculated {calculatedHash})");
+							++_errorCount;
+						}
+					}
+					else
+					{
+						AddLogLineBackground($"Error: Calculating Sha256-Hash: {calculateFileHashResult.ErrorMessage}");
 						++_errorCount;
 					}
 
@@ -202,23 +211,23 @@ namespace WingetRepoBrowser
 			if (Directory.Exists(versionFolder))
 			{
 				//save modified manifest to download-folder
-				string yamlTargetFilename = Path.GetFileName(newDownload.FilePath);
+				string yamlTargetFilename = Path.GetFileName(newDownload.MultiFileYaml.MainYamlFilePath);
 				string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
 
 				_yamlFileHelper.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
-				if (newDownload.InstallerPackageFilePath == null)
+				if (newDownload.MultiFileYaml.InstallerPackageFilePath == null)
 				{
-					Trace.WriteLine("modified: " + newDownload.FilePath + " " + yamlTargetFilePath);
+					Trace.WriteLine("modified: " + newDownload.MultiFileYaml.MainYamlFilePath + " " + yamlTargetFilePath);
 				}
 				else
 				{
 					string yamlInstallerTargetFilePath = Helpers.GetInstallerPackageFilePath(yamlTargetFilePath);
 					_yamlFileHelper.WriteYamlFile(yamlInstallerTargetFilePath, installerPackage);
-					Trace.WriteLine("modified: " + newDownload.InstallerPackageFilePath + " " + yamlInstallerTargetFilePath);
+					Trace.WriteLine("modified: " + newDownload.MultiFileYaml.InstallerPackageFilePath + " " + yamlInstallerTargetFilePath);
 
 					string defaultLocale = targetManifestPackage.DefaultLocale;
 					string yamlLocaleTargetFilePath = GetYamlLocaleFilePath(yamlTargetFilePath, defaultLocale);
-					string yamlLocaleSourceFilePath = GetYamlLocaleFilePath(newDownload.FilePath, defaultLocale);
+					string yamlLocaleSourceFilePath = GetYamlLocaleFilePath(newDownload.MultiFileYaml.MainYamlFilePath, defaultLocale);
 					File.Copy(yamlLocaleSourceFilePath, yamlLocaleTargetFilePath);
 				}
 			}
@@ -281,8 +290,9 @@ namespace WingetRepoBrowser
 		internal NewDownload NewDownload { get { return _newDownload; } }
 
 
-		public string PackageName { get { return _newDownload.ManifestPackage.PackageName; } }
-		public string PackageVersion { get { return _newDownload.ManifestPackage.PackageVersion; } }
-		public string PackageIdentifier { get { return _newDownload.ManifestPackage.PackageIdentifier; } }
+		public string PackageName { get { return _newDownload.MultiFileYaml.DefaultLocalePackage.PackageName; } }
+		public string PackageVersion { get { return _newDownload.MultiFileYaml.MainPackage.PackageVersion; } }
+		public string PackageIdentifier { get { return _newDownload.MultiFileYaml.MainPackage.PackageIdentifier; } }
+
 	}
 }

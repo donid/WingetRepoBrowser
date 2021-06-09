@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 using YamlDotNet.Serialization;
 
@@ -62,6 +63,32 @@ namespace WingetRepoBrowserCore
 			return ex.Message + inner;
 		}
 
+
+		public IEnumerable<MultiFileYaml> LoadAllManifests(IEnumerable<string> yamlFiles, out List<string> messages)
+		{
+			Dictionary<string, MultiFileYaml> multiFileYamlDict = new Dictionary<string, MultiFileYaml>();
+			messages = new List<string>();
+			foreach (string yamlFilePath in yamlFiles)
+			{
+				ReadYamlFileResult ryfr = ReadYamlFile(yamlFilePath);
+				if (ryfr.ErrorMessage != null)
+				{
+					messages.Add(yamlFilePath + ": " + ryfr.ErrorMessage);
+					continue;
+				}
+				ManifestPackage_1_0_0 package = ryfr.Manifest;
+
+				string yamlFolder = Path.GetDirectoryName(yamlFilePath);
+				MultiFileYaml multiFileYaml = null;
+				if (multiFileYamlDict.TryGetValue(yamlFolder, out multiFileYaml) == false)
+				{
+					multiFileYaml = new MultiFileYaml();
+					multiFileYamlDict.Add(yamlFolder, multiFileYaml);
+				}
+				multiFileYaml.AddPackage(package, yamlFilePath);
+			}
+			return multiFileYamlDict.Values;
+		}
 
 
 	}
