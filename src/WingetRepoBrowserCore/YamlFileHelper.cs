@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
+using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
 namespace WingetRepoBrowserCore
@@ -37,7 +38,7 @@ namespace WingetRepoBrowserCore
 					ManifestPackage_1_0_0 package = _deserializer.Deserialize<ManifestPackage_1_0_0>(streamReader);
 					return new ReadYamlFileResult() { Manifest=package, FilePath=yamlFile};
 				}
-				catch (YamlDotNet.Core.YamlException ex)
+				catch (YamlException ex)
 				{
 					return new ReadYamlFileResult() {ErrorMessage=GetMessage(ex), FilePath=yamlFile};
 				}
@@ -53,7 +54,7 @@ namespace WingetRepoBrowserCore
 		}
 
 
-		private /*static*/ string GetMessage(YamlDotNet.Core.YamlException ex)
+		private /*static*/ string GetMessage(YamlException ex)
 		{
 			string inner = null;
 			if (ex.InnerException != null)
@@ -90,6 +91,13 @@ namespace WingetRepoBrowserCore
 			return multiFileYamlDict.Values;
 		}
 
-
+		public static string GetLocaleYamlFilePath(string yamlFilePath, string locale)
+		{
+			return Path.ChangeExtension(yamlFilePath, ".locale." + locale + ".yaml");
+		}
+		public static string GetInstallerPackageFilePath(string filePath)
+		{
+			return Path.ChangeExtension(filePath, ".installer.yaml");
+		}
 	}
 }

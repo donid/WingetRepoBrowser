@@ -58,6 +58,15 @@ namespace WingetRepoBrowser
 				wingetidSettings.VersionsToIgnoreDownload = oldVersions.Concat(versionsToIgnore).ToArray();
 				Helpers.SaveWingetIdSettings(wingetidFilePath, wingetidSettings);
 			}
+
+			//remove all selected rows from grid
+			List<int> descendingRowHandles = gridView1.GetSelectedRows().OrderByDescending(i => i).ToList();
+			gridView1.BeginDataUpdate();
+			foreach (int rowHandle in descendingRowHandles)
+			{
+				gridView1.DeleteRow(rowHandle);
+			}
+			gridView1.EndDataUpdate();
 		}
 
 		private IEnumerable<NewDownloadVM> GetSelectedRows()
@@ -221,22 +230,19 @@ namespace WingetRepoBrowser
 				}
 				else
 				{
-					string yamlInstallerTargetFilePath = Helpers.GetInstallerPackageFilePath(yamlTargetFilePath);
+					string yamlInstallerTargetFilePath = YamlFileHelper.GetInstallerPackageFilePath(yamlTargetFilePath);
 					_yamlFileHelper.WriteYamlFile(yamlInstallerTargetFilePath, installerPackage);
 					Trace.WriteLine("modified: " + newDownload.MultiFileYaml.InstallerPackageFilePath + " " + yamlInstallerTargetFilePath);
 
 					string defaultLocale = targetManifestPackage.DefaultLocale;
-					string yamlLocaleTargetFilePath = GetYamlLocaleFilePath(yamlTargetFilePath, defaultLocale);
-					string yamlLocaleSourceFilePath = GetYamlLocaleFilePath(newDownload.MultiFileYaml.MainYamlFilePath, defaultLocale);
+					string yamlLocaleTargetFilePath = YamlFileHelper.GetLocaleYamlFilePath(yamlTargetFilePath, defaultLocale);
+					string yamlLocaleSourceFilePath = YamlFileHelper.GetLocaleYamlFilePath(newDownload.MultiFileYaml.MainYamlFilePath, defaultLocale);
 					File.Copy(yamlLocaleSourceFilePath, yamlLocaleTargetFilePath);
 				}
 			}
 		}
 
-		private static string GetYamlLocaleFilePath(string yamlFilePath, string locale)
-		{
-			return Path.ChangeExtension(yamlFilePath, ".locale." + locale + ".yaml");
-		}
+
 
 		private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{

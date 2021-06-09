@@ -24,7 +24,7 @@ namespace WingetRepoBrowserCore
 				{
 					return null;
 				}
-				return Helpers.GetInstallerPackageFilePath(MainYamlFilePath);
+				return YamlFileHelper.GetInstallerPackageFilePath(MainYamlFilePath);
 			}
 		}
 

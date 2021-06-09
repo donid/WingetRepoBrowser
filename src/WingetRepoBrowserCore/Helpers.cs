@@ -89,9 +89,6 @@ namespace WingetRepoBrowserCore
 			return stringBuilder.ToString();
 		}
 
-		public static string GetInstallerPackageFilePath(string filePath)
-		{
-			return Path.ChangeExtension(filePath, ".installer.yaml");
-		}
+	
 	}
 }
