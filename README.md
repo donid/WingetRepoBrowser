@@ -18,7 +18,7 @@ Clone the winget-pkgs repository to a local folder and specify that folder in Wi
 **New Features in v0.2.0**
 - added context menu "OpenGitRepo"
 - searching for yaml files doesn't block UI anymore
-- "Ignore selected version(s)"
+- fixed "Ignore selected version(s)"
 
 **New Features in v0.1.2**
 
