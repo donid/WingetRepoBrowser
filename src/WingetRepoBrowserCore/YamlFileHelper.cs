@@ -36,11 +36,11 @@ namespace WingetRepoBrowserCore
 				try
 				{
 					ManifestPackage_1_0_0 package = _deserializer.Deserialize<ManifestPackage_1_0_0>(streamReader);
-					return new ReadYamlFileResult() { Manifest=package, FilePath=yamlFile};
+					return new ReadYamlFileResult() { Manifest = package, FilePath = yamlFile };
 				}
 				catch (YamlException ex)
 				{
-					return new ReadYamlFileResult() {ErrorMessage=GetMessage(ex), FilePath=yamlFile};
+					return new ReadYamlFileResult() { ErrorMessage = GetMessage(ex), FilePath = yamlFile };
 				}
 			}
 		}
@@ -65,16 +65,51 @@ namespace WingetRepoBrowserCore
 		}
 
 
-		public IEnumerable<MultiFileYaml> LoadAllManifests(IEnumerable<string> yamlFiles, out List<string> messages)
+		public MultiFileYaml LoadMultiFileYaml(string mainYamlFilePath)
 		{
+			var ryr = ReadYamlFile(mainYamlFilePath);
+			if (ryr.ErrorMessage != null)
+			{
+				return null;//todo
+			}
+			MultiFileYaml result = new MultiFileYaml();
+			result.AddPackage(ryr.Manifest, mainYamlFilePath);
+			if (result.MainPackage.ManifestType == "version")
+			{
+				string packageIdentifier = result.MainPackage.PackageIdentifier;
+				string folder = Path.GetDirectoryName(mainYamlFilePath);
+				string installerFilePath = $"{packageIdentifier}.installer.yaml";
+				var ryri = ReadYamlFile(Path.Combine(folder, installerFilePath));
+				if (ryri.ErrorMessage != null)
+				{
+					return null;//todo
+				}
+				result.AddPackage(ryri.Manifest, installerFilePath);
+				string[] yamlFilePaths = Directory.GetFiles(folder, $"{packageIdentifier}.locale.*.yaml", SearchOption.TopDirectoryOnly);
+				foreach (string yamlFilePath in yamlFilePaths)
+				{
+					ReadYamlFileResult localeManifestResult = ReadYamlFile(Path.Combine(folder, yamlFilePath));
+					if (localeManifestResult.ErrorMessage != null)
+					{
+						return null;//todo
+					}
+
+					result.AddPackage(localeManifestResult.Manifest, yamlFilePath);
+				}
+			}
+			return result;
+		}
+
+		public LoadManifestsResult LoadAllManifests(IEnumerable<string> yamlFiles)
+		{
+			LoadManifestsResult result = new LoadManifestsResult();
 			Dictionary<string, MultiFileYaml> multiFileYamlDict = new Dictionary<string, MultiFileYaml>();
-			messages = new List<string>();
 			foreach (string yamlFilePath in yamlFiles)
 			{
 				ReadYamlFileResult ryfr = ReadYamlFile(yamlFilePath);
 				if (ryfr.ErrorMessage != null)
 				{
-					messages.Add(yamlFilePath + ": " + ryfr.ErrorMessage);
+					result.Messages.Add(yamlFilePath + ": " + ryfr.ErrorMessage);
 					continue;
 				}
 				ManifestPackage_1_0_0 package = ryfr.Manifest;
@@ -88,7 +123,8 @@ namespace WingetRepoBrowserCore
 				}
 				multiFileYaml.AddPackage(package, yamlFilePath);
 			}
-			return multiFileYamlDict.Values;
+			result.Manifests = multiFileYamlDict.Values;
+			return result;
 		}
 
 		public static string GetLocaleYamlFilePath(string yamlFilePath, string locale)
@@ -99,5 +135,31 @@ namespace WingetRepoBrowserCore
 		{
 			return Path.ChangeExtension(filePath, ".installer.yaml");
 		}
+
+		public void SaveMultiFileYaml(MultiFileYaml mfy, string versionFolder)
+		{
+			string yamlTargetFilename = Path.GetFileName(mfy.MainYamlFilePath);
+			string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
+
+			string packageIdentifier = mfy.MainPackage.PackageIdentifier;
+			WriteYamlFile(Path.Combine(versionFolder, $"{packageIdentifier}.yaml"), mfy.MainPackage);
+			if (mfy.MainPackage.ManifestType == "singleton")
+			{
+				return;
+			}
+			WriteYamlFile(Path.Combine(versionFolder, $"{packageIdentifier}.installer.yaml"), mfy.InstallerPackage);
+			WriteYamlFile(Path.Combine(versionFolder, $"{packageIdentifier}.locale.{mfy.DefaultLocalePackage.PackageLocale}.yaml"), mfy.DefaultLocalePackage);
+			foreach (ManifestPackage_1_0_0 localePackage in mfy.LocalePackages)
+			{
+				WriteYamlFile(Path.Combine(versionFolder, $"{packageIdentifier}.locale.{localePackage.PackageLocale}.yaml"), localePackage);				
+			}
+		}
+	}
+
+	public class LoadManifestsResult
+	{
+		public IEnumerable<MultiFileYaml> Manifests { get; set; }
+		public List<string> Messages { get; } = new List<string>();
+
 	}
 }

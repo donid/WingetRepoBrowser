@@ -13,6 +13,16 @@ namespace WingetRepoBrowserTests
 	{
 		[TestMethod]
 		//[Ignore][Explicit]
+		public void TestLoadMultiFileYaml()
+		{
+			const string MainYamlFilePath = @"V:\projects_os_git\winget-pkgs\manifests\a\AxisCommunications\AxisCameraStation\5.37.301\AxisCommunications.AxisCameraStation.yaml";
+			MultiFileYaml mfy = new YamlFileHelper().LoadMultiFileYaml(MainYamlFilePath);
+
+		}
+
+
+		[TestMethod]
+		//[Ignore][Explicit]
 		public void TestDeserializeYaml()
 		{
 			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\7\7zip\7zip\19.0.0\7zip.7zip.yaml";

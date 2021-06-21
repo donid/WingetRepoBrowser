@@ -113,9 +113,11 @@ namespace WingetRepoBrowser
 		{
 			_installerDownloader = new InstallerDownloader();
 			_errorCount = 0;
-			foreach (NewDownload newDownload in NewDownloads)
+
+			List<NewDownloadVM> ds = (List<NewDownloadVM>)gridControl1.DataSource;
+			foreach (NewDownloadVM newDownloadVM in ds)
 			{
-				ProcessOneNewDownload(newDownload);
+				ProcessOneNewDownload(newDownloadVM.NewDownload);
 			}
 		}
 
@@ -132,17 +134,9 @@ namespace WingetRepoBrowser
 		{
 			string versionFolder = newDownload.VersionFolder;
 			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
-			ManifestPackage_1_0_0 targetManifestPackage = _yamlFileHelper.ReadYamlFile(newDownload.MultiFileYaml.MainYamlFilePath).Manifest;
-			ManifestInstaller_1_0_0[] installers = targetManifestPackage.Installers;
-
-			ManifestPackage_1_0_0 installerPackage = null;
-			if (newDownload.MultiFileYaml.InstallerPackageFilePath != null)
-			{
-				installerPackage = _yamlFileHelper.ReadYamlFile(newDownload.MultiFileYaml.InstallerPackageFilePath).Manifest;
-				installers = installerPackage.Installers;
-			}
-
-			var installersWithMatchingLocale = installers.Where(i => HasMatchingLocale(i, LocalesToDownload));
+			MultiFileYaml mfy = new YamlFileHelper().LoadMultiFileYaml(newDownload.MultiFileYaml.MainYamlFilePath);
+	
+			var installersWithMatchingLocale = mfy.Installers.Where(i => HasMatchingLocale(i, LocalesToDownload));
 
 			foreach (ManifestInstaller_1_0_0 manifestInstaller in installersWithMatchingLocale)
 			{
@@ -166,7 +160,7 @@ namespace WingetRepoBrowser
 					AddLogLineBackground("Creating directory: " + versionFolder);
 					Directory.CreateDirectory(versionFolder);
 					string downloadFolder = versionFolder;
-					if (newDownload.MultiFileYaml.InstallerPackageFilePath != null)
+					if (newDownload.MultiFileYaml.Installers.Count >1)
 					{
 						string archAndLocale = $"{manifestInstaller.Architecture ?? "null"}_{manifestInstaller.InstallerLocale ?? "null"}";
 						downloadFolder = Path.Combine(versionFolder, archAndLocale);
@@ -220,25 +214,7 @@ namespace WingetRepoBrowser
 			if (Directory.Exists(versionFolder))
 			{
 				//save modified manifest to download-folder
-				string yamlTargetFilename = Path.GetFileName(newDownload.MultiFileYaml.MainYamlFilePath);
-				string yamlTargetFilePath = Path.Combine(versionFolder, yamlTargetFilename);
-
-				_yamlFileHelper.WriteYamlFile(yamlTargetFilePath, targetManifestPackage);
-				if (newDownload.MultiFileYaml.InstallerPackageFilePath == null)
-				{
-					Trace.WriteLine("modified: " + newDownload.MultiFileYaml.MainYamlFilePath + " " + yamlTargetFilePath);
-				}
-				else
-				{
-					string yamlInstallerTargetFilePath = YamlFileHelper.GetInstallerPackageFilePath(yamlTargetFilePath);
-					_yamlFileHelper.WriteYamlFile(yamlInstallerTargetFilePath, installerPackage);
-					Trace.WriteLine("modified: " + newDownload.MultiFileYaml.InstallerPackageFilePath + " " + yamlInstallerTargetFilePath);
-
-					string defaultLocale = targetManifestPackage.DefaultLocale;
-					string yamlLocaleTargetFilePath = YamlFileHelper.GetLocaleYamlFilePath(yamlTargetFilePath, defaultLocale);
-					string yamlLocaleSourceFilePath = YamlFileHelper.GetLocaleYamlFilePath(newDownload.MultiFileYaml.MainYamlFilePath, defaultLocale);
-					File.Copy(yamlLocaleSourceFilePath, yamlLocaleTargetFilePath);
-				}
+				_yamlFileHelper.SaveMultiFileYaml(mfy, versionFolder);
 			}
 		}
 

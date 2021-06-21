@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using DevExpress.Utils.Menu;
@@ -26,6 +27,8 @@ namespace WingetRepoBrowser
 {
 	public partial class MainForm : XtraForm
 	{
+		const string cGitRepoBaseUrl = "https://github.com/microsoft/winget-pkgs";
+
 		AppSettings _appSettings;
 		GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
 		List<ManifestPackageVM> _manifestVMs;
@@ -46,7 +49,8 @@ namespace WingetRepoBrowser
 
 			DXMenuItem[] result = new DXMenuItem[] {
 				new DXMenuItem("OpenYamlFile", ItemOpenYamlFile_Click),
-				new DXMenuItem("OpenYamlFolder", ItemOpenYamlFolder_Click)
+				new DXMenuItem("OpenYamlFolder", ItemOpenYamlFolder_Click),
+				new DXMenuItem("OpenGitRepo", ItemOpenGitRepo_Click)
 			};
 			return result;
 		}
@@ -70,6 +74,19 @@ namespace WingetRepoBrowser
 			}
 
 			OpenFileOrUrl(Path.GetDirectoryName(row.FilePath));
+		}
+		private void ItemOpenGitRepo_Click(object sender, EventArgs e)
+		{
+			ManifestPackageVM row = GetFocusedRow();
+			if (row == null)
+			{
+				return;
+			}
+			string[] parts = row.Id.Split('.');
+			string vendor = parts[0];
+			string name = parts[1];
+			string url = cGitRepoBaseUrl + $"/tree/master/manifests/{vendor.ToLower()[0]}/{vendor}/{name}/{row.Version}";
+			OpenFileOrUrl(url);
 		}
 
 		private void ShowMessageBox(string message)
@@ -140,7 +157,29 @@ namespace WingetRepoBrowser
 			e.ChildList = row.Installers;
 		}
 
-		private void simpleButtonSearch_Click(object sender, EventArgs e)
+		private static IEnumerable<string> FindAllYamlFiles(string folder)
+		{
+			return Directory.GetFiles(folder, "*.yaml", SearchOption.AllDirectories);
+		}
+		/*
+		private static async Task<IEnumerable<string>> FindAllYamlFilesAsync(string folder)
+		{
+			using (var e = await Task.Run(() => Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories).GetEnumerator()))
+			{
+				while (await Task.Run(() => e.MoveNext()))
+				{
+					Use(e.Current);
+				}
+			}
+		}
+		*/
+		private static async Task<IEnumerable<string>> FindAllYamlFilesAsync(string folder)
+		{
+			IEnumerable<string> e = await Task.Run(() => Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories));
+			return e;
+		}
+
+		private async void simpleButtonSearch_Click(object sender, EventArgs e)
 		{
 			string folder = textEditRepoFolder.Text;
 			if (!Directory.Exists(folder))
@@ -150,52 +189,58 @@ namespace WingetRepoBrowser
 			}
 
 			memoEditMessages.Text = string.Empty;
+			gridControl1.DataSource = null; //remove old list;
+			simpleButtonCheckForNewDownloads.Enabled = false;
+			simpleButtonCreateSubFoldersForSelected.Enabled = false;
 
-			Cursor saveCursor = Cursor.Current;
+			simpleButtonSearch.Enabled = false;
+			gridView1.ShowLoadingPanel();
+
 			try
 			{
-				Cursor.Current = Cursors.WaitCursor;
-
 
 				IEnumerable<string> yamlFiles;
 				try
 				{
-					yamlFiles = Directory.GetFiles(folder, "*.yaml", SearchOption.AllDirectories);
+					//yamlFiles = await FindAllYamlFilesAsync(folder);
+					yamlFiles = FindAllYamlFiles(folder);
 				}
 				catch (Exception ex)
 				{
-					gridControl1.DataSource = null; //remove old list;
-					simpleButtonCheckForNewDownloads.Enabled = false;
-					simpleButtonCreateSubFoldersForSelected.Enabled = false;
 
 					// e.g. when using folder 'c:\' System.UnauthorizedAccessException: 'Access to the path 'C:\$Recycle.Bin\S-1-5-18' is denied.'
 					ShowMessageBox(ex.Message);
 					return;
 				}
 
-				List<string> messages;
-				IEnumerable<MultiFileYaml> multiFileYamls = _yamlFileHelper.LoadAllManifests(yamlFiles, out messages);
+
+				LoadManifestsResult loadManifestsResult = await Task.Run(() => _yamlFileHelper.LoadAllManifests(yamlFiles));
+				// LoadManifestsResult loadManifestsResult = _yamlFileHelper.LoadAllManifests(yamlFiles);
+
+				IEnumerable<MultiFileYaml> multiFileYamls = loadManifestsResult.Manifests;
 				List<ManifestPackageVM> tmpManifestVMs = new List<ManifestPackageVM>();
 				foreach (MultiFileYaml multiFileYaml in multiFileYamls)
 				{
 					tmpManifestVMs.Add(new ManifestPackageVM(multiFileYaml));
 				}
 
-				if (messages.Any())
+				if (loadManifestsResult.Messages.Any())
 				{
 					layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
-					memoEditMessages.Text = string.Join(Environment.NewLine, messages);
+					memoEditMessages.Text = string.Join(Environment.NewLine, loadManifestsResult.Messages);
 				}
 				_manifestVMs = tmpManifestVMs;
 				gridControl1.DataSource = _manifestVMs;
 			}
 			finally
 			{
-				Cursor.Current = saveCursor;
+				gridView1.HideLoadingPanel();
+				simpleButtonSearch.Enabled = true;
 			}
 			simpleButtonCheckForNewDownloads.Enabled = true;
 			simpleButtonCreateSubFoldersForSelected.Enabled = true;
 		}
+
 
 
 		private void repositoryItemButtonEditUrl_ButtonClick(object sender, ButtonPressedEventArgs e)
@@ -219,7 +264,7 @@ namespace WingetRepoBrowser
 
 		private void simpleButtonOpenGitRepo_Click(object sender, EventArgs e)
 		{
-			OpenFileOrUrl("https://github.com/microsoft/winget-pkgs");
+			OpenFileOrUrl(cGitRepoBaseUrl);
 		}
 
 		private void simpleButtonCheckForNewDownloads_Click(object sender, EventArgs e)
@@ -250,7 +295,7 @@ namespace WingetRepoBrowser
 				{
 					form.LocalesToDownload = _appSettings.LocalesToDownload;
 				}
-				form.ShowDialog();
+				form.ShowDialog(this);
 			}
 			finally
 			{
@@ -272,7 +317,7 @@ namespace WingetRepoBrowser
 			foreach (Tuple<ManifestPackageVM, string> idFileTuple in idFileTuples)
 			{
 				ManifestPackageVM manifestPackage = idFileTuple.Item1;
-				string idFilePath=idFileTuple.Item2;
+				string idFilePath = idFileTuple.Item2;
 
 				string[] versionsToIgnoreDownload = Helpers.GetVersionsToIgnoreDownload(idFilePath);
 
@@ -312,7 +357,7 @@ namespace WingetRepoBrowser
 			return result;
 		}
 
-	
+
 
 		static string ReplaceInvalidChars(string filename)
 		{

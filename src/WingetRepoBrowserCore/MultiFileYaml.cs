@@ -70,16 +70,24 @@ namespace WingetRepoBrowserCore
 				_mainYamlFilePath = yamlFilePath;
 				_mainPackage = package;
 			}
-			else if (package.ManifestType == "defaultLocale")//todo: allow only one
+			else if (package.ManifestType == "defaultLocale")
 			{
+				if (_defaultLocalePackage != null)
+				{
+					throw new Exception("package is already set!");
+				}
 				_defaultLocalePackage = package;
 			}
 			else if (package.ManifestType == "locale")
 			{
 				LocalePackages.Add(package);
 			}
-			else if (package.ManifestType == "installer")//todo: allow only one
+			else if (package.ManifestType == "installer")
 			{
+				if (_installerPackage != null)
+				{
+					throw new Exception("package is already set!");
+				}
 				_installerPackage = package;
 				_installers.AddRange(package.Installers);
 			}
