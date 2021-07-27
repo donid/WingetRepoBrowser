@@ -97,7 +97,7 @@ namespace WingetRepoBrowser
 
 		private string GetDebuggerDisplay()
 		{
-			return ToString();
+			return Id;
 		}
 
 	

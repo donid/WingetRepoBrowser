@@ -1,4 +1,7 @@
-﻿using WingetRepoBrowserCore;
+﻿using System.Collections.Generic;
+using System.IO;
+
+using WingetRepoBrowserCore;
 
 using WingetRepoBrowserTests;
 

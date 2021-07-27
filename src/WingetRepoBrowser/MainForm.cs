@@ -324,34 +324,15 @@ namespace WingetRepoBrowser
 				string idFileFolder = Path.GetDirectoryName(idFilePath);
 				string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in folders with version as name
 				bool exists = versionsToIgnoreDownload.Any(v => v == manifestPackage.Version) || Directory.Exists(versionFolder);
-				//if (manifestPackage.Version == "latest" && exists)
-				if (false)//TODO: the following code crashes when downloaded yaml-files are not version 1.0.0
+				if (!exists)
 				{
-					string downloadedYamlFilePath = Path.Combine(versionFolder, "latest.yaml");
-					ManifestPackage_1_0_0 downloadedManifestPackage = yamlFileHelper.ReadYamlFile(downloadedYamlFilePath).Manifest;
-					//TODO test all installers when winget supports multiple installers
-					if (manifestPackage.Installers[0].Sha256 != downloadedManifestPackage.Installers[0].InstallerSha256)
+					NewDownload dl = new NewDownload()
 					{
-						FileInfo fi = new FileInfo(downloadedYamlFilePath);
-						string versionSuffix = fi.LastWriteTime.ToString("_yyyy-MM-dd");
-						downloadedManifestPackage.PackageVersion += versionSuffix;
-						yamlFileHelper.WriteYamlFile(downloadedYamlFilePath, downloadedManifestPackage);
-						Directory.Move(versionFolder, versionFolder + versionSuffix);
-						exists = Directory.Exists(versionFolder);
-					}
-				}
-				if (manifestPackage.Version != "latest")//TODO!!!!
-				{
-					if (!exists)
-					{
-						NewDownload dl = new NewDownload()
-						{
-							MultiFileYaml = manifestPackage.MultiFileYaml,
-							VersionFolder = versionFolder,
-							IdFilePath = idFilePath
-						};
-						result.Add(dl);
-					}
+						MultiFileYaml = manifestPackage.MultiFileYaml,
+						VersionFolder = versionFolder,
+						IdFilePath = idFilePath
+					};
+					result.Add(dl);
 				}
 			}
 			return result;

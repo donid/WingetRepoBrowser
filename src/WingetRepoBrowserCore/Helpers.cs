@@ -44,7 +44,9 @@ namespace WingetRepoBrowserCore
 			return result;
 		}
 
-
+		//TODO: Retry if this occurs:
+		// happens regularly on a network share (due to malware scanner?)
+		// Error: Calculating Sha256-Hash: I/O Exception: The process cannot access the file '...\Firefox\89.0.1\x86_en-US\Firefox Setup 89.0.1.msi' because it is being used by another process.
 		public static CalculateFileHashResult CalculateSha256HashFromFile(string downloadFilePath)
 		{
 			using (SHA256 mySHA256 = SHA256.Create())
