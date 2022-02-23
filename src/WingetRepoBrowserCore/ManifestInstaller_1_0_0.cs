@@ -1,4 +1,6 @@
-﻿namespace WingetRepoBrowserCore
+﻿using System;
+
+namespace WingetRepoBrowserCore
 {
 	/// <summary>
 	///  Installers represents the collection of entries that define the actual installer.  The installer provides the architecture, url and hash that 
@@ -95,5 +97,10 @@
 
 
 		public string UpgradeBehavior { get; set; }
+
+		/// <summary>
+		/// DateOnly exists only in .Net 6 not in netstandard 2
+		/// </summary>
+		public DateTime? ReleaseDate { get; set; }
 	}
 }

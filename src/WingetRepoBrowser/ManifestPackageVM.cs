@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using WingetRepoBrowserCore;
@@ -38,7 +39,20 @@ namespace WingetRepoBrowser
 
 		public string Version { get { return _multiFileYaml.MainPackage.PackageVersion; } }
 
-		public string Publisher { get { return _multiFileYaml.DefaultLocalePackage.Publisher; } }
+        public DateTime? ReleaseDate
+        {
+            get
+            {
+                DateTime? releaseDate = _multiFileYaml.InstallerPackage?.ReleaseDate;
+                if (releaseDate!=null)
+                {
+                    return releaseDate;
+                }
+                return GetInstallers().Max(item => item.ReleaseDate);
+            }
+        }
+
+        public string Publisher { get { return _multiFileYaml.DefaultLocalePackage.Publisher; } }
 
 		public string Moniker { get { return _multiFileYaml.DefaultLocalePackage.Moniker; } }
 

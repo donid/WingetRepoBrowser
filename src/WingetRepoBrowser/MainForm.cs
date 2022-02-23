@@ -161,18 +161,7 @@ namespace WingetRepoBrowser
 		{
 			return Directory.GetFiles(folder, "*.yaml", SearchOption.AllDirectories);
 		}
-		/*
-		private static async Task<IEnumerable<string>> FindAllYamlFilesAsync(string folder)
-		{
-			using (var e = await Task.Run(() => Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories).GetEnumerator()))
-			{
-				while (await Task.Run(() => e.MoveNext()))
-				{
-					Use(e.Current);
-				}
-			}
-		}
-		*/
+
 		private static async Task<IEnumerable<string>> FindAllYamlFilesAsync(string folder)
 		{
 			IEnumerable<string> e = await Task.Run(() => Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories));

@@ -1,4 +1,6 @@
-﻿using WingetRepoBrowserCore;
+﻿using System;
+
+using WingetRepoBrowserCore;
 
 namespace WingetRepoBrowser
 {
@@ -26,6 +28,8 @@ namespace WingetRepoBrowser
 
 		public string Scope { get { return _installers.Scope; } }
 
+		public DateTime? ReleaseDate { get { return _installers.ReleaseDate; } }
+
 
 		public string ProductCode { get { return _installers.ProductCode; } }
 		public string UpgradeBehavior { get { return _installers.UpgradeBehavior; } }
@@ -45,5 +49,6 @@ namespace WingetRepoBrowser
 
 		public string SwitchesLog { get { return _installers.InstallerSwitches?.Log; } }
 		public string SwitchesInteractive { get { return _installers.InstallerSwitches?.Interactive; } }
+
 	}
 }

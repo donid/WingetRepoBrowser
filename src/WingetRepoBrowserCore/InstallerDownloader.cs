@@ -11,7 +11,8 @@ namespace WingetRepoBrowserCore
 		// newer, but very specific: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0";
 		// or "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)"
 		//const string cUserAgent = "Mozilla/4.0 (Windows NT 10.0; Win64; x64)";
-		public const string cUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0";
+		//public const string cUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0";
+		public const string cUserAgent = "winget/1.0";
 
 		WebClient _webClient;
 		public InstallerDownloader()

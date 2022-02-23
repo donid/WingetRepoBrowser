@@ -57,7 +57,7 @@ namespace WingetRepoBrowserCore
 					{
 						byte[] hashValue = mySHA256.ComputeHash(fileStream);
 						string hash = ToHex(hashValue);
-						return new CalculateFileHashResult() { Hash= hash };
+						return new CalculateFileHashResult() { Hash = hash };
 					}
 				}
 				catch (IOException e)
@@ -73,7 +73,7 @@ namespace WingetRepoBrowserCore
 
 		public class CalculateFileHashResult
 		{
-			public string Hash { get; set; }
+			public string Hash { get; set; }    // TODO: use 'init' instead of 'set' when switching to c#9
 			public string ErrorMessage { get; set; }
 		}
 
@@ -91,6 +91,6 @@ namespace WingetRepoBrowserCore
 			return stringBuilder.ToString();
 		}
 
-	
+
 	}
 }

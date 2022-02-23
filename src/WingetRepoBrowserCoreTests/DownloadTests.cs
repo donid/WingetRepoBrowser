@@ -19,10 +19,11 @@ namespace WingetRepoBrowserCoreTests
 		{
 			// https://stackoverflow.com/questions/68529103/why-does-webrequest-fail-with-404/68529810?noredirect=1#comment121112114_68529810
 
+			//string url = "https://sourceforge.net/projects/smplayer/files/SMPlayer/21.1.0/smplayer-21.1.0-win32.exe/download";// do not use UserAgent when trying to get filename
 			//string url = "https://dl.pstmn.io/download/version/8.9.0/win64"; // works
 			//string url = "https://dl.pstmn.io/download/version/8.9.0/win32"; //404 here, but works in FF or Chrome
 			string url = "https://download.filezilla-project.org/client/FileZilla_3.55.0_win32-setup.exe"; // 403
-																										   //string url = "https://sourceforge.net/projects/smplayer/files/SMPlayer/21.1.0/smplayer-21.1.0-win32.exe/download";// do not use UserAgent when trying to get filename
+
 			HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
 			req.Method = "HEAD";
 			req.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;// for postman!! avoid 404

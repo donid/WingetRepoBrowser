@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace WingetRepoBrowserCore
 {
@@ -73,6 +74,11 @@ Localization:
 		/// Restrictions: 4 sections with max value of 65535.  For example:65535.65535.65535.65535
 		/// </summary>
 		public string PackageVersion { get; set; }
+
+		/// <summary>
+		/// DateOnly exists only in .Net 6 not in netstandard 2
+		/// </summary>
+		public DateTime? ReleaseDate { get; set; }
 
 		/// <summary>
 		/// Mandatory!
