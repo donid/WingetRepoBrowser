@@ -16,7 +16,7 @@ namespace WingetRepoBrowserTests
 		//[Ignore][Explicit]
 		public void TestLoadMultiFileYaml()
 		{
-			const string MainYamlFilePath = @"V:\projects_os_git\winget-pkgs\manifests\a\AxisCommunications\AxisCameraStation\5.37.301\AxisCommunications.AxisCameraStation.yaml";
+			const string MainYamlFilePath = @"V:\projects_os_git\winget-pkgs\manifests\a\AxisCommunications\AxisCameraStation\5.37.304\AxisCommunications.AxisCameraStation.yaml";
 			MultiFileYaml mfy = new YamlFileHelper().LoadMultiFileYaml(MainYamlFilePath);
 
 		}
@@ -26,7 +26,7 @@ namespace WingetRepoBrowserTests
 		//[Ignore][Explicit]
 		public void TestDeserializeYaml()
 		{
-			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\7\7zip\7zip\19.0.0\7zip.7zip.yaml";
+			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\7\7zip\7zip\21.07\7zip.7zip.yaml";
 			ManifestPackage_1_0_0 package = new YamlFileHelper().ReadYamlFile(yamlFile).Manifest;
 			string locale = package.PackageLocale;
 		}
@@ -38,7 +38,7 @@ namespace WingetRepoBrowserTests
 		{
 			//string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\7Zip\7Zip\19.0.0.yaml";
 			//string yamlFileTarget = @"e:\7Zip_19.0.0.yaml";
-			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\a\AcroSoftware\CutePDFWriter\4.0.1.1\AcroSoftware.CutePDFWriter.yaml";
+			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\a\AcroSoftware\CutePDFWriter\4.0\AcroSoftware.CutePDFWriter.yaml";
 			string yamlFileTarget = @"e:\cutepdf4.yaml";
 			YamlFileHelper yamlFileHelper = new YamlFileHelper();
 			ManifestPackage_1_0_0 package = yamlFileHelper.ReadYamlFile(yamlFile).Manifest;
@@ -50,7 +50,7 @@ namespace WingetRepoBrowserTests
 		//[Ignore][Explicit]
 		public void TestReadManifestVersion()
 		{
-			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\a\AcroSoftware\CutePDFWriter\4.0.1.1\AcroSoftware.CutePDFWriter.yaml";
+			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\a\AcroSoftware\CutePDFWriter\4.0\AcroSoftware.CutePDFWriter.yaml";
 			string version = ReadYamlManifestVersion(yamlFile);
 		}
 

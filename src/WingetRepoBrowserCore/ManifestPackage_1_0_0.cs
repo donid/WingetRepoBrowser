@@ -168,6 +168,9 @@ Localization:
 		/// </summary>
 		public string InstallerType { get; set; }
 
+		public string[] InstallModes { get; set; }
+
+
 		/// <summary>
 		/// Mandatory!
 		/// nested map of keys for specific installer

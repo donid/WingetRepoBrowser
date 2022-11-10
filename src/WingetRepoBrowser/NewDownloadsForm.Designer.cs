@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+			this.progressBarControl1 = new DevExpress.XtraEditors.ProgressBarControl();
 			this.simpleButtonCancel = new DevExpress.XtraEditors.SimpleButton();
 			this.memoEdit1 = new DevExpress.XtraEditors.MemoEdit();
 			this.simpleButtonDownload = new DevExpress.XtraEditors.SimpleButton();
@@ -43,9 +44,11 @@
 			this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
 			this.splitterItem1 = new DevExpress.XtraLayout.SplitterItem();
 			this.layoutControlItemCancel = new DevExpress.XtraLayout.LayoutControlItem();
+			this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
 			this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
 			this.layoutControl1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.progressBarControl1.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.memoEdit1.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
@@ -55,10 +58,12 @@
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItemCancel)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// layoutControl1
 			// 
+			this.layoutControl1.Controls.Add(this.progressBarControl1);
 			this.layoutControl1.Controls.Add(this.simpleButtonCancel);
 			this.layoutControl1.Controls.Add(this.memoEdit1);
 			this.layoutControl1.Controls.Add(this.simpleButtonDownload);
@@ -68,13 +73,22 @@
 			this.layoutControl1.Name = "layoutControl1";
 			this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(4676, 600, 650, 400);
 			this.layoutControl1.Root = this.Root;
-			this.layoutControl1.Size = new System.Drawing.Size(588, 413);
+			this.layoutControl1.Size = new System.Drawing.Size(588, 476);
 			this.layoutControl1.TabIndex = 0;
 			this.layoutControl1.Text = "layoutControl1";
 			// 
+			// progressBarControl1
+			// 
+			this.progressBarControl1.Location = new System.Drawing.Point(12, 256);
+			this.progressBarControl1.Name = "progressBarControl1";
+			this.progressBarControl1.Properties.ShowTitle = true;
+			this.progressBarControl1.Size = new System.Drawing.Size(564, 16);
+			this.progressBarControl1.StyleController = this.layoutControl1;
+			this.progressBarControl1.TabIndex = 8;
+			// 
 			// simpleButtonCancel
 			// 
-			this.simpleButtonCancel.Location = new System.Drawing.Point(296, 201);
+			this.simpleButtonCancel.Location = new System.Drawing.Point(296, 230);
 			this.simpleButtonCancel.Name = "simpleButtonCancel";
 			this.simpleButtonCancel.Size = new System.Drawing.Size(280, 22);
 			this.simpleButtonCancel.StyleController = this.layoutControl1;
@@ -84,15 +98,15 @@
 			// 
 			// memoEdit1
 			// 
-			this.memoEdit1.Location = new System.Drawing.Point(12, 243);
+			this.memoEdit1.Location = new System.Drawing.Point(12, 292);
 			this.memoEdit1.Name = "memoEdit1";
-			this.memoEdit1.Size = new System.Drawing.Size(564, 158);
+			this.memoEdit1.Size = new System.Drawing.Size(564, 172);
 			this.memoEdit1.StyleController = this.layoutControl1;
 			this.memoEdit1.TabIndex = 6;
 			// 
 			// simpleButtonDownload
 			// 
-			this.simpleButtonDownload.Location = new System.Drawing.Point(12, 201);
+			this.simpleButtonDownload.Location = new System.Drawing.Point(12, 230);
 			this.simpleButtonDownload.Name = "simpleButtonDownload";
 			this.simpleButtonDownload.Size = new System.Drawing.Size(280, 22);
 			this.simpleButtonDownload.StyleController = this.layoutControl1;
@@ -105,7 +119,7 @@
 			this.gridControl1.Location = new System.Drawing.Point(12, 12);
 			this.gridControl1.MainView = this.gridView1;
 			this.gridControl1.Name = "gridControl1";
-			this.gridControl1.Size = new System.Drawing.Size(564, 180);
+			this.gridControl1.Size = new System.Drawing.Size(564, 209);
 			this.gridControl1.TabIndex = 4;
 			this.gridControl1.UseEmbeddedNavigator = true;
 			this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
@@ -155,9 +169,10 @@
             this.layoutControlItemDownload,
             this.layoutControlItem3,
             this.splitterItem1,
-            this.layoutControlItemCancel});
+            this.layoutControlItemCancel,
+            this.layoutControlItem2});
 			this.Root.Name = "Root";
-			this.Root.Size = new System.Drawing.Size(588, 413);
+			this.Root.Size = new System.Drawing.Size(588, 476);
 			this.Root.TextVisible = false;
 			// 
 			// layoutControlItem1
@@ -165,14 +180,14 @@
 			this.layoutControlItem1.Control = this.gridControl1;
 			this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
 			this.layoutControlItem1.Name = "layoutControlItem1";
-			this.layoutControlItem1.Size = new System.Drawing.Size(568, 184);
+			this.layoutControlItem1.Size = new System.Drawing.Size(568, 213);
 			this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItem1.TextVisible = false;
 			// 
 			// layoutControlItemDownload
 			// 
 			this.layoutControlItemDownload.Control = this.simpleButtonDownload;
-			this.layoutControlItemDownload.Location = new System.Drawing.Point(0, 189);
+			this.layoutControlItemDownload.Location = new System.Drawing.Point(0, 218);
 			this.layoutControlItemDownload.Name = "layoutControlItemDownload";
 			this.layoutControlItemDownload.Size = new System.Drawing.Size(284, 26);
 			this.layoutControlItemDownload.TextSize = new System.Drawing.Size(0, 0);
@@ -181,9 +196,9 @@
 			// layoutControlItem3
 			// 
 			this.layoutControlItem3.Control = this.memoEdit1;
-			this.layoutControlItem3.Location = new System.Drawing.Point(0, 215);
+			this.layoutControlItem3.Location = new System.Drawing.Point(0, 264);
 			this.layoutControlItem3.Name = "layoutControlItem3";
-			this.layoutControlItem3.Size = new System.Drawing.Size(568, 178);
+			this.layoutControlItem3.Size = new System.Drawing.Size(568, 192);
 			this.layoutControlItem3.Text = "Log";
 			this.layoutControlItem3.TextLocation = DevExpress.Utils.Locations.Top;
 			this.layoutControlItem3.TextSize = new System.Drawing.Size(17, 13);
@@ -191,19 +206,28 @@
 			// splitterItem1
 			// 
 			this.splitterItem1.AllowHotTrack = true;
-			this.splitterItem1.Location = new System.Drawing.Point(0, 184);
+			this.splitterItem1.Location = new System.Drawing.Point(0, 213);
 			this.splitterItem1.Name = "splitterItem1";
 			this.splitterItem1.Size = new System.Drawing.Size(568, 5);
 			// 
 			// layoutControlItemCancel
 			// 
 			this.layoutControlItemCancel.Control = this.simpleButtonCancel;
-			this.layoutControlItemCancel.Location = new System.Drawing.Point(284, 189);
+			this.layoutControlItemCancel.Location = new System.Drawing.Point(284, 218);
 			this.layoutControlItemCancel.Name = "layoutControlItemCancel";
 			this.layoutControlItemCancel.Size = new System.Drawing.Size(284, 26);
 			this.layoutControlItemCancel.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItemCancel.TextVisible = false;
 			this.layoutControlItemCancel.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Never;
+			// 
+			// layoutControlItem2
+			// 
+			this.layoutControlItem2.Control = this.progressBarControl1;
+			this.layoutControlItem2.Location = new System.Drawing.Point(0, 244);
+			this.layoutControlItem2.Name = "layoutControlItem2";
+			this.layoutControlItem2.Size = new System.Drawing.Size(568, 20);
+			this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
+			this.layoutControlItem2.TextVisible = false;
 			// 
 			// backgroundWorker1
 			// 
@@ -217,13 +241,14 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(588, 413);
+			this.ClientSize = new System.Drawing.Size(588, 476);
 			this.Controls.Add(this.layoutControl1);
 			this.Name = "NewDownloadsForm";
 			this.Text = "WingetRepoBrowser New Downloads";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.NewDownloadsForm_FormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
 			this.layoutControl1.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.progressBarControl1.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.memoEdit1.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
@@ -233,6 +258,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.splitterItem1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.layoutControlItemCancel)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -255,5 +281,7 @@
 		private System.ComponentModel.BackgroundWorker backgroundWorker1;
 		private DevExpress.XtraEditors.SimpleButton simpleButtonCancel;
 		private DevExpress.XtraLayout.LayoutControlItem layoutControlItemCancel;
-	}
+        private DevExpress.XtraEditors.ProgressBarControl progressBarControl1;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+    }
 }

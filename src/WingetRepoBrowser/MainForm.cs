@@ -27,12 +27,11 @@ namespace WingetRepoBrowser
 {
 	public partial class MainForm : XtraForm
 	{
-		const string cGitRepoBaseUrl = "https://github.com/microsoft/winget-pkgs";
-
-		AppSettings _appSettings;
-		GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
-		List<ManifestPackageVM> _manifestVMs;
-		YamlFileHelper _yamlFileHelper;
+		private const string cGitRepoBaseUrl = "https://github.com/microsoft/winget-pkgs";
+		private AppSettings _appSettings;
+		private GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
+		private List<ManifestPackageVM> _manifestVMs;
+		private YamlFileHelper _yamlFileHelper;
 
 		public MainForm()
 		{
@@ -291,7 +290,8 @@ namespace WingetRepoBrowser
 				Cursor.Current = saveCursor;
 			}
 		}
-		static string GetKeyFromIdFilePath(string wingetidFilePath)
+
+		private static string GetKeyFromIdFilePath(string wingetidFilePath)
 		{
 			return Path.GetFileNameWithoutExtension(wingetidFilePath).ToLower();
 		}
@@ -327,14 +327,12 @@ namespace WingetRepoBrowser
 			return result;
 		}
 
-
-
-		static string ReplaceInvalidChars(string filename)
+		private static string ReplaceInvalidChars(string filename)
 		{
 			return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
 		}
 
-		static string ConvertVersionToDirectoryName(string version)
+		private static string ConvertVersionToDirectoryName(string version)
 		{
 			return ReplaceInvalidChars(version);
 		}
@@ -392,8 +390,7 @@ namespace WingetRepoBrowser
 
 	}
 
-
-	class NewDownload
+	internal class NewDownload
 	{
 		public MultiFileYaml MultiFileYaml { get; set; }
 		public string VersionFolder { get; set; }

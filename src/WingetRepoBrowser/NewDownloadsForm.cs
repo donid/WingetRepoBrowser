@@ -17,8 +17,8 @@ namespace WingetRepoBrowser
 {
 	public partial class NewDownloadsForm : XtraForm
 	{
-		GridRowPopupMenuBehavior _gridViewDownloadRowPopup;
-		YamlFileHelper _yamlFileHelper;
+		private GridRowPopupMenuBehavior _gridViewDownloadRowPopup;
+		private YamlFileHelper _yamlFileHelper;
 
 		public NewDownloadsForm(YamlFileHelper yamlFileHelper)
 		{
@@ -85,11 +85,11 @@ namespace WingetRepoBrowser
 
 			List<NewDownloadVM> ds = NewDownloads.Select(item => new NewDownloadVM(item)).ToList();
 			gridControl1.DataSource = ds;
+			progressBarControl1.Properties.Maximum = 100;
 		}
 
-
-		InstallerDownloader _installerDownloader;
-		int _errorCount;
+		private InstallerDownloader _installerDownloader;
+		private int _errorCount;
 
 		private void simpleButtonDownload_Click(object sender, EventArgs e)
 		{
@@ -99,14 +99,18 @@ namespace WingetRepoBrowser
 			backgroundWorker1.RunWorkerAsync();
 		}
 
-		void AddLogLine(string text)
+		private void AddLogLine(int percentage, string text)
 		{
+			if (percentage >= 0)
+			{
+				progressBarControl1.EditValue = percentage;
+			}
 			memoEdit1.Text += text + Environment.NewLine;
 		}
 
-		void AddLogLineBackground(string text)
+		private void AddLogLineBackground(int percentage, string text)
 		{
-			backgroundWorker1.ReportProgress(0, text);
+			backgroundWorker1.ReportProgress(percentage, text);
 		}
 
 		private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
@@ -115,9 +119,11 @@ namespace WingetRepoBrowser
 			_errorCount = 0;
 
 			List<NewDownloadVM> ds = (List<NewDownloadVM>)gridControl1.DataSource;
+			int downloadIndex = 0;
 			foreach (NewDownloadVM newDownloadVM in ds)
 			{
-				ProcessOneNewDownload(newDownloadVM.NewDownload);
+				ProcessOneNewDownload(downloadIndex * 100 / ds.Count, newDownloadVM.NewDownload);
+				++downloadIndex;
 			}
 		}
 
@@ -130,12 +136,12 @@ namespace WingetRepoBrowser
 			return localesToDownload.Any(locale => string.Compare(locale, manifestInstaller.InstallerLocale, true) == 0);
 		}
 
-		private void ProcessOneNewDownload(NewDownload newDownload)
+		private void ProcessOneNewDownload(int progressPercent, NewDownload newDownload)
 		{
 			string versionFolder = newDownload.VersionFolder;
 			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
 			MultiFileYaml mfy = new YamlFileHelper().LoadMultiFileYaml(newDownload.MultiFileYaml.MainYamlFilePath);
-	
+
 			var installersWithMatchingLocale = mfy.Installers.Where(i => HasMatchingLocale(i, LocalesToDownload));
 
 			foreach (ManifestInstaller_1_0_0 manifestInstaller in installersWithMatchingLocale)
@@ -152,15 +158,15 @@ namespace WingetRepoBrowser
 				}
 				if (downloadFileName == null)
 				{
-					AddLogLineBackground("Error: Unable to determine filename from download-url!");
+					AddLogLineBackground(progressPercent, "Error: Unable to determine filename from download-url!");
 					continue;
 				}
 				try
 				{
-					AddLogLineBackground("Creating directory: " + versionFolder);
+					AddLogLineBackground(progressPercent, "Creating directory: " + versionFolder);
 					Directory.CreateDirectory(versionFolder);
 					string downloadFolder = versionFolder;
-					if (newDownload.MultiFileYaml.Installers.Count >1)
+					if (newDownload.MultiFileYaml.Installers.Count > 1)
 					{
 						string archAndLocale = $"{manifestInstaller.Architecture ?? "null"}_{manifestInstaller.InstallerLocale ?? "null"}";
 						downloadFolder = Path.Combine(versionFolder, archAndLocale);
@@ -168,14 +174,14 @@ namespace WingetRepoBrowser
 					}
 
 					string downloadFilePath = Path.Combine(downloadFolder, downloadFileName);
-					AddLogLineBackground("Downloading: " + downloadUrl + " -> " + downloadFilePath);
+					AddLogLineBackground(progressPercent, "Downloading: " + downloadUrl + " -> " + downloadFilePath);
 					_installerDownloader.DownloadFile(downloadUrl, downloadFilePath);
 					if (backgroundWorker1.CancellationPending)
 					{
 						return;
 					}
 
-					AddLogLineBackground("Calculating Sha256-Hash from file");
+					AddLogLineBackground(progressPercent, "Calculating Sha256-Hash from file");
 					Helpers.CalculateFileHashResult calculateFileHashResult = Helpers.CalculateSha256HashFromFile(downloadFilePath);
 					if (calculateFileHashResult.ErrorMessage == null)
 					{
@@ -183,13 +189,13 @@ namespace WingetRepoBrowser
 						string expectedHash = manifestInstaller.InstallerSha256.ToLower();
 						if (calculatedHash != expectedHash)
 						{
-							AddLogLineBackground($"Error: Sha256-Hash mismatch (expected {expectedHash} - calculated {calculatedHash})");
+							AddLogLineBackground(progressPercent, $"Error: Sha256-Hash mismatch (expected {expectedHash} - calculated {calculatedHash})");
 							++_errorCount;
 						}
 					}
 					else
 					{
-						AddLogLineBackground($"Error: Calculating Sha256-Hash: {calculateFileHashResult.ErrorMessage}");
+						AddLogLineBackground(progressPercent, $"Error: Calculating Sha256-Hash: {calculateFileHashResult.ErrorMessage}");
 						++_errorCount;
 					}
 
@@ -203,7 +209,7 @@ namespace WingetRepoBrowser
 				catch (Exception ex)
 				{
 					++_errorCount;
-					AddLogLineBackground(ex.ToString());
+					AddLogLineBackground(progressPercent, ex.ToString());
 					if (Directory.GetFiles(versionFolder).Length == 0)
 					{
 						Directory.Delete(versionFolder);
@@ -222,7 +228,7 @@ namespace WingetRepoBrowser
 
 		private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
-			AddLogLine((string)e.UserState);
+			AddLogLine(e.ProgressPercentage, (string)e.UserState);
 		}
 
 		private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -230,22 +236,22 @@ namespace WingetRepoBrowser
 			layoutControlItemDownload.Visibility = LayoutVisibility.Always;
 			layoutControlItemCancel.Visibility = LayoutVisibility.Never;
 
-			AddLogLine("");
+			AddLogLine(100, "");
 			if (_errorCount == 0)
 			{
-				AddLogLine("All downloads completed successfully.");
+				AddLogLine(100, "All downloads completed successfully.");
 			}
 			else
 			{
-				AddLogLine($"{_errorCount} error(s) occurred!");
+				AddLogLine(100, $"{_errorCount} error(s) occurred!");
 			}
 			_installerDownloader.Dispose();
 		}
 
 		private void simpleButtonCancel_Click(object sender, EventArgs e)
 		{
-			AddLogLine("");
-			AddLogLine("Cancellation pending...");
+			AddLogLine(-1, "");
+			AddLogLine(-1, "Cancellation pending...");
 
 			layoutControlItemCancel.Visibility = LayoutVisibility.Never;
 			backgroundWorker1.CancelAsync();
@@ -261,9 +267,9 @@ namespace WingetRepoBrowser
 		}
 	}
 
-	class NewDownloadVM
+	internal class NewDownloadVM
 	{
-		NewDownload _newDownload;
+		private NewDownload _newDownload;
 
 		public NewDownloadVM(NewDownload newDownload)
 		{

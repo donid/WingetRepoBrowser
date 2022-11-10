@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
 using WingetRepoBrowserCore;
 
 namespace WingetRepoBrowser
@@ -9,13 +10,11 @@ namespace WingetRepoBrowser
 	[DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 	public class ManifestPackageVM
 	{
-
-		ManifestInstallerVM[] _installerVMs;
-
-		MultiFileYaml _multiFileYaml;
+		private ManifestInstallerVM[] _installerVMs;
+		private MultiFileYaml _multiFileYaml;
 		internal MultiFileYaml MultiFileYaml { get { return _multiFileYaml; } }
 
-		ParsedPackageVersion _parsedPackageVersion;
+		private ParsedPackageVersion _parsedPackageVersion;
 		public ParsedPackageVersion ParsedPackageVersion { get { return _parsedPackageVersion; } }
 
 		public ManifestPackageVM(MultiFileYaml multiFileYaml)
@@ -23,9 +22,9 @@ namespace WingetRepoBrowser
 			_multiFileYaml = multiFileYaml;
 			_installerVMs = multiFileYaml.Installers.Select(item => new ManifestInstallerVM(item)).ToArray();
 			_parsedPackageVersion = new ParsedPackageVersion(_multiFileYaml.MainPackage.PackageVersion);
-		}	
+		}
 
-		IEnumerable<ManifestInstaller_1_0_0> GetInstallers()
+		private IEnumerable<ManifestInstaller_1_0_0> GetInstallers()
 		{
 			return _multiFileYaml.Installers;
 		}
@@ -39,20 +38,20 @@ namespace WingetRepoBrowser
 
 		public string Version { get { return _multiFileYaml.MainPackage.PackageVersion; } }
 
-        public DateTime? ReleaseDate
-        {
-            get
-            {
-                DateTime? releaseDate = _multiFileYaml.InstallerPackage?.ReleaseDate;
-                if (releaseDate!=null)
-                {
-                    return releaseDate;
-                }
-                return GetInstallers().Max(item => item.ReleaseDate);
-            }
-        }
+		public DateTime? ReleaseDate
+		{
+			get
+			{
+				DateTime? releaseDate = _multiFileYaml.InstallerPackage?.ReleaseDate;
+				if (releaseDate != null)
+				{
+					return releaseDate;
+				}
+				return GetInstallers().Max(item => item.ReleaseDate);
+			}
+		}
 
-        public string Publisher { get { return _multiFileYaml.DefaultLocalePackage.Publisher; } }
+		public string Publisher { get { return _multiFileYaml.DefaultLocalePackage.Publisher; } }
 
 		public string Moniker { get { return _multiFileYaml.DefaultLocalePackage.Moniker; } }
 
@@ -73,7 +72,7 @@ namespace WingetRepoBrowser
 
 		public string Tags { get { return SafeJoin("|", _multiFileYaml.DefaultLocalePackage.Tags); } }
 
-		static string SafeJoin(string separator, IEnumerable<string> arr)
+		private static string SafeJoin(string separator, IEnumerable<string> arr)
 		{
 			if (arr == null)
 			{
@@ -83,6 +82,7 @@ namespace WingetRepoBrowser
 		}
 
 		public string InstallerType { get { return _multiFileYaml.InstallerPackage?.InstallerType; } }
+		public string InstallModes { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.InstallModes); } }
 
 		public ManifestInstallerVM[] Installers { get { return _installerVMs; } }
 		public int InstallersCount { get { return _installerVMs == null ? 0 : _installerVMs.Length; } }
@@ -105,7 +105,7 @@ namespace WingetRepoBrowser
 
 		public string ManifestType { get { return _multiFileYaml.MainPackage.ManifestType; } }
 
-		public string PackageLocale { get { return string.Join("|", _multiFileYaml.LocalePackages.Select(p=>p.PackageLocale)); } }
+		public string PackageLocale { get { return string.Join("|", _multiFileYaml.LocalePackages.Select(p => p.PackageLocale)); } }
 
 		public string DefaultLocale { get { return _multiFileYaml.MainPackage.DefaultLocale; } }
 
@@ -114,7 +114,7 @@ namespace WingetRepoBrowser
 			return Id;
 		}
 
-	
+
 	}
 
 

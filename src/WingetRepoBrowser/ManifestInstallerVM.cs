@@ -6,7 +6,7 @@ namespace WingetRepoBrowser
 {
 	public class ManifestInstallerVM
 	{
-		ManifestInstaller_1_0_0 _installers;
+		private ManifestInstaller_1_0_0 _installers;
 
 		public ManifestInstallerVM(ManifestInstaller_1_0_0 installers)
 		{
@@ -25,6 +25,7 @@ namespace WingetRepoBrowser
 		public string InstallerType { get { return _installers.InstallerType; } }
 
 		public string InstallerLocale { get { return _installers.InstallerLocale; } }
+		public string InstallModes { get { return _installers.InstallModes == null ? null : string.Join("|", _installers.InstallModes); } }
 
 		public string Scope { get { return _installers.Scope; } }
 

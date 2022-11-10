@@ -102,5 +102,7 @@ namespace WingetRepoBrowserCore
 		/// DateOnly exists only in .Net 6 not in netstandard 2
 		/// </summary>
 		public DateTime? ReleaseDate { get; set; }
+
+		public string[] InstallModes { get; set; }
 	}
 }
