@@ -210,9 +210,16 @@ namespace WingetRepoBrowser
 				{
 					++_errorCount;
 					AddLogLineBackground(progressPercent, ex.ToString());
-					if (Directory.GetFiles(versionFolder).Length == 0)
+					if (Directory.GetFileSystemEntries(versionFolder).Length == 0)
 					{
-						Directory.Delete(versionFolder);
+						try
+						{
+							Directory.Delete(versionFolder);
+						}
+						catch (Exception ex2)
+						{
+							AddLogLineBackground(progressPercent, ex2.ToString());
+						}
 					}
 				}
 			}
