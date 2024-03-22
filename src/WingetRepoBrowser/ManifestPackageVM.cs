@@ -62,6 +62,7 @@ namespace WingetRepoBrowser
 		public string LicenseUrl { get { return _multiFileYaml.DefaultLocalePackage.LicenseUrl; } }
 		public string PrivacyUrl { get { return _multiFileYaml.DefaultLocalePackage.PrivacyUrl; } }
 		public string PublisherUrl { get { return _multiFileYaml.DefaultLocalePackage.PublisherUrl; } }
+		public string PublisherSupportUrl { get { return _multiFileYaml.DefaultLocalePackage.PublisherSupportUrl; } }
 
 		public string MinOSVersion { get { return _multiFileYaml.InstallerPackage?.MinimumOSVersion; } }
 
@@ -91,6 +92,9 @@ namespace WingetRepoBrowser
 		public string FileExtensions { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.FileExtensions); } } // InstallerPackage will be missing, when reading it threw an exception
 
 		public string Protocols { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Protocols); } }
+		public string Platforms { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Platform); } }
+
+		public string ExpectedReturnCodes { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.ExpectedReturnCodes?.Select(i => i.ToString())); } }
 
 		public string Commands { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Commands); } }
 

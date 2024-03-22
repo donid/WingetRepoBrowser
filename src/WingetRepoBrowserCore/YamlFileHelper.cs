@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 using YamlDotNet.Core;
@@ -15,9 +16,8 @@ namespace WingetRepoBrowserCore
 
 	public class YamlFileHelper
 	{
-
-		IDeserializer _deserializer;
-		ISerializer _serializer;
+		private IDeserializer _deserializer;
+		private ISerializer _serializer;
 
 		public YamlFileHelper()
 		{
@@ -100,10 +100,11 @@ namespace WingetRepoBrowserCore
 			return result;
 		}
 
-		public LoadManifestsResult LoadAllManifests(IEnumerable<string> yamlFiles)
+		public LoadManifestsResult LoadAllManifests(IEnumerable<string> yamlFiles, IProgress<int> progress)
 		{
 			LoadManifestsResult result = new LoadManifestsResult();
 			Dictionary<string, MultiFileYaml> multiFileYamlDict = new Dictionary<string, MultiFileYaml>();
+			int count = 0;
 			foreach (string yamlFilePath in yamlFiles)
 			{
 				ReadYamlFileResult ryfr = ReadYamlFile(yamlFilePath);
@@ -122,6 +123,7 @@ namespace WingetRepoBrowserCore
 					multiFileYamlDict.Add(yamlFolder, multiFileYaml);
 				}
 				multiFileYaml.AddPackage(package, yamlFilePath);
+				progress.Report(++count);
 			}
 			result.Manifests = multiFileYamlDict.Values;
 			return result;
@@ -151,7 +153,7 @@ namespace WingetRepoBrowserCore
 			WriteYamlFile(Path.Combine(versionFolder, $"{packageIdentifier}.locale.{mfy.DefaultLocalePackage.PackageLocale}.yaml"), mfy.DefaultLocalePackage);
 			foreach (ManifestPackage_1_0_0 localePackage in mfy.LocalePackages)
 			{
-				WriteYamlFile(Path.Combine(versionFolder, $"{packageIdentifier}.locale.{localePackage.PackageLocale}.yaml"), localePackage);				
+				WriteYamlFile(Path.Combine(versionFolder, $"{packageIdentifier}.locale.{localePackage.PackageLocale}.yaml"), localePackage);
 			}
 		}
 	}

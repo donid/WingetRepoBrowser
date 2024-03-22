@@ -113,9 +113,20 @@ Localization:
 		/// </summary>
 		public string LicenseUrl { get; set; }
 
+		/// <summary>
+		/// The publisher privacy page or the package privacy page
+		/// </summary>
 		public string PrivacyUrl { get; set; }
+		/// <summary>
+		/// The publisher home page
+		/// </summary>
 		public string PublisherUrl { get; set; }
+		/// <summary>
+		/// The publisher support page
+		/// </summary>
+		public string PublisherSupportUrl { get; set; }
 
+		public string[] Platform { get; set; }
 
 		/// <summary>
 		/// version numbering format for minimum version of Windows supported
@@ -258,6 +269,11 @@ Localization:
 		public string PackageLocale { get; set; }
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public string InstallerLocale { get; set; }
+
+		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// specifies log redirection switches and path
 		/// </summary>
@@ -269,6 +285,8 @@ Localization:
 		/// </summary>
 		public string InstallLocation { get; set; }
 
+
+		public ExpectedReturnCode[] ExpectedReturnCodes { get; set; }
 
 		/// <summary>
 		/// Mandatory!

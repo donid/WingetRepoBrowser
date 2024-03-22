@@ -156,12 +156,20 @@ namespace WingetRepoBrowser
 			e.ChildList = row.Installers;
 		}
 
-		private static IEnumerable<string> FindAllYamlFiles(string folder)
+		private static List<string> FindAllYamlFiles(string folder, IProgress<int> progress)
 		{
-			return Directory.GetFiles(folder, "*.yaml", SearchOption.AllDirectories);
+			IEnumerable<string> enumerable = Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories);
+			List<string> result = new List<string>();
+			int count = 0;
+			foreach (string item in enumerable)
+			{
+				result.Add(item);
+				progress.Report(++count);
+			}
+			return result;
 		}
 
-		private static async Task<IEnumerable<string>> FindAllYamlFilesAsync(string folder)
+		private static async Task<IEnumerable<string>> FindAllYamlFilesAsync(string folder, IProgress<int> progress)
 		{
 			IEnumerable<string> e = await Task.Run(() => Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories));
 			return e;
@@ -169,6 +177,7 @@ namespace WingetRepoBrowser
 
 		private async void simpleButtonSearch_Click(object sender, EventArgs e)
 		{
+
 			string folder = textEditRepoFolder.Text;
 			if (!Directory.Exists(folder))
 			{
@@ -183,27 +192,34 @@ namespace WingetRepoBrowser
 
 			simpleButtonSearch.Enabled = false;
 			gridView1.ShowLoadingPanel();
+			barEditItemMarquee.EditValue = 0;
+			barEditItemProgress.EditValue = 0;
+			repositoryItemMarqueeProgressBar1.Paused = false;
+			barEditItemMarquee.Visibility = DevExpress.XtraBars.BarItemVisibility.Always;
 
 			try
 			{
 
-				IEnumerable<string> yamlFiles;
+				List<string> yamlFiles;
 				try
 				{
 					//yamlFiles = await FindAllYamlFilesAsync(folder);
-					yamlFiles = FindAllYamlFiles(folder);
+					IProgress<int> progressDiscover = new Progress<int>(count => barEditItemMarquee.EditValue = count);
+					yamlFiles = await Task.Run(() => FindAllYamlFiles(folder, progressDiscover));
 				}
 				catch (Exception ex)
 				{
 
+					repositoryItemMarqueeProgressBar1.Paused = true;
 					// e.g. when using folder 'c:\' System.UnauthorizedAccessException: 'Access to the path 'C:\$Recycle.Bin\S-1-5-18' is denied.'
 					ShowMessageBox(ex.Message);
 					return;
 				}
 
-
-				LoadManifestsResult loadManifestsResult = await Task.Run(() => _yamlFileHelper.LoadAllManifests(yamlFiles));
-				// LoadManifestsResult loadManifestsResult = _yamlFileHelper.LoadAllManifests(yamlFiles);
+				repositoryItemMarqueeProgressBar1.Paused = true;
+				barEditItemProgress.Visibility = DevExpress.XtraBars.BarItemVisibility.Always;
+				IProgress<int> progressRead = new Progress<int>(count => { if (count % 200 == 0) barEditItemProgress.EditValue = count * 100.0 / yamlFiles.Count; });
+				LoadManifestsResult loadManifestsResult = await Task.Run(() => _yamlFileHelper.LoadAllManifests(yamlFiles, progressRead));
 
 				IEnumerable<MultiFileYaml> multiFileYamls = loadManifestsResult.Manifests;
 				List<ManifestPackageVM> tmpManifestVMs = new List<ManifestPackageVM>();
@@ -224,6 +240,8 @@ namespace WingetRepoBrowser
 			{
 				gridView1.HideLoadingPanel();
 				simpleButtonSearch.Enabled = true;
+				barEditItemMarquee.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
+				barEditItemProgress.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
 			}
 			simpleButtonCheckForNewDownloads.Enabled = true;
 			simpleButtonCreateSubFoldersForSelected.Enabled = true;

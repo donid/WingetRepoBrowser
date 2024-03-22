@@ -1,0 +1,28 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<svg viewBox="-2 -4 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g id="Layer_1" transform="translate(-2, -4)" style="enable-background:new 0 0 32 32">
+    <g id="Box">
+      <polygon points="18,4 10,4 2,12 10,12  " fill="#727272" style="fill:#C97B06" />
+    </g>
+  </g>
+  <g id="Layer_1" transform="translate(-2, -4)" style="enable-background:new 0 0 32 32">
+    <g id="Box">
+      <rect x="2" y="14" width="20" height="14" fill="#727272" style="fill:#C97B06" />
+    </g>
+  </g>
+  <g id="Layer_1" transform="translate(-2, -3.99999980926514)" style="enable-background:new 0 0 32 32">
+    <g id="Box">
+      <polygon points="24,28 30,22 30,6.8 24,12.8  " fill="#727272" style="fill:#C97B06" />
+    </g>
+  </g>
+  <g id="Layer_1" transform="translate(-2, -4)" style="enable-background:new 0 0 32 32">
+    <g id="Box">
+      <polygon points="21,4 13,12 21.9,12 29.9,4  " fill="#727272" style="fill:#C97B06" />
+    </g>
+  </g>
+  <g id="Layer_1" transform="translate(2, 6)" style="enable-background:new 0 0 16 16">
+    <g id="Arrow1Down">
+      <polygon points="6,0 10,0 10,8 16,8 8,16 0,8 6,8  " fill="#1177D7" style="fill:#5C5858" />
+    </g>
+  </g>
+</svg>
