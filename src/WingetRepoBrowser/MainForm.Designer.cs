@@ -88,6 +88,7 @@
 			this.colManifestSwitchSilent = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colManifestSwitchSilentWithProgress = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.colPlatforms = new DevExpress.XtraGrid.Columns.GridColumn();
+			this.colExpectedReturnCodes = new DevExpress.XtraGrid.Columns.GridColumn();
 			this.textEditRepoFolder = new DevExpress.XtraEditors.TextEdit();
 			this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
 			this.memoEditMessages = new DevExpress.XtraEditors.MemoEdit();
@@ -122,7 +123,6 @@
 			this.repositoryItemProgressBar1 = new DevExpress.XtraEditors.Repository.RepositoryItemProgressBar();
 			this.repositoryItemTextEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
 			this.repositoryItemMemoEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemMemoEdit();
-			this.colExpectedReturnCodes = new DevExpress.XtraGrid.Columns.GridColumn();
 			((System.ComponentModel.ISupportInitialize)(this.gridView2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
@@ -310,12 +310,12 @@
 			gridLevelNode1.RelationName = "Installers";
 			this.gridControl1.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] {
             gridLevelNode1});
-			this.gridControl1.Location = new System.Drawing.Point(5, 139);
+			this.gridControl1.Location = new System.Drawing.Point(5, 140);
 			this.gridControl1.MainView = this.gridView1;
 			this.gridControl1.Name = "gridControl1";
 			this.gridControl1.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
             this.repositoryItemButtonEditUrl});
-			this.gridControl1.Size = new System.Drawing.Size(1002, 419);
+			this.gridControl1.Size = new System.Drawing.Size(1002, 422);
 			this.gridControl1.TabIndex = 4;
 			this.gridControl1.UseEmbeddedNavigator = true;
 			this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
@@ -663,6 +663,14 @@
 			this.colPlatforms.Visible = true;
 			this.colPlatforms.VisibleIndex = 34;
 			// 
+			// colExpectedReturnCodes
+			// 
+			this.colExpectedReturnCodes.Caption = "ExpectedReturnCodes";
+			this.colExpectedReturnCodes.FieldName = "ExpectedReturnCodes";
+			this.colExpectedReturnCodes.Name = "colExpectedReturnCodes";
+			this.colExpectedReturnCodes.Visible = true;
+			this.colExpectedReturnCodes.VisibleIndex = 35;
+			// 
 			// textEditRepoFolder
 			// 
 			this.textEditRepoFolder.Location = new System.Drawing.Point(91, 5);
@@ -686,7 +694,7 @@
 			this.layoutControl1.Name = "layoutControl1";
 			this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(4790, 879, 650, 400);
 			this.layoutControl1.Root = this.Root;
-			this.layoutControl1.Size = new System.Drawing.Size(1012, 563);
+			this.layoutControl1.Size = new System.Drawing.Size(1012, 567);
 			this.layoutControl1.TabIndex = 6;
 			this.layoutControl1.Text = "layoutControl1";
 			// 
@@ -694,7 +702,7 @@
 			// 
 			this.memoEditMessages.Location = new System.Drawing.Point(5, 73);
 			this.memoEditMessages.Name = "memoEditMessages";
-			this.memoEditMessages.Size = new System.Drawing.Size(1002, 57);
+			this.memoEditMessages.Size = new System.Drawing.Size(1002, 58);
 			this.memoEditMessages.StyleController = this.layoutControl1;
 			this.memoEditMessages.TabIndex = 11;
 			// 
@@ -764,15 +772,15 @@
             this.splitterItem1});
 			this.Root.Name = "Root";
 			this.Root.Padding = new DevExpress.XtraLayout.Utils.Padding(3, 3, 3, 3);
-			this.Root.Size = new System.Drawing.Size(1012, 563);
+			this.Root.Size = new System.Drawing.Size(1012, 567);
 			this.Root.TextVisible = false;
 			// 
 			// layoutControlItem1
 			// 
 			this.layoutControlItem1.Control = this.gridControl1;
-			this.layoutControlItem1.Location = new System.Drawing.Point(0, 134);
+			this.layoutControlItem1.Location = new System.Drawing.Point(0, 135);
 			this.layoutControlItem1.Name = "layoutControlItem1";
-			this.layoutControlItem1.Size = new System.Drawing.Size(1006, 423);
+			this.layoutControlItem1.Size = new System.Drawing.Size(1006, 426);
 			this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
 			this.layoutControlItem1.TextVisible = false;
 			// 
@@ -835,7 +843,7 @@
 			this.layoutControlItemMessages.Control = this.memoEditMessages;
 			this.layoutControlItemMessages.Location = new System.Drawing.Point(0, 52);
 			this.layoutControlItemMessages.Name = "layoutControlItemMessages";
-			this.layoutControlItemMessages.Size = new System.Drawing.Size(1006, 77);
+			this.layoutControlItemMessages.Size = new System.Drawing.Size(1006, 78);
 			this.layoutControlItemMessages.Text = "Messages:";
 			this.layoutControlItemMessages.TextLocation = DevExpress.Utils.Locations.Top;
 			this.layoutControlItemMessages.TextSize = new System.Drawing.Size(82, 13);
@@ -844,7 +852,7 @@
 			// splitterItem1
 			// 
 			this.splitterItem1.AllowHotTrack = true;
-			this.splitterItem1.Location = new System.Drawing.Point(0, 129);
+			this.splitterItem1.Location = new System.Drawing.Point(0, 130);
 			this.splitterItem1.Name = "splitterItem1";
 			this.splitterItem1.Size = new System.Drawing.Size(1006, 5);
 			// 
@@ -909,7 +917,7 @@
 			// 
 			// barStaticItem1
 			// 
-			this.barStaticItem1.Caption = "v0.2.7";
+			this.barStaticItem1.Caption = "v0.2.8";
 			this.barStaticItem1.Id = 3;
 			this.barStaticItem1.Name = "barStaticItem1";
 			// 
@@ -941,7 +949,7 @@
 			// 
 			// repositoryItemProgressBar2
 			// 
-			this.repositoryItemProgressBar2.DisplayFormat.FormatString = "0.0";
+			this.repositoryItemProgressBar2.DisplayFormat.FormatString = "0.0 \\%";
 			this.repositoryItemProgressBar2.DisplayFormat.FormatType = DevExpress.Utils.FormatType.Numeric;
 			this.repositoryItemProgressBar2.Name = "repositoryItemProgressBar2";
 			this.repositoryItemProgressBar2.PercentView = false;
@@ -959,9 +967,9 @@
 			// 
 			this.barDockControlBottom.CausesValidation = false;
 			this.barDockControlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.barDockControlBottom.Location = new System.Drawing.Point(0, 612);
+			this.barDockControlBottom.Location = new System.Drawing.Point(0, 616);
 			this.barDockControlBottom.Manager = this.barManager1;
-			this.barDockControlBottom.Size = new System.Drawing.Size(1012, 27);
+			this.barDockControlBottom.Size = new System.Drawing.Size(1012, 23);
 			// 
 			// barDockControlLeft
 			// 
@@ -969,7 +977,7 @@
 			this.barDockControlLeft.Dock = System.Windows.Forms.DockStyle.Left;
 			this.barDockControlLeft.Location = new System.Drawing.Point(0, 49);
 			this.barDockControlLeft.Manager = this.barManager1;
-			this.barDockControlLeft.Size = new System.Drawing.Size(0, 563);
+			this.barDockControlLeft.Size = new System.Drawing.Size(0, 567);
 			// 
 			// barDockControlRight
 			// 
@@ -977,7 +985,7 @@
 			this.barDockControlRight.Dock = System.Windows.Forms.DockStyle.Right;
 			this.barDockControlRight.Location = new System.Drawing.Point(1012, 49);
 			this.barDockControlRight.Manager = this.barManager1;
-			this.barDockControlRight.Size = new System.Drawing.Size(0, 563);
+			this.barDockControlRight.Size = new System.Drawing.Size(0, 567);
 			// 
 			// repositoryItemProgressBar1
 			// 
@@ -990,14 +998,6 @@
 			// repositoryItemMemoEdit1
 			// 
 			this.repositoryItemMemoEdit1.Name = "repositoryItemMemoEdit1";
-			// 
-			// colExpectedReturnCodes
-			// 
-			this.colExpectedReturnCodes.Caption = "ExpectedReturnCodes";
-			this.colExpectedReturnCodes.FieldName = "ExpectedReturnCodes";
-			this.colExpectedReturnCodes.Name = "colExpectedReturnCodes";
-			this.colExpectedReturnCodes.Visible = true;
-			this.colExpectedReturnCodes.VisibleIndex = 35;
 			// 
 			// MainForm
 			// 
