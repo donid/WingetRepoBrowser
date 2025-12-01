@@ -1,6 +1,11 @@
-﻿using System;
+﻿using DevExpress.Utils.Menu;
+using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Controls;
+using DevExpress.XtraGrid;
+using DevExpress.XtraGrid.Views.Base;
+using DevExpress.XtraGrid.Views.Grid;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -8,14 +13,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using DevExpress.Utils.Menu;
-using DevExpress.XtraEditors;
-using DevExpress.XtraEditors.Controls;
-using DevExpress.XtraGrid;
-using DevExpress.XtraGrid.Views.Base;
-using DevExpress.XtraGrid.Views.Grid;
-
 using WingetRepoBrowserCore;
 
 
@@ -161,6 +158,7 @@ namespace WingetRepoBrowser
 			IEnumerable<string> enumerable = Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories);
 			List<string> result = new List<string>();
 			int count = 0;
+
 			foreach (string item in enumerable)
 			{
 				result.Add(item);
@@ -177,7 +175,6 @@ namespace WingetRepoBrowser
 
 		private async void simpleButtonSearch_Click(object sender, EventArgs e)
 		{
-
 			string folder = textEditRepoFolder.Text;
 			if (!Directory.Exists(folder))
 			{
