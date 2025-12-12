@@ -31,13 +31,13 @@ namespace WingetRepoBrowser
 
 		private DXMenuItem[] CreateMenuItemsDownloadPopup()
 		{
-			DXMenuItem[] result = new DXMenuItem[] {
+			DXMenuItem[] result = [
 				new DXMenuItem("Ignore selected version(s)", ItemIgnoreVersion_Click)
-			};
+			];
 			return result;
 		}
 
-		private void ItemIgnoreVersion_Click(object sender, EventArgs e)
+		private void ItemIgnoreVersion_Click(object? sender, EventArgs e)
 		{
 			NewDownloadVM[] rows = GetSelectedRows().ToArray();
 			if (rows.Length == 0)
@@ -74,8 +74,10 @@ namespace WingetRepoBrowser
 			return gridView1.GetSelectedRows().Select(item => gridView1.GetRow(item)).Cast<NewDownloadVM>();
 		}
 
-		internal List<NewDownload> NewDownloads { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        internal List<NewDownload> NewDownloads { get; set; }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string[] LocalesToDownload { get; set; }
 
 
@@ -99,16 +101,19 @@ namespace WingetRepoBrowser
 			backgroundWorker1.RunWorkerAsync();
 		}
 
-		private void AddLogLine(int percentage, string text)
+		private void AddLogLine(int percentage, string? text)
 		{
 			if (percentage >= 0)
 			{
 				progressBarControl1.EditValue = percentage;
-			}
-			memoEdit1.Text += text + Environment.NewLine;
-		}
+            }
+			if(!string.IsNullOrEmpty(text))
+            {
+                memoEdit1.Text += text + Environment.NewLine;
+            }
+        }
 
-		private void AddLogLineBackground(int percentage, string text)
+        private void AddLogLineBackground(int percentage, string text)
 		{
 			backgroundWorker1.ReportProgress(percentage, text);
 		}
@@ -235,7 +240,7 @@ namespace WingetRepoBrowser
 
 		private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
 		{
-			AddLogLine(e.ProgressPercentage, (string)e.UserState);
+			AddLogLine(e.ProgressPercentage, (string?)e.UserState);
 		}
 
 		private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

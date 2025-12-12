@@ -7,25 +7,25 @@
 
 	/*
 	 # Switches in installers can override the root specified switches. See definition earlier in this document.
-    Switches:
-      Language: /en-US
-      Custom: /s
+	Switches:
+	  Language: /en-US
+	  Custom: /s
 
-    # This is an example of an additional installer.
-    # See further restrictions earlier in this document.
-    # Support for multiple installers are not supported in this preview (5/24/2020)
+	# This is an example of an additional installer.
+	# See further restrictions earlier in this document.
+	# Support for multiple installers are not supported in this preview (5/24/2020)
   - Arch: x64
-    Url: https://contosa.net/publiccontainer/contosainstaller64.exe
-    Sha256: 69D84CA8899800A5575CE31798293CD4FEBAB1D734A07C2E51E56A28E0DF8C83
-    Language: en-US
-    Scope: user
+	Url: https://contosa.net/publiccontainer/contosainstaller64.exe
+	Sha256: 69D84CA8899800A5575CE31798293CD4FEBAB1D734A07C2E51E56A28E0DF8C83
+	Language: en-US
+	Scope: user
 
-    # Localized values will provide links and text to match the users settings.  For example the following links and text will be displayed instead.
+	# Localized values will provide links and text to match the users settings.  For example the following links and text will be displayed instead.
 Localization:
   - Language: es-MX
-    Description: Text to display for es-MX
-    Homepage: https://github.com/microsoft/msix-packaging/es-MX
-    LicenseUrl: https://github.com/microsoft/msix-packaging/blob/master/LICENSE-es-MX
+	Description: Text to display for es-MX
+	Homepage: https://github.com/microsoft/msix-packaging/es-MX
+	LicenseUrl: https://github.com/microsoft/msix-packaging/blob/master/LICENSE-es-MX
 	*/
 
 	public class ManifestPackage_0_1_0
@@ -40,7 +40,7 @@ Localization:
 		/// and the folder structure PublisherName\ApplicationName\ApplicationName-Version.YAML
 		/// Restrictions: No white spaces allowed. [min: 4, max:255]
 		/// </summary>
-		public string Id { get; set; }
+		public string? Id { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -49,7 +49,7 @@ Localization:
 		/// Name is a required field.  It should be the friendly name of the application.
 		/// Restrictions: [min: 1, max:128]
 		/// </summary>
-		public string Name { get; set; }
+		public string? Name { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -61,7 +61,7 @@ Localization:
 		/// Versions will be sorted as integers following the following pattern: Major.Minor.Build.Patch.
 		/// Restrictions: 4 sections with max value of 65535.  For example:65535.65535.65535.65535
 		/// </summary>
-		public string Version { get; set; }
+		public string? Version { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -70,7 +70,7 @@ Localization:
 		/// Publisher is a required field.  It should be the legal company name.
 		/// Restrictions: [min: 1, max:128]
 		/// </summary>
-		public string Publisher { get; set; }
+		public string? Publisher { get; set; }
 
 		/// <summary>
 		/// the common name someone may use to search for the package
@@ -78,9 +78,9 @@ Localization:
 		/// AppMoniker is the common name someone may use to search for the application.
 		/// Restrictions:  No white spaces allowed. [min: 1, max:40]
 		/// </summary>
-		public string AppMoniker { get; set; }
+		public string? AppMoniker { get; set; }
 
-		public string Author { get; set; }
+		public string? Author { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -90,7 +90,7 @@ Localization:
 		/// For example: BSD, MIT, Apache, Microsoft Public License, commercial
 		/// Restrictions: [min: 1, max:40]
 		/// </summary>
-		public string License { get; set; }
+		public string? License { get; set; }
 
 		/// <summary>
 		/// valid secure URL to license
@@ -99,7 +99,7 @@ Localization:
 		/// Restrictions: The LicenseUrl must be a valid secure URL, for example beginning with https and 
 		/// followed by a hostname.  [min: 10, max:2000]
 		/// </summary>
-		public string LicenseUrl { get; set; }
+		public string? LicenseUrl { get; set; }
 
 		/// <summary>
 		/// version numbering format for minimum version of Windows supported
@@ -108,7 +108,7 @@ Localization:
 		/// For example specifying 10.0.18362.0 will only allows this tool to be installed on Windows build 1903 or greater.
 		/// Restrictions: must follow Windows versioning model. 4 sections with max value of 65535.  For example:65535.65535.65535.65535
 		/// </summary>
-		public string MinOSVersion { get; set; }
+		public string? MinOSVersion { get; set; }
 
 		/// <summary>
 		/// valid secure URL for the package
@@ -117,7 +117,7 @@ Localization:
 		/// Restrictions: The Homepage must be a valid secure URL, for example beginning with https and 
 		/// followed by a hostname.  [min: 10, max:2000]
 		/// </summary>
-		public string Homepage { get; set; }
+		public string? Homepage { get; set; }
 
 		/// <summary>
 		/// description of the package
@@ -125,7 +125,7 @@ Localization:
 		/// Description should be friendly providing insights into the value of the tool.
 		// Restrictions: [min: 1, max:500]
 		/// </summary>
-		public string Description { get; set; }
+		public string? Description { get; set; }
 
 		/// <summary>
 		/// datatype: 'list' !?!?
@@ -133,7 +133,7 @@ Localization:
 		/// Tags are comma separated list.  They represent strings that the user may use to search for a given tool.
 		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
-		public string Tags { get; set; }
+		public string? Tags { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -144,7 +144,7 @@ Localization:
 		/// zip is not supported in this preview (5/24/2020)  
 		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
-		public string InstallerType { get; set; }
+		public string? InstallerType { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -160,7 +160,7 @@ Localization:
 		/// FileExtensions are not supported in this preview (5/24/2020)
 		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
-		public string FileExtensions { get; set; }
+		public string? FileExtensions { get; set; }
 
 		/// <summary>
 		///  datatype: 'list' !?!?
@@ -171,7 +171,7 @@ Localization:
 		/// Restrictions: [min: 1, max:40] 
 		/// example: ms-winget
 		/// </summary>
-		public string Protocols { get; set; }
+		public string? Protocols { get; set; }
 
 		/// <summary>
 		///  datatype: 'list' !?!?
@@ -180,7 +180,7 @@ Localization:
 		/// For example "code" for VSCode.  If multiple commands are supported, the commands must be separated by a comma.
 		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
-		public string Commands { get; set; }
+		public string? Commands { get; set; }
 
 		public ManifestSwitches Switches { get; set; }
 
@@ -207,7 +207,7 @@ Localization:
 		/// Interactive is not supported in this preview (5/24/2020)
 		/// example: /ShowEula
 		/// </summary>
-		public string Interactive { get; set; }
+		public string? Interactive { get; set; }
 
 
 		/// <summary>
@@ -218,13 +218,13 @@ Localization:
 		/// Restrictions: [min: 1, max:40]
 		/// example: Prerelease
 		/// </summary>
-		public string Channel { get; set; }
+		public string? Channel { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// custom switches passed to the installer
 		/// </summary>
-		public string Custom { get; set; }
+		public string? Custom { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
@@ -236,24 +236,24 @@ Localization:
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// switches passed to the installer for non-interactive install
 		/// </summary>
-		public string SilentWithProgress { get; set; }
+		public string? SilentWithProgress { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// experimental
 		/// </summary>
-		public string Language { get; set; }
+		public string? Language { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// specifies log redirection switches and path
 		/// </summary>
-		public string Log { get; set; }
+		public string? Log { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// specifies alternate location to install package
 		/// </summary>
-		public string InstallLocation { get; set; }
+		public string? InstallLocation { get; set; }
 	}
 }

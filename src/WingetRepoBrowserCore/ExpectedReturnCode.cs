@@ -7,7 +7,7 @@ namespace WingetRepoBrowserCore
 	public class ExpectedReturnCode
 	{
 		public long InstallerReturnCode { get; set; }
-		public string ReturnResponse { get; set; }
+		public string? ReturnResponse { get; set; }
 
 		public override string ToString()
 		{

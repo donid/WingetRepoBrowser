@@ -1,36 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <PropertyGroup>
     <ManifestCertificateThumbprint>E274E81B3E05419FB05CCEBD3F76355FAB11D273</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
     <ManifestKeyFile>WingetRepoBrowser_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup>
     <SignManifests>false</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
     <ApplicationIcon>WingetRepoBrowser.ico</ApplicationIcon>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Properties\licenses.licx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Web" />
+    <PackageReference Include="DevExpress.Win.Grid" Version="25.1.5" />
+    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="2.2.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="AppSettings.json">
@@ -39,13 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WingetRepoBrowserCore\WingetRepoBrowserCore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="DevExpress.Win.Grid" Version="25.1.5" />
-    <PackageReference Include="System.Text.Json">
-      <Version>9.0.10</Version>
-    </PackageReference>
-    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="WingetRepoBrowser.ico" />

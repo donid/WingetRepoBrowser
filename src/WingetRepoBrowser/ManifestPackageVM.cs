@@ -57,23 +57,23 @@ namespace WingetRepoBrowser
 
 		public string Author { get { return _multiFileYaml.DefaultLocalePackage.Author; } }
 
-		public string License { get { return _multiFileYaml.DefaultLocalePackage.License; } }
+		public string? License { get { return _multiFileYaml.DefaultLocalePackage.License; } }
 
-		public string LicenseUrl { get { return _multiFileYaml.DefaultLocalePackage.LicenseUrl; } }
-		public string PrivacyUrl { get { return _multiFileYaml.DefaultLocalePackage.PrivacyUrl; } }
-		public string PublisherUrl { get { return _multiFileYaml.DefaultLocalePackage.PublisherUrl; } }
-		public string PublisherSupportUrl { get { return _multiFileYaml.DefaultLocalePackage.PublisherSupportUrl; } }
+		public string? LicenseUrl { get { return _multiFileYaml.DefaultLocalePackage.LicenseUrl; } }
+		public string? PrivacyUrl { get { return _multiFileYaml.DefaultLocalePackage.PrivacyUrl; } }
+		public string? PublisherUrl { get { return _multiFileYaml.DefaultLocalePackage.PublisherUrl; } }
+		public string? PublisherSupportUrl { get { return _multiFileYaml.DefaultLocalePackage.PublisherSupportUrl; } }
 
-		public string MinOSVersion { get { return _multiFileYaml.InstallerPackage?.MinimumOSVersion; } }
+		public string? MinOSVersion { get { return _multiFileYaml.InstallerPackage?.MinimumOSVersion; } }
 
-		public string PackageUrl { get { return _multiFileYaml.DefaultLocalePackage.PackageUrl; } }
+		public string? PackageUrl { get { return _multiFileYaml.DefaultLocalePackage.PackageUrl; } }
 
-		public string ShortDescription { get { return _multiFileYaml.DefaultLocalePackage.ShortDescription; } }
-		public string Description { get { return _multiFileYaml.DefaultLocalePackage.Description; } }
+		public string? ShortDescription { get { return _multiFileYaml.DefaultLocalePackage.ShortDescription; } }
+		public string? Description { get { return _multiFileYaml.DefaultLocalePackage.Description; } }
 
-		public string Tags { get { return SafeJoin("|", _multiFileYaml.DefaultLocalePackage.Tags); } }
+		public string? Tags { get { return SafeJoin("|", _multiFileYaml.DefaultLocalePackage.Tags); } }
 
-		private static string SafeJoin(string separator, IEnumerable<string> arr)
+		private static string? SafeJoin(string separator, IEnumerable<string>? arr)
 		{
 			if (arr == null)
 			{
@@ -82,36 +82,36 @@ namespace WingetRepoBrowser
 			return string.Join(separator, arr);
 		}
 
-		public string InstallerType { get { return _multiFileYaml.InstallerPackage?.InstallerType; } }
-		public string InstallModes { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.InstallModes); } }
+		public string? InstallerType { get { return _multiFileYaml.InstallerPackage?.InstallerType; } }
+		public string? InstallModes { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.InstallModes); } }
 
 		public ManifestInstallerVM[] Installers { get { return _installerVMs; } }
 		public int InstallersCount { get { return _installerVMs == null ? 0 : _installerVMs.Length; } }
 
 
-		public string FileExtensions { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.FileExtensions); } } // InstallerPackage will be missing, when reading it threw an exception
+		public string? FileExtensions { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.FileExtensions); } } // InstallerPackage will be missing, when reading it threw an exception
 
-		public string Protocols { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Protocols); } }
-		public string Platforms { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Platform); } }
+		public string? Protocols { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Protocols); } }
+		public string? Platforms { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Platform); } }
 
-		public string ExpectedReturnCodes { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.ExpectedReturnCodes?.Select(i => i.ToString())); } }
+		public string? ExpectedReturnCodes { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.ExpectedReturnCodes?.Select(i => i.ToString())); } }
 
-		public string Commands { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Commands); } }
+		public string? Commands { get { return SafeJoin("|", _multiFileYaml.InstallerPackage?.Commands); } }
 
-		public string InstallersArch { get { return SafeJoin("|", GetInstallers().Select(item => item.Architecture)); } }
-		public string InstallersLocale { get { return SafeJoin("|", GetInstallers().Select(item => item.InstallerLocale)); } }
-		public string InstallersInstallerType { get { return SafeJoin("|", GetInstallers().Select(item => item.InstallerType)); } }
+		public string? InstallersArch { get { return SafeJoin("|", GetInstallers().Select(item => item.Architecture)); } }
+		public string? InstallersLocale { get { return SafeJoin("|", GetInstallers().Select(item => item.InstallerLocale)); } }
+		public string? InstallersInstallerType { get { return SafeJoin("|", GetInstallers().Select(item => item.InstallerType)); } }
 
-		public string ManifestSwitchInteractive { get { return _multiFileYaml.InstallerPackage?.InstallerSwitches?.Interactive; } }
-		public string ManifestSwitchSilent { get { return _multiFileYaml.InstallerPackage?.InstallerSwitches?.Silent; } }
-		public string ManifestSwitchSilentWithProgress { get { return _multiFileYaml.InstallerPackage?.InstallerSwitches?.SilentWithProgress; } }
+		public string? ManifestSwitchInteractive { get { return _multiFileYaml.InstallerPackage?.InstallerSwitches?.Interactive; } }
+		public string? ManifestSwitchSilent { get { return _multiFileYaml.InstallerPackage?.InstallerSwitches?.Silent; } }
+		public string? ManifestSwitchSilentWithProgress { get { return _multiFileYaml.InstallerPackage?.InstallerSwitches?.SilentWithProgress; } }
 
 
-		public string ManifestType { get { return _multiFileYaml.MainPackage.ManifestType; } }
+		public string? ManifestType { get { return _multiFileYaml.MainPackage.ManifestType; } }
 
 		public string PackageLocale { get { return string.Join("|", _multiFileYaml.LocalePackages.Select(p => p.PackageLocale)); } }
 
-		public string DefaultLocale { get { return _multiFileYaml.MainPackage.DefaultLocale; } }
+		public string? DefaultLocale { get { return _multiFileYaml.MainPackage.DefaultLocale; } }
 
 		private string GetDebuggerDisplay()
 		{
@@ -149,9 +149,9 @@ namespace WingetRepoBrowser
 			for (int index = 0; index < _intParts.Length; index++)
 			{
 				string part;
-				if (_intParts[index].HasValue)
+				if (_intParts[index] is int intPart)
 				{
-					part = _intParts[index].Value.ToString("0000000000");
+					part = intPart.ToString("0000000000");
 				}
 				else
 				{

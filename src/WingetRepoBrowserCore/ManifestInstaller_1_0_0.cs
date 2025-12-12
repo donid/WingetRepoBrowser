@@ -15,7 +15,7 @@ namespace WingetRepoBrowserCore
 		/// Supported values: arm, arm64, x86, x64 and neutral
 		/// example: x64
 		/// </summary>
-		public string Architecture { get; set; }
+		public string? Architecture { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -34,7 +34,7 @@ namespace WingetRepoBrowserCore
 		/// Restrictions: [valid sha256 hash]
 		/// example: 712f139d71e56bfb306e4a7b739b0e1109abb662dfa164192a5cfd6adb24a4e1
 		/// </summary>
-		public string InstallerSha256 { get; set; }
+		public string InstallerSha256 { get; set; } = "";
 
 		/// <summary>
 		/// SHA256 calculated from signature file's hash of MSIX file
@@ -44,18 +44,18 @@ namespace WingetRepoBrowserCore
 		/// https://github.com/microsoft/winget-cli/docs/create.md
 		/// Restrictions: [valid sha256 hash]
 		/// </summary>
-		public string SignatureSha256 { get; set; }
+		public string? SignatureSha256 { get; set; }
 
 		/// <summary>
 		/// InstallerType is a required field if not defined at the root.  Unless specified, the InstallerType will be assumed to be the same InstallerType as the root. 
 		/// See further restrictions on InstallerType earlier in this document.
 		/// </summary>
-		public string InstallerType { get; set; }
+		public string? InstallerType { get; set; }
 
 		/// <summary>
 		/// example: en-us
 		/// </summary>
-		public string InstallerLocale { get; set; }
+		public string? InstallerLocale { get; set; }
 
 		/// <summary>
 		/// experimental
@@ -64,7 +64,7 @@ namespace WingetRepoBrowserCore
 		/// Unless specified, user is the default.
 		/// example: user
 		/// </summary>
-		public string Scope { get; set; }
+		public string? Scope { get; set; }
 
 		/// <summary>
 		/// collection of entries to override root keys
@@ -85,7 +85,7 @@ namespace WingetRepoBrowserCore
 		/// Restrictions: [min: 3, max:128] 
 		/// example:{3740BD44-B58D-321A-AFC0-6D3D4556DD6C}
 		/// </summary>
-		public string ProductCode { get; set; }
+		public string? ProductCode { get; set; }
 
 		/// <summary>
 		///   "type": [ "string", "null" ],
@@ -93,10 +93,10 @@ namespace WingetRepoBrowserCore
 		///   "maxLength": 255,
 		///   "description": "PackageFamilyName for appx or msix installer. Could be used for correlation of packages across sources"
 		/// </summary>
-		public string PackageFamilyName { get; set; }
+		public string? PackageFamilyName { get; set; }
 
 
-		public string UpgradeBehavior { get; set; }
+		public string? UpgradeBehavior { get; set; }
 
 		/// <summary>
 		/// DateOnly exists only in .Net 6 not in netstandard 2

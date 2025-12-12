@@ -13,7 +13,7 @@
 		/// Supported values: arm, arm64, x86, x64 and neutral
 		/// example: x64
 		/// </summary>
-		public string Arch { get; set; }
+		public string? Arch { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -23,7 +23,7 @@
 		/// Restrictions: [min: 10, max:2000]
 		/// example: https://statics.teams.cdn.office.net/production-windows-x64/1.3.00.4461/Teams_windows_x64.exe
 		/// </summary>
-		public string Url { get; set; }
+		public string? Url { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -32,7 +32,7 @@
 		/// Restrictions: [valid sha256 hash]
 		/// example: 712f139d71e56bfb306e4a7b739b0e1109abb662dfa164192a5cfd6adb24a4e1
 		/// </summary>
-		public string Sha256 { get; set; }
+		public string? Sha256 { get; set; }
 
 		/// <summary>
 		/// SHA256 calculated from signature file's hash of MSIX file
@@ -42,13 +42,13 @@
 		/// https://github.com/microsoft/winget-cli/docs/create.md
 		/// Restrictions: [valid sha256 hash]
 		/// </summary>
-		public string SignatureSha256 { get; set; }
+		public string? SignatureSha256 { get; set; }
 
 		/// <summary>
 		/// InstallerType is a required field if not defined at the root.  Unless specified, the InstallerType will be assumed to be the same InstallerType as the root. 
 		/// See further restrictions on InstallerType earlier in this document.
 		/// </summary>
-		public string InstallerType { get; set; }
+		public string? InstallerType { get; set; }
 
 		/// <summary>
 		/// Language is the specific language of the installer.  If no language is specified, the installer will display for all users.
@@ -56,7 +56,7 @@
 		/// Language is not supported in this preview (5/24/2020)
 		/// example: en-us
 		/// </summary>
-		public string Language { get; set; }
+		public string? Language { get; set; }
 
 		/// <summary>
 		/// experimental
@@ -66,7 +66,7 @@
 		/// Scope is not supported in this preview (5/24/2020)
 		/// example: user
 		/// </summary>
-		public string Scope { get; set; }
+		public string? Scope { get; set; }
 
 		/// <summary>
 		/// collection of entries to override root keys
@@ -87,6 +87,6 @@
 		/// Restrictions: [min: 3, max:128] 
 		/// example:{3740BD44-B58D-321A-AFC0-6D3D4556DD6C}
 		/// </summary>
-		public string SystemAppId { get; set; }
+		public string? SystemAppId { get; set; }
 	}
 }
