@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <OutputType>WinExe</OutputType>
@@ -45,6 +45,7 @@
     <PackageReference Include="System.Text.Json">
       <Version>9.0.10</Version>
     </PackageReference>
+    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="WingetRepoBrowser.ico" />
