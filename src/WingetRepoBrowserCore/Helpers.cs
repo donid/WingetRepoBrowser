@@ -28,7 +28,7 @@ public class Helpers
 
 	public static string[] GetVersionsToIgnoreDownload(string idFilePath)
 	{
-		string[] result = new string[] { };
+		string[] result = [];
 		try
 		{
 			WingetIdSettings? settings = LoadWingetIdSettings(idFilePath);
@@ -73,8 +73,8 @@ public class Helpers
 
 	public class CalculateFileHashResult
 	{
-		public string Hash { get; set; }    // TODO: use 'init' instead of 'set' when switching to c#9
-		public string ErrorMessage { get; set; }
+		public string Hash { get; init; } = "";
+		public string? ErrorMessage { get; set; }
 	}
 
 	public static string ToHex(Byte[] bytes)

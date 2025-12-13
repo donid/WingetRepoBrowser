@@ -914,7 +914,7 @@
             // 
             // barStaticItem1
             // 
-            this.barStaticItem1.Caption = "v0.2.10";
+            this.barStaticItem1.Caption = "v0.3.0";
             this.barStaticItem1.Id = 3;
             this.barStaticItem1.Name = "barStaticItem1";
             // 

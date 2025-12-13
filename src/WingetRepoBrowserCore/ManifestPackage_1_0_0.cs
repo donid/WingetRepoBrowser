@@ -44,7 +44,7 @@ Localization:
 		/// and the folder structure PublisherName\ApplicationName\ApplicationName-Version.YAML
 		/// Restrictions: No white spaces allowed. [min: 4, max:255]
 		/// </summary>
-		public string PackageIdentifier { get; set; }
+		public string PackageIdentifier { get; set; } = "";
 
 		/// <summary>
 		/// Mandatory!
@@ -53,7 +53,7 @@ Localization:
 		/// Name is a required field.  It should be the friendly name of the application.
 		/// Restrictions: [min: 1, max:128]
 		/// </summary>
-		public string PackageName { get; set; }
+		public string PackageName { get; set; } = "";
 
 		/// <summary>
 		/// the common name someone may use to search for the package
@@ -61,7 +61,7 @@ Localization:
 		/// AppMoniker is the common name someone may use to search for the application.
 		/// Restrictions:  No white spaces allowed. [min: 1, max:40]
 		/// </summary>
-		public string Moniker { get; set; }
+		public string Moniker { get; set; } = "";
 
 		/// <summary>
 		/// Mandatory!
@@ -126,7 +126,7 @@ Localization:
 		/// </summary>
 		public string? PublisherSupportUrl { get; set; }
 
-		public string[] Platform { get; set; }
+		public string[]? Platform { get; set; }
 
 		/// <summary>
 		/// version numbering format for minimum version of Windows supported
@@ -218,7 +218,7 @@ Localization:
 		/// </summary>
 		public string[] Commands { get; set; }
 
-		public ManifestSwitches InstallerSwitches { get; set; }
+		public ManifestSwitches? InstallerSwitches { get; set; }
 
 
 		/// <summary>

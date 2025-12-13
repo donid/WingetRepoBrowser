@@ -49,12 +49,12 @@ namespace WingetRepoBrowser
 			{
 				string wingetidFilePath = group.Key;
 				string[] versionsToIgnore = group.Select(nd => nd.MultiFileYaml.MainPackage.PackageVersion).ToArray();
-				WingetIdSettings wingetidSettings = Helpers.LoadWingetIdSettings(wingetidFilePath);
+				WingetIdSettings? wingetidSettings = Helpers.LoadWingetIdSettings(wingetidFilePath);
 				if (wingetidSettings == null)
 				{
 					wingetidSettings = new WingetIdSettings();
 				}
-				IEnumerable<string> oldVersions = wingetidSettings.VersionsToIgnoreDownload ?? new string[] { };
+				IEnumerable<string> oldVersions = wingetidSettings.VersionsToIgnoreDownload ?? [];
 				wingetidSettings.VersionsToIgnoreDownload = oldVersions.Concat(versionsToIgnore).ToArray();
 				Helpers.SaveWingetIdSettings(wingetidFilePath, wingetidSettings);
 			}

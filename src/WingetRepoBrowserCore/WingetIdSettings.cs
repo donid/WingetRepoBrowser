@@ -2,7 +2,7 @@
 {
 	public class WingetIdSettings
 	{
-		public string[] VersionsToIgnoreDownload { get; set; }
+		public string[]? VersionsToIgnoreDownload { get; set; }
 
 	}
 }

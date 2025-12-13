@@ -25,7 +25,7 @@ namespace WingetRepoBrowserCore
 		/// Restrictions: [min: 10, max:2000]
 		/// example: https://statics.teams.cdn.office.net/production-windows-x64/1.3.00.4461/Teams_windows_x64.exe
 		/// </summary>
-		public string InstallerUrl { get; set; }
+		public string InstallerUrl { get; set; } = "";
 
 		/// <summary>
 		/// Mandatory!
@@ -69,7 +69,7 @@ namespace WingetRepoBrowserCore
 		/// <summary>
 		/// collection of entries to override root keys
 		/// </summary>
-		public ManifestSwitches InstallerSwitches { get; set; }
+		public ManifestSwitches? InstallerSwitches { get; set; }
 
 		/// <summary>
 		///  not yet used in the wild!

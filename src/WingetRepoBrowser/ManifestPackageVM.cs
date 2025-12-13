@@ -51,11 +51,11 @@ namespace WingetRepoBrowser
 			}
 		}
 
-		public string Publisher { get { return _multiFileYaml.DefaultLocalePackage.Publisher; } }
+		public string? Publisher { get { return _multiFileYaml.DefaultLocalePackage.Publisher; } }
 
 		public string Moniker { get { return _multiFileYaml.DefaultLocalePackage.Moniker; } }
 
-		public string Author { get { return _multiFileYaml.DefaultLocalePackage.Author; } }
+		public string? Author { get { return _multiFileYaml.DefaultLocalePackage.Author; } }
 
 		public string? License { get { return _multiFileYaml.DefaultLocalePackage.License; } }
 
