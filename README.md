@@ -19,6 +19,7 @@ Clone the winget-pkgs repository to a local folder and specify that folder in Wi
 **New Features in v0.3.0**
 
 - show infos about local and remote winget-repo
+- migrated all projects to .Net 10
 
 **New Features in v0.2.6**
 
