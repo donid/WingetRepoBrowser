@@ -16,6 +16,10 @@ Clone the winget-pkgs repository to a local folder and specify that folder in Wi
 - versions-count when grouping and group-count (number of unique packages)
 - Downloading is currently not supported for manifests that have the PackageVersion 'latest'.
 
+**New Features in v0.3.0**
+
+- show infos about local and remote winget-repo
+
 **New Features in v0.2.6**
 
 - added application icon
