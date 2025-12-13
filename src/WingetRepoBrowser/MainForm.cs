@@ -402,7 +402,8 @@ namespace WingetRepoBrowser
 
 		private async void TextEditRepoFolder_Leave(object? sender, EventArgs e)
 		{
-			await UpdateLastCommitDisplayAsync();
+			memoEditMessages.Text = "";
+            await UpdateLastCommitDisplayAsync();
 		}
 
 		private async Task UpdateLastCommitDisplayAsync()
