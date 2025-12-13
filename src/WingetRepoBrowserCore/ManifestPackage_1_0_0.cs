@@ -44,7 +44,7 @@ Localization:
 		/// and the folder structure PublisherName\ApplicationName\ApplicationName-Version.YAML
 		/// Restrictions: No white spaces allowed. [min: 4, max:255]
 		/// </summary>
-		public string PackageIdentifier { get; set; }
+		public string PackageIdentifier { get; set; } = "";
 
 		/// <summary>
 		/// Mandatory!
@@ -53,7 +53,7 @@ Localization:
 		/// Name is a required field.  It should be the friendly name of the application.
 		/// Restrictions: [min: 1, max:128]
 		/// </summary>
-		public string PackageName { get; set; }
+		public string PackageName { get; set; } = "";
 
 		/// <summary>
 		/// the common name someone may use to search for the package
@@ -61,7 +61,7 @@ Localization:
 		/// AppMoniker is the common name someone may use to search for the application.
 		/// Restrictions:  No white spaces allowed. [min: 1, max:40]
 		/// </summary>
-		public string Moniker { get; set; }
+		public string Moniker { get; set; } = "";
 
 		/// <summary>
 		/// Mandatory!
@@ -87,11 +87,11 @@ Localization:
 		/// Publisher is a required field.  It should be the legal company name.
 		/// Restrictions: [min: 1, max:128]
 		/// </summary>
-		public string Publisher { get; set; }
+		public string? Publisher { get; set; }
 
 
 
-		public string Author { get; set; }
+		public string? Author { get; set; }
 
 		/// <summary>
 		/// Mandatory!
@@ -101,7 +101,7 @@ Localization:
 		/// For example: BSD, MIT, Apache, Microsoft Public License, commercial
 		/// Restrictions: [min: 1, max:40]
 		/// </summary>
-		public string License { get; set; }
+		public string? License { get; set; }
 
 
 		/// <summary>
@@ -111,22 +111,22 @@ Localization:
 		/// Restrictions: The LicenseUrl must be a valid secure URL, for example beginning with https and 
 		/// followed by a hostname.  [min: 10, max:2000]
 		/// </summary>
-		public string LicenseUrl { get; set; }
+		public string? LicenseUrl { get; set; }
 
 		/// <summary>
 		/// The publisher privacy page or the package privacy page
 		/// </summary>
-		public string PrivacyUrl { get; set; }
+		public string? PrivacyUrl { get; set; }
 		/// <summary>
 		/// The publisher home page
 		/// </summary>
-		public string PublisherUrl { get; set; }
+		public string? PublisherUrl { get; set; }
 		/// <summary>
 		/// The publisher support page
 		/// </summary>
-		public string PublisherSupportUrl { get; set; }
+		public string? PublisherSupportUrl { get; set; }
 
-		public string[] Platform { get; set; }
+		public string[]? Platform { get; set; }
 
 		/// <summary>
 		/// version numbering format for minimum version of Windows supported
@@ -135,7 +135,7 @@ Localization:
 		/// For example specifying 10.0.18362.0 will only allows this tool to be installed on Windows build 1903 or greater.
 		/// Restrictions: must follow Windows versioning model. 4 sections with max value of 65535.  For example:65535.65535.65535.65535
 		/// </summary>
-		public string MinimumOSVersion { get; set; }
+		public string? MinimumOSVersion { get; set; }
 
 		/// <summary>
 		/// valid secure URL for the package
@@ -144,7 +144,7 @@ Localization:
 		/// Restrictions: The Homepage must be a valid secure URL, for example beginning with https and 
 		/// followed by a hostname.  [min: 10, max:2000]
 		/// </summary>
-		public string PackageUrl { get; set; }
+		public string? PackageUrl { get; set; }
 
 		/// <summary>
 		/// The short description of the package
@@ -152,13 +152,13 @@ Localization:
 		/// Description should be friendly providing insights into the value of the tool.
 		/// Restrictions: [min: 3, max:256]
 		/// </summary>
-		public string ShortDescription { get; set; }
+		public string? ShortDescription { get; set; }
 
 		/// <summary>
 		/// The full description of the package
 		/// Restrictions: [min: 3, max:10000]
 		/// </summary>
-		public string Description { get; set; }
+		public string? Description { get; set; }
 
 		/// <summary>
 		/// datatype: 'list' !?!?
@@ -177,7 +177,7 @@ Localization:
 		/// zip is not supported in this preview (5/24/2020)  
 		/// Restrictions: [min: 1, max:40] 
 		/// </summary>
-		public string InstallerType { get; set; }
+		public string? InstallerType { get; set; }
 
 		public string[] InstallModes { get; set; }
 
@@ -218,7 +218,7 @@ Localization:
 		/// </summary>
 		public string[] Commands { get; set; }
 
-		public ManifestSwitches InstallerSwitches { get; set; }
+		public ManifestSwitches? InstallerSwitches { get; set; }
 
 
 		/// <summary>
@@ -230,7 +230,7 @@ Localization:
 		/// Interactive is not supported in this preview (5/24/2020)
 		/// example: /ShowEula
 		/// </summary>
-		public string Interactive { get; set; }
+		public string? Interactive { get; set; }
 
 
 		/// <summary>
@@ -238,52 +238,52 @@ Localization:
 		/// The distribution channel
 		/// Restrictions: [min: 1, max:16]
 		/// </summary>
-		public string Channel { get; set; }
+		public string? Channel { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// custom switches passed to the installer
 		/// </summary>
-		public string Custom { get; set; }
+		public string? Custom { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// switches passed to the installer for silent installation
 		/// </summary>
-		public string Silent { get; set; }
+		public string? Silent { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// switches passed to the installer for non-interactive install
 		/// </summary>
-		public string SilentWithProgress { get; set; }
+		public string? SilentWithProgress { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string DefaultLocale { get; set; }
+		public string? DefaultLocale { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string PackageLocale { get; set; }
+		public string? PackageLocale { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string InstallerLocale { get; set; }
+		public string? InstallerLocale { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// specifies log redirection switches and path
 		/// </summary>
-		public string Log { get; set; }
+		public string? Log { get; set; }
 
 		/// <summary>
 		/// not yet used in the wild! -> used in ManifestSwitches
 		/// specifies alternate location to install package
 		/// </summary>
-		public string InstallLocation { get; set; }
+		public string? InstallLocation { get; set; }
 
 
 		public ExpectedReturnCode[] ExpectedReturnCodes { get; set; }
@@ -293,9 +293,9 @@ Localization:
 		/// The 'singleton' format is only valid for packages containing a single installer and a single locale.
 		/// If more than one installer or locale is provided, the multiple YAML file format and schema must be used.
 		/// </summary>
-		public string ManifestType { get; set; }
+		public string? ManifestType { get; set; }
 
-		public string ManifestVersion { get; set; }
+		public string? ManifestVersion { get; set; }
 
 
 		private string GetDebuggerDisplay()

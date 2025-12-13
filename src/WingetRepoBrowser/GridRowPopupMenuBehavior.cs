@@ -10,7 +10,7 @@ namespace WingetRepoBrowser
 	public class GridRowPopupMenuBehavior
 	{
 		private readonly GridView _view;
-		private DXMenuItem[] _menuItems;
+		private DXMenuItem[] _menuItems=[];
 
 
 		public GridRowPopupMenuBehavior(GridView view)
@@ -36,7 +36,7 @@ namespace WingetRepoBrowser
 
 		private void view_PopupMenuShowing(object sender, PopupMenuShowingEventArgs e)
 		{
-			GridRowPopupMenuBehavior.FillPopupMenuItems(sender, e, _menuItems);
+			FillPopupMenuItems(sender, e, _menuItems);
 		}
 
 		public static void FillPopupMenuItems(object sender, PopupMenuShowingEventArgs e, DXMenuItem[] menuItems)

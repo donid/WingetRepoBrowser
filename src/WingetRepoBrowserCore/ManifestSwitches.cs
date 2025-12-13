@@ -27,14 +27,14 @@ namespace WingetRepoBrowserCore
 		///  SilentWithProgress represents the value that should be passed to the installer when the user chooses to install a non-interactive install.
 		/// For example, some installers support "passive".
 		/// </summary>
-		public string SilentWithProgress { get; set; }
+		public string? SilentWithProgress { get; set; }
 
 		/// <summary>
 		/// custom switches passed to the installer
 		/// Custom switches will be passed directly to the installer by winget.
 		/// Restrictions: [min: 1, max:128]
 		/// </summary>
-		public string Custom { get; set; }
+		public string? Custom { get; set; }
 
 		/// <summary>
 		/// specifies alternate location to install package
@@ -46,7 +46,7 @@ namespace WingetRepoBrowserCore
 		/// InstallLocation must include the <INSTALLPATH> token.
 		/// example: /DIR=<INSTALLPATH>
 		/// </summary>
-		public string InstallLocation { get; set; }
+		public string? InstallLocation { get; set; }
 
 		/// <summary>
 		/// experimental
@@ -55,7 +55,7 @@ namespace WingetRepoBrowserCore
 		/// Language is not supported in this preview (5/24/2020)
 		/// example: en-US
 		/// </summary>
-		public string Language { get; set; }
+		public string? Language { get; set; }
 
 		/// <summary>
 		/// specifies log redirection switches and path
@@ -66,7 +66,7 @@ namespace WingetRepoBrowserCore
 		/// Log must include the <LOGPATH> token.
 		/// example: /LOG=<LOGPATH>
 		/// </summary>
-		public string Log { get; set; }
+		public string? Log { get; set; }
 
 
 		// e.g. in "V:\\projects_os_git\\winget-pkgs\\manifests\\Sonos\\Controller\\11.1.yaml"
@@ -78,6 +78,6 @@ namespace WingetRepoBrowserCore
 		/// Interactive is not supported in this preview (5/24/2020)
 		/// example: /ShowEula
 		/// </summary>
-		public string Interactive { get; set; }
+		public string? Interactive { get; set; }
 	}
 }

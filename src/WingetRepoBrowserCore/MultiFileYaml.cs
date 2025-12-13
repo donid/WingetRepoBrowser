@@ -16,7 +16,7 @@ namespace WingetRepoBrowserCore
 			get { return _mainYamlFilePath; }
 		}
 
-		public string InstallerPackageFilePath
+		public string? InstallerPackageFilePath
 		{
 			get
 			{

@@ -1,4 +1,4 @@
-﻿using DevExpress.Utils.Menu;
+using DevExpress.Utils.Menu;
 using DevExpress.XtraEditors;
 using DevExpress.XtraEditors.Controls;
 using DevExpress.XtraGrid;
@@ -25,7 +25,7 @@ namespace WingetRepoBrowser
 	public partial class MainForm : XtraForm
 	{
 		private const string cGitRepoBaseUrl = "https://github.com/microsoft/winget-pkgs";
-		private AppSettings _appSettings;
+		private AppSettings _appSettings= new AppSettings();
 		private GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
 		private List<ManifestPackageVM> _manifestVMs;
 		private YamlFileHelper _yamlFileHelper;
@@ -37,21 +37,24 @@ namespace WingetRepoBrowser
 			_gridViewManifestsRowPopup = new GridRowPopupMenuBehavior(gridView1);
 			_gridViewManifestsRowPopup.SetMenuItems(CreateMenuItemsManifestsPopup());
 			_yamlFileHelper = new YamlFileHelper();
+
+			// Hook up repository-folder Leave event to check last commit when user finishes editing the path
+			this.textEditRepoFolder.Leave += TextEditRepoFolder_Leave;
 		}
 
 		private DXMenuItem[] CreateMenuItemsManifestsPopup()
 		{
 			//menu tooltip: https://www.devexpress.com/Support/Center/Question/Details/Q304975
 
-			DXMenuItem[] result = new DXMenuItem[] {
+			DXMenuItem[] result = [
 				new DXMenuItem("OpenYamlFile", ItemOpenYamlFile_Click),
 				new DXMenuItem("OpenYamlFolder", ItemOpenYamlFolder_Click),
 				new DXMenuItem("OpenGitRepo", ItemOpenGitRepo_Click)
-			};
+			];
 			return result;
 		}
 
-		private void ItemOpenYamlFile_Click(object sender, EventArgs e)
+		private void ItemOpenYamlFile_Click(object? sender, EventArgs e)
 		{
 			ManifestPackageVM row = GetFocusedRow();
 			if (row == null)
@@ -61,7 +64,7 @@ namespace WingetRepoBrowser
 
 			OpenFileOrUrl(row.FilePath);
 		}
-		private void ItemOpenYamlFolder_Click(object sender, EventArgs e)
+		private void ItemOpenYamlFolder_Click(object? sender, EventArgs e)
 		{
 			ManifestPackageVM row = GetFocusedRow();
 			if (row == null)
@@ -71,7 +74,7 @@ namespace WingetRepoBrowser
 
 			OpenFileOrUrl(Path.GetDirectoryName(row.FilePath));
 		}
-		private void ItemOpenGitRepo_Click(object sender, EventArgs e)
+		private void ItemOpenGitRepo_Click(object? sender, EventArgs e)
 		{
 			ManifestPackageVM row = GetFocusedRow();
 			if (row == null)
@@ -92,7 +95,7 @@ namespace WingetRepoBrowser
 
 		private ManifestPackageVM GetFocusedRow()
 		{
-			return gridView1.GetFocusedRow() as ManifestPackageVM;
+			return (ManifestPackageVM)gridView1.GetFocusedRow();
 		}
 		private IEnumerable<ManifestPackageVM> GetSelectedRows()
 		{
@@ -103,23 +106,28 @@ namespace WingetRepoBrowser
 		{
 			base.OnLoad(e);
 
-			//var args = Environment.GetCommandLineArgs();
-			//if (args.Length >= 2)
-			//{
-			//	textEditRepoFolder.Text = args[1];
-			//}
-			//if (args.Length >= 3)
-			//{
-			//	textEditInstallersFolder.Text = args[2];
-			//}
+            //var args = Environment.GetCommandLineArgs();
+            //if (args.Length >= 2)
+            //{
+            //    textEditRepoFolder.Text = args[1];
+            //}
+            //if (args.Length >= 3)
+            //{
+            //    textEditInstallersFolder.Text = args[2];
+            //}
 
-			string settingsFilePath = Path.Combine(Application.StartupPath, "AppSettings.json");
+
+            // because of the git-repo check messages -> now done here instead of in simpleButtonSearch_Click
+            layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+
+
+            string settingsFilePath = Path.Combine(Application.StartupPath, "AppSettings.json");
 			if (File.Exists(settingsFilePath))
 			{
 				try
 				{
 					string json = File.ReadAllText(settingsFilePath);
-					_appSettings = JsonSerializer.Deserialize<AppSettings>(json);
+					_appSettings = JsonSerializer.Deserialize<AppSettings>(json)!;
 					textEditRepoFolder.Text = _appSettings.RepoFolder;
 					textEditInstallersFolder.Text = _appSettings.InstallersFolder;
 				}
@@ -128,6 +136,9 @@ namespace WingetRepoBrowser
 					ShowMessageBox("Error while deserializing AppSettings: " + ex.Message);
 				}
 			}
+
+			// Start an initial check for the last commit (non-blocking)
+			_ = UpdateLastCommitDisplayAsync();
 
 		}
 
@@ -149,7 +160,7 @@ namespace WingetRepoBrowser
 
 		private void gridView1_MasterRowGetChildList(object sender, MasterRowGetChildListEventArgs e)
 		{
-			ManifestPackageVM row = gridView1.GetRow(e.RowHandle) as ManifestPackageVM;
+			ManifestPackageVM row = (ManifestPackageVM)gridView1.GetRow(e.RowHandle);
 			e.ChildList = row.Installers;
 		}
 
@@ -227,7 +238,8 @@ namespace WingetRepoBrowser
 
 				if (loadManifestsResult.Messages.Any())
 				{
-					layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+					// is now done in OnLoad, because of the git-repo check
+					//layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
 					memoEditMessages.Text = string.Join(Environment.NewLine, loadManifestsResult.Messages);
 				}
 				_manifestVMs = tmpManifestVMs;
@@ -279,7 +291,7 @@ namespace WingetRepoBrowser
 				return;
 			}
 
-			Cursor saveCursor = Cursor.Current;
+			Cursor? saveCursor = Cursor.Current;
 			try
 			{
 				Cursor.Current = Cursors.WaitCursor;
@@ -325,8 +337,8 @@ namespace WingetRepoBrowser
 
 				string[] versionsToIgnoreDownload = Helpers.GetVersionsToIgnoreDownload(idFilePath);
 
-				string idFileFolder = Path.GetDirectoryName(idFilePath);
-				string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in folders with version as name
+				string idFileFolder = Path.GetDirectoryName(idFilePath)!;
+				string versionFolder = Path.Combine(idFileFolder, ConvertVersionToDirectoryName(manifestPackage.Version)); // illegal chars in version shouldn't be a problem, because yaml files are stored in[...]
 				bool exists = versionsToIgnoreDownload.Any(v => v == manifestPackage.Version) || Directory.Exists(versionFolder);
 				if (!exists)
 				{
@@ -386,6 +398,55 @@ namespace WingetRepoBrowser
 				e.Graphics.DrawString("GroupRowCount:" + Environment.NewLine + groupRows, e.Appearance.Font, Brushes.Black, e.Bounds);
 				e.Handled = true;
 			}
+		}
+
+		private async void TextEditRepoFolder_Leave(object? sender, EventArgs e)
+		{
+			memoEditMessages.Text = "";
+            await UpdateLastCommitDisplayAsync();
+		}
+
+		private async Task UpdateLastCommitDisplayAsync()
+		{
+			string newLine = Environment.NewLine;
+			string path = textEditRepoFolder.Text?.Trim() ?? "";
+			if (!Directory.Exists(path))
+			{
+				memoEditMessages.Text += "Repo-folder not found!" + newLine;
+				return;
+			}
+
+			var savedText = memoEditMessages.Text;
+			memoEditMessages.Text = "Checking git info...";
+
+			RepoCommitInfo repoInfo = await GitHelpers.GetRepoCommitInfoAsync(path);
+
+			if (repoInfo.ErrorMessage != "")
+			{
+				memoEditMessages.Text = $"Error occurred for repo path: {path} message: {repoInfo.ErrorMessage}" + newLine + savedText;
+				return;
+			}
+
+			string localLine = repoInfo.Local != null
+				? $"Local HEAD: {ShortSha(repoInfo.Local.Sha)} — {repoInfo.Local.Date:u} — {repoInfo.Local.Message}"
+				: "Local HEAD: (no commits)";
+
+			string remoteLine = repoInfo.Remote != null
+				? $"Remote tip: {ShortSha(repoInfo.Remote.Sha)} — {repoInfo.Remote.Date:u} — {repoInfo.Remote.Message}"
+				: "Remote tip: (no origin/main or origin/master detected or fetch failed)";
+
+			string display = $"Repo-root: {repoInfo.RepositoryRootPath}{newLine}{localLine}{newLine}{remoteLine}{newLine}{newLine}{savedText}";
+
+			memoEditMessages.Text = display;
+		}
+
+		private static string ShortSha(string sha)
+		{
+			if (string.IsNullOrEmpty(sha))
+			{
+				return sha;
+			}
+			return sha.Length >= 7 ? sha.Substring(0, 7) : sha;
 		}
 
 		/*
