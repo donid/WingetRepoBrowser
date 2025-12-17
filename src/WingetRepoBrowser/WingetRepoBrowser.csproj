@@ -16,7 +16,7 @@
   <ItemGroup>
     <None Remove="Properties\licenses.licx" />
     <PackageReference Include="DevExpress.Win.Grid" Version="25.1.5" />
-    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="2.2.0" />
   </ItemGroup>

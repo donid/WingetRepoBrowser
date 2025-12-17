@@ -1,26 +1,30 @@
+using LibGit2Sharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using LibGit2Sharp;
 
 namespace WingetRepoBrowserCore;
 
 public static class GitHelpers
 {
-	private static string? FindRepoRoot(string path)
+	public static string? FindRepoRoot(string path)
 	{
 		if (string.IsNullOrWhiteSpace(path))
 		{
 			return null;
 		}
-		string? discovered = Repository.Discover(path);
-		if (string.IsNullOrEmpty(discovered))
+
+		string? discoveredDotGitFolder = Repository.Discover(path);
+		if (string.IsNullOrEmpty(discoveredDotGitFolder))
 		{
 			return null;
 		}
-		return Path.GetFullPath(Path.Combine(discovered, ".."));
+		
+		string repoRootPath = Path.Combine(discoveredDotGitFolder, ".."); // is this the same as "Path.GetDirectoryName(discoveredDotGitFolder)" ?
+		return Path.GetFullPath(repoRootPath);
 	}
 
 	public static Task<RepoCommitInfo> GetRepoCommitInfoAsync(string repoPath)
@@ -38,7 +42,7 @@ public static class GitHelpers
 			string? root = FindRepoRoot(repoPath);
 			if (root == null || !Repository.IsValid(root))
 			{
-				return new RepoCommitInfo() { ErrorMessage= "invalid repoPath" };
+				return new RepoCommitInfo() { ErrorMessage = "invalid repoPath" };
 			}
 
 			using var repo = new Repository(root);
@@ -81,11 +85,90 @@ public static class GitHelpers
 				}
 			}
 
-			return new RepoCommitInfo { Local = localInfo, Remote = remoteInfo, RepositoryRootPath=root };
+			return new RepoCommitInfo { Local = localInfo, Remote = remoteInfo, RepositoryRootPath = root };
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
-			return new RepoCommitInfo() { ErrorMessage = "GetRepoCommitInfo exception: "+ ex.Message };
+			return new RepoCommitInfo() { ErrorMessage = "GetRepoCommitInfo exception: " + ex.Message };
 		}
 	}
+
+
+	/// <summary>
+	/// Returns a set of directories (absolute paths) that contain .yaml files added/modified/renamed/copied
+	/// in commits since <paramref name="sinceUtc"/>.
+	/// If the path is not a git repository, an empty collection is returned.
+	/// </summary>
+	public static IEnumerable<string> GetChangedYamlDirectories(string repoRoot, DateTime sinceDate)
+	{
+		if (string.IsNullOrWhiteSpace(repoRoot) || !Directory.Exists(repoRoot))
+		{
+			return Array.Empty<string>();
+		}
+
+		if (repoRoot == null || !Directory.Exists(Path.Combine(repoRoot, ".git")))
+		{
+			// Not a git repository
+			return Array.Empty<string>();
+		}
+
+		var relativeDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		try
+		{
+			using (var repo = new Repository(repoRoot))
+			{
+				var filter = new CommitFilter { SortBy = CommitSortStrategies.Time };
+
+				var filteredCommits = repo.Commits.QueryBy(filter).TakeWhile(commit => commit.Committer.When >= sinceDate).ToList();
+				if (filteredCommits.Count<=2)
+				{
+					//todo print log message
+					return Array.Empty<string>();
+				}
+				Commit oldestCommit = filteredCommits.Last();
+				Commit newestCommit = filteredCommits.First();
+
+				TreeChanges changes = repo.Diff.Compare<TreeChanges>(oldestCommit!.Tree, newestCommit!.Tree);
+				AddChangedDirs(repoRoot, relativeDirs, changes);
+			}
+
+			return relativeDirs.Select(dir=>MakeDirAbsolute(repoRoot,dir));
+		}
+		catch
+		{
+			// On any error return empty so caller can fall back
+			return Array.Empty<string>();
+		}
+
+	}
+
+	private static string MakeDirAbsolute(string repoRoot, string relativeDir)
+	{
+		string absoluteDir = Path.Combine(repoRoot, relativeDir.Replace('/', Path.DirectorySeparatorChar));
+		return absoluteDir;
+	}
+
+	private static void AddChangedDirs(string repoRoot, HashSet<string> dirs, TreeChanges changes)
+	{
+		foreach (var change in changes)
+		{
+			if (!change.Path.EndsWith(".yaml", StringComparison.OrdinalIgnoreCase))
+			{
+				continue;
+			}
+
+			if (change.Status == ChangeKind.Added
+				|| change.Status == ChangeKind.Modified
+				|| change.Status == ChangeKind.Renamed
+				|| change.Status == ChangeKind.Copied)
+			{
+				string? relativeDir = Path.GetDirectoryName(change.Path);
+				if (relativeDir != null)
+				{
+					dirs.Add(relativeDir);
+				}
+			}
+		}
+	}
+
 }

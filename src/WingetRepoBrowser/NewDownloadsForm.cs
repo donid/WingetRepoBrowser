@@ -144,8 +144,17 @@ namespace WingetRepoBrowser
 		private void ProcessOneNewDownload(int progressPercent, NewDownload newDownload)
 		{
 			string versionFolder = newDownload.VersionFolder;
-			// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
-			MultiFileYaml mfy = new YamlFileHelper().LoadMultiFileYaml(newDownload.MultiFileYaml.MainYamlFilePath);
+			MultiFileYaml mfy;
+			try
+			{
+				// create a fresh instance, otherwise the changes we will make would be visible in the GUI-grid
+				mfy = new YamlFileHelper().LoadMultiFileYaml(newDownload.MultiFileYaml.MainYamlFilePath);
+			}
+			catch (Exception ex)
+			{
+				AddLogLineBackground(progressPercent, ex.ToString());
+				return;
+			}
 
 			var installersWithMatchingLocale = mfy.Installers.Where(i => HasMatchingLocale(i, LocalesToDownload));
 

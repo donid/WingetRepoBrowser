@@ -3,12 +3,13 @@
     <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <StartupObject>WingetRepoBrowserCoreTests.Program</StartupObject>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\WingetRepoBrowserCore\WingetRepoBrowserCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="LibGit2Sharp" Version="0.29.0" />
+    <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk">
       <Version>17.13.0</Version>
     </PackageReference>

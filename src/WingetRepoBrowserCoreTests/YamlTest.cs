@@ -28,7 +28,7 @@ namespace WingetRepoBrowserTests
 		{
 			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\7\7zip\7zip\21.07\7zip.7zip.yaml";
 			ManifestPackage_1_0_0 package = new YamlFileHelper().ReadYamlFile(yamlFile).Manifest;
-			string locale = package.PackageLocale;
+			string? locale = package.PackageLocale;
 		}
 
 
@@ -51,7 +51,7 @@ namespace WingetRepoBrowserTests
 		public void TestReadManifestVersion()
 		{
 			string yamlFile = @"V:\projects_os_git\winget-pkgs\manifests\a\AcroSoftware\CutePDFWriter\4.0\AcroSoftware.CutePDFWriter.yaml";
-			string version = ReadYamlManifestVersion(yamlFile);
+			string? version = ReadYamlManifestVersion(yamlFile);
 		}
 
 		[TestMethod]
@@ -62,7 +62,7 @@ namespace WingetRepoBrowserTests
 			string[] filePaths = Directory.GetFiles(yamlFolder, "*.yaml", SearchOption.AllDirectories);
 			foreach (string filePath in filePaths)
 			{
-				string version = ReadYamlManifestVersion(filePath);
+				string? version = ReadYamlManifestVersion(filePath);
 				if (version != "1.0.0")
 				{
 
@@ -71,14 +71,18 @@ namespace WingetRepoBrowserTests
 		}
 
 
-		private static string ReadYamlManifestVersion(string yamlFile)
+		private static string? ReadYamlManifestVersion(string yamlFile)
 		{
 			using (StreamReader streamReader = new StreamReader(yamlFile, true))
 			{
 				YamlStream yaml = new YamlStream();
 				yaml.Load(streamReader);
 				YamlMappingNode mapping = (YamlMappingNode)yaml.Documents[0].RootNode;
-				YamlScalarNode versionNode = mapping.Children[new YamlScalarNode("ManifestVersion")] as YamlScalarNode;
+				YamlScalarNode? versionNode = mapping.Children[new YamlScalarNode("ManifestVersion")] as YamlScalarNode;
+				if (versionNode==null)
+				{
+					return null;
+				}
 
 				return versionNode.Value;
 			}

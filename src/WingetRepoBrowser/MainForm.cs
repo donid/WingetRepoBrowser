@@ -25,7 +25,7 @@ namespace WingetRepoBrowser
 	public partial class MainForm : XtraForm
 	{
 		private const string cGitRepoBaseUrl = "https://github.com/microsoft/winget-pkgs";
-		private AppSettings _appSettings= new AppSettings();
+		private AppSettings _appSettings = new AppSettings();
 		private GridRowPopupMenuBehavior _gridViewManifestsRowPopup;
 		private List<ManifestPackageVM> _manifestVMs;
 		private YamlFileHelper _yamlFileHelper;
@@ -64,6 +64,7 @@ namespace WingetRepoBrowser
 
 			OpenFileOrUrl(row.FilePath);
 		}
+
 		private void ItemOpenYamlFolder_Click(object? sender, EventArgs e)
 		{
 			ManifestPackageVM row = GetFocusedRow();
@@ -72,8 +73,16 @@ namespace WingetRepoBrowser
 				return;
 			}
 
-			OpenFileOrUrl(Path.GetDirectoryName(row.FilePath));
+			string? yamlFolder = Path.GetDirectoryName(row.FilePath);
+			if (yamlFolder==null)
+			{
+				ShowMessageBox("Path.GetDirectoryName returned null");
+				return;
+			}
+
+			OpenFileOrUrl(yamlFolder);
 		}
+
 		private void ItemOpenGitRepo_Click(object? sender, EventArgs e)
 		{
 			ManifestPackageVM row = GetFocusedRow();
@@ -106,22 +115,22 @@ namespace WingetRepoBrowser
 		{
 			base.OnLoad(e);
 
-            //var args = Environment.GetCommandLineArgs();
-            //if (args.Length >= 2)
-            //{
-            //    textEditRepoFolder.Text = args[1];
-            //}
-            //if (args.Length >= 3)
-            //{
-            //    textEditInstallersFolder.Text = args[2];
-            //}
+			//var args = Environment.GetCommandLineArgs();
+			//if (args.Length >= 2)
+			//{
+			//    textEditRepoFolder.Text = args[1];
+			//}
+			//if (args.Length >= 3)
+			//{
+			//    textEditInstallersFolder.Text = args[2];
+			//}
 
 
-            // because of the git-repo check messages -> now done here instead of in simpleButtonSearch_Click
-            layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
+			// because of the git-repo check messages -> now done here instead of in simpleButtonSearch_Click
+			layoutControlItemMessages.Visibility = DevExpress.XtraLayout.Utils.LayoutVisibility.Always;
 
 
-            string settingsFilePath = Path.Combine(Application.StartupPath, "AppSettings.json");
+			string settingsFilePath = Path.Combine(Application.StartupPath, "AppSettings.json");
 			if (File.Exists(settingsFilePath))
 			{
 				try
@@ -164,15 +173,28 @@ namespace WingetRepoBrowser
 			e.ChildList = row.Installers;
 		}
 
-		private static List<string> FindAllYamlFiles(string folder, IProgress<int> progress)
+		// ageLimitCommitDays =-1 -> find all files
+		private static List<string> FindAllYamlFiles(string folder, IProgress<int> progress, int ageLimitCommitDays)
 		{
-			IEnumerable<string> enumerable = Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories);
+			string? repoRootFolder = GitHelpers.FindRepoRoot(folder);
+			HashSet<string> allowedDirsHashSet = new HashSet<string>();
+			if (repoRootFolder != null && ageLimitCommitDays >= 0)
+			{
+				DateTime since = DateTime.UtcNow.AddDays(-ageLimitCommitDays);
+				var allowedDirectories = GitHelpers.GetChangedYamlDirectories(repoRootFolder, since).ToList();
+				allowedDirsHashSet = new HashSet<string>(allowedDirectories, StringComparer.OrdinalIgnoreCase);
+			}
+
+			IEnumerable<string> filePaths = Directory.EnumerateFiles(folder, "*.yaml", SearchOption.AllDirectories);
 			List<string> result = new List<string>();
 			int count = 0;
 
-			foreach (string item in enumerable)
+			foreach (string filePath in filePaths)
 			{
-				result.Add(item);
+				if (allowedDirsHashSet.Count == 0 || allowedDirsHashSet.Contains(Path.GetDirectoryName(filePath)!))
+				{
+					result.Add(filePath);
+				}
 				progress.Report(++count);
 			}
 			return result;
@@ -204,6 +226,7 @@ namespace WingetRepoBrowser
 			barEditItemProgress.EditValue = 0;
 			repositoryItemMarqueeProgressBar1.Paused = false;
 			barEditItemMarquee.Visibility = DevExpress.XtraBars.BarItemVisibility.Always;
+			int ageLimitCommitDays =(int)numericUpDownAgeLimitCommitDays.Value;
 
 			try
 			{
@@ -213,7 +236,7 @@ namespace WingetRepoBrowser
 				{
 					//yamlFiles = await FindAllYamlFilesAsync(folder);
 					IProgress<int> progressDiscover = new Progress<int>(count => barEditItemMarquee.EditValue = count);
-					yamlFiles = await Task.Run(() => FindAllYamlFiles(folder, progressDiscover));
+					yamlFiles = await Task.Run(() => FindAllYamlFiles(folder, progressDiscover, ageLimitCommitDays));
 				}
 				catch (Exception ex)
 				{
@@ -403,7 +426,7 @@ namespace WingetRepoBrowser
 		private async void TextEditRepoFolder_Leave(object? sender, EventArgs e)
 		{
 			memoEditMessages.Text = "";
-            await UpdateLastCommitDisplayAsync();
+			await UpdateLastCommitDisplayAsync();
 		}
 
 		private async Task UpdateLastCommitDisplayAsync()
@@ -469,11 +492,11 @@ namespace WingetRepoBrowser
 	internal class NewDownload
 	{
 		public MultiFileYaml MultiFileYaml { get; set; }
-		public string VersionFolder { get; set; }
+		public string VersionFolder { get; set; } = "";
 		//public string FilePath { get; set; }
 		//public ManifestPackage_1_0_0 InstallerPackage { get; set; }
 		//public string InstallerPackageFilePath { get; set; }
-		public string IdFilePath { get; set; }
+		public string IdFilePath { get; set; } = "";
 
 	}
 

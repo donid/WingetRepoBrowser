@@ -73,7 +73,7 @@ namespace WingetRepoBrowser
 
 		public string? Tags { get { return SafeJoin("|", _multiFileYaml.DefaultLocalePackage.Tags); } }
 
-		private static string? SafeJoin(string separator, IEnumerable<string>? arr)
+		private static string? SafeJoin(string separator, IEnumerable<string?>? arr)
 		{
 			if (arr == null)
 			{

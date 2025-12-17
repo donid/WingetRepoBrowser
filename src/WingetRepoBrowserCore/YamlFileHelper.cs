@@ -70,7 +70,7 @@ namespace WingetRepoBrowserCore
 			var ryr = ReadYamlFile(mainYamlFilePath);
 			if (ryr.ErrorMessage != null)
 			{
-				return null;//todo
+				throw new Exception(ryr.ErrorMessage);
 			}
 			MultiFileYaml result = new MultiFileYaml();
 			result.AddPackage(ryr.Manifest, mainYamlFilePath);
@@ -82,7 +82,7 @@ namespace WingetRepoBrowserCore
 				var ryri = ReadYamlFile(Path.Combine(folder, installerFilePath));
 				if (ryri.ErrorMessage != null)
 				{
-					return null;//todo
+					throw new Exception(ryri.ErrorMessage);
 				}
 				result.AddPackage(ryri.Manifest, installerFilePath);
 				string[] yamlFilePaths = Directory.GetFiles(folder, $"{packageIdentifier}.locale.*.yaml", SearchOption.TopDirectoryOnly);
@@ -91,7 +91,7 @@ namespace WingetRepoBrowserCore
 					ReadYamlFileResult localeManifestResult = ReadYamlFile(Path.Combine(folder, yamlFilePath));
 					if (localeManifestResult.ErrorMessage != null)
 					{
-						return null;//todo
+						throw new Exception(localeManifestResult.ErrorMessage);
 					}
 
 					result.AddPackage(localeManifestResult.Manifest, yamlFilePath);
@@ -116,7 +116,7 @@ namespace WingetRepoBrowserCore
 				ManifestPackage_1_0_0 package = ryfr.Manifest;
 
 				string yamlFolder = Path.GetDirectoryName(yamlFilePath)!;
-				MultiFileYaml multiFileYaml;
+				MultiFileYaml? multiFileYaml;
 				if (multiFileYamlDict.TryGetValue(yamlFolder, out multiFileYaml) == false)
 				{
 					multiFileYaml = new MultiFileYaml();
