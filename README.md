@@ -18,7 +18,7 @@ Clone the winget-pkgs repository to a local folder and specify that folder in Wi
 
 **New Features in v0.3.1**
 
-- the winget package repo has become huge and parsing that many files can take a very long time, so now there is new edit where you can limit the .yaml file reading to commits of the last X days.
+- the winget package repo has become huge and parsing that many files can take a very long time. So, now there is a new edit where you can limit the .yaml file reading to commits of the last X days.
 
 **New Features in v0.3.0**
 
